@@ -28,11 +28,11 @@ import (
 var logger *zap.Logger
 
 func init() {
-        var err error
-        logger, err = zap.NewProduction()
-        if err != nil {
-                panic("zap.NewProduction " + err.Error())
-        }
+	var err error
+	logger, err = zap.NewProduction()
+	if err != nil {
+		panic("zap.NewProduction " + err.Error())
+	}
 }
 
 // ClientError is an error whose details to be shared with client.
@@ -111,13 +111,13 @@ var (
 		Message: "Undefined error",
 	}
 	ErrorLengthRequired = &HTTPError{
-		Code: http.StatusLengthRequired,
-		Cause: nil,
+		Code:    http.StatusLengthRequired,
+		Cause:   nil,
 		Message: http.StatusText(http.StatusLengthRequired),
 	}
 	ErrorRequestEntityTooLarge = &HTTPError{
-		Code: http.StatusRequestEntityTooLarge,
-		Cause: nil,
+		Code:    http.StatusRequestEntityTooLarge,
+		Cause:   nil,
 		Message: http.StatusText(http.StatusRequestEntityTooLarge),
 	}
 	ErrorDBNoRows = &HTTPError{
@@ -134,13 +134,13 @@ var (
 
 func NewInternalServerError(err error) ClientError {
 	return &HTTPError{
-		Code: 500,
+		Code:    500,
 		Message: err.Error(),
 	}
 }
 func NewInvalidRequestError(err error) ClientError {
 	return &HTTPError{
-		Code: 400,
+		Code:    400,
 		Message: err.Error(),
 	}
 }

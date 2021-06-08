@@ -21,8 +21,8 @@ package postgresql
 
 import (
 	"database/sql"
-	"fmt"
 	"errors"
+	"fmt"
 	"sync"
 	"time"
 
@@ -30,13 +30,13 @@ import (
 )
 
 var (
-	dbCache map[string]*sql.DB
+	dbCache    map[string]*sql.DB
 	dbCacheMux sync.RWMutex
 )
 
 type DomainDB struct {
 	Domain string
-	DB *sql.DB
+	DB     *sql.DB
 }
 
 func init() {
@@ -64,7 +64,7 @@ func init() {
 					delete(dbCache, domain)
 				}
 				dbCacheMux.Unlock()
-			break
+				break
 			}
 		}
 	}()
@@ -127,7 +127,7 @@ func GetAllDB() []DomainDB {
 	for domain, db := range dbCache {
 		dbs = append(dbs, DomainDB{
 			Domain: domain,
-			DB: db,
+			DB:     db,
 		})
 	}
 	dbCacheMux.RUnlock()

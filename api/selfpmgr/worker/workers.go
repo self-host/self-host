@@ -28,7 +28,7 @@ type WorkerCache struct {
 }
 
 type Worker struct {
-	URI string
+	URI       string
 	Languages []string
 }
 
@@ -46,7 +46,7 @@ func NewWorkerCache() *WorkerCache {
 
 func NewWorker(uri string, langs []string) *Worker {
 	return &Worker{
-		URI: uri,
+		URI:       uri,
 		Languages: langs,
 	}
 }
