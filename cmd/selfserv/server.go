@@ -168,10 +168,9 @@ func Server(address string) (<-chan error, error) {
 	//	fmt.Printf("Logging err: %s\n", err.Error())
 	//}
 
-	port := 8095
 	srv := http.Server{
 		Handler: r,
-		Addr:    fmt.Sprintf("0.0.0.0:%d", port),
+		Addr:    address,
 	}
 
 	errC := make(chan error, 1)
