@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="docs/assets/logo.svg" width="200" height="200">
+    <img src="https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/logo.svg" width="200" height="200">
     <br>
     <br>
     <quote>&ldquo;If you want something done, do it yourself.&rdquo;</quote>
@@ -104,5 +104,5 @@ Steps:
 :hearts: Like this project? Want to improve it but unsure where to begin? Check out the [issue tracker](https://github.com/self-host/self-host/issues).
 
 
-[fig1]: docs/assets/overview.svg "Overview"
+[fig1]: https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/overview.svg "Overview"
 
