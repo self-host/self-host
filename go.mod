@@ -27,10 +27,12 @@ require (
 	github.com/kshvakov/clickhouse v1.3.4 // indirect
 	github.com/kyleconroy/sqlc v1.8.0 // indirect
 	github.com/lib/pq v1.10.1
+	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/gox v1.0.1 // indirect
 	github.com/mongodb/mongo-go-driver v0.1.0 // indirect
 	github.com/ory/dockertest/v3 v3.6.5
 	github.com/pkg/errors v0.9.1
+	github.com/spf13/cobra v1.1.3 // indirect
 	github.com/spf13/viper v1.7.0
 	go.uber.org/zap v1.15.0
 	golang.org/x/exp v0.0.0-20200224162631-6cc2880d07d6 // indirect
