@@ -23,7 +23,7 @@ import (
 
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 
-	"github.com/self-host/self-host/api/v2/rest"
+	"github.com/self-host/self-host/api/selfserv/rest"
 )
 
 func main() {
