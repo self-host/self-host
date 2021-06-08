@@ -1,4 +1,5 @@
 /*
+
 Copyright (C) 2021 The Self-host Authors.
 This file is part of Self-host <https://github.com/self-host/self-host>.
 
@@ -13,8 +14,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with dogtag.  If not, see <http://www.gnu.org/licenses/>.
+along with Self-host. If not, see <http://www.gnu.org/licenses/>.
+
 */
+
 package main
 
 import (
