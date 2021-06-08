@@ -130,7 +130,6 @@ func NewProgram(domain string, id string, language string, deadline time.Duratio
 	switch language {
 	case "tengo":
 		return NewTengoProgram(domain, id, deadline, source_code), nil
-		break
 	}
 
 	return nil, errors.New(fmt.Sprintf("language %v is not supported", language))

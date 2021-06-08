@@ -161,12 +161,10 @@ func ParseDBError(e error) ClientError {
 	} else if strings.Contains(serr, "no rows") {
 		// Expected one row, but got no rows.
 		return ErrorDBNoRows
-	} else {
-		logger.Error("dberror", zap.Error(e))
-		return ErrorDBUndefined
 	}
 
-	return nil
+	logger.Error("dberror", zap.Error(e))
+	return ErrorDBUndefined
 }
 
 func SendHTTPError(w http.ResponseWriter, e ClientError) {

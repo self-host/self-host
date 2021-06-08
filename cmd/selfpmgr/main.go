@@ -86,16 +86,16 @@ func main() {
 		case err := <-s_errC:
 			waitfor -= 1
 			if err != nil {
-				goto giveup
 				logger.Fatal("Fatal error while running", zap.Error(err))
+				goto giveup
 			}
 
 			// Wait for Program Manager to terminate
 		case err := <-pm_errC:
 			waitfor -= 1
 			if err != nil {
-				goto giveup
 				logger.Fatal("Fatal error while running", zap.Error(err))
+				goto giveup
 			}
 		}
 	}
