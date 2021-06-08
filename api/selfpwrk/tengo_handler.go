@@ -31,7 +31,7 @@ import (
 	"github.com/d5/tengo/v2"
 	"github.com/d5/tengo/v2/stdlib"
 
-	"github.com/noda/selfhost/api/selfpwrk/library"
+	"github.com/self-host/self-host/api/selfpwrk/library"
 )
 
 var AllowedBaseModules = []string{

@@ -28,7 +28,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/google/uuid"
-	"github.com/noda/selfhost/api/selfpmgr/worker"
+	"github.com/self-host/self-host/api/selfpmgr/worker"
 )
 
 type ProgramRevision struct {

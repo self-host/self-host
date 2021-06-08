@@ -25,7 +25,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/noda/selfhost/internal/services"
+	"github.com/self-host/self-host/internal/services"
 )
 
 // Tests can run in any order, so we need to run everyting (Timeseries related) in one function

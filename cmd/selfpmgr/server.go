@@ -25,9 +25,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	chiware "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/noda/selfhost/api/selfpmgr"
+	"github.com/self-host/self-host/api/selfpmgr"
 	"go.uber.org/zap"
-	// "github.com/noda/selfhost/middleware"
+	// "github.com/self-host/self-host/middleware"
 )
 
 func Server(quit <-chan struct{}, address string) (<-chan error, error) {

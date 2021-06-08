@@ -24,9 +24,9 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/noda/selfhost/api/selfserv/rest"
-	ie "github.com/noda/selfhost/internal/errors"
-	"github.com/noda/selfhost/internal/services"
+	"github.com/self-host/self-host/api/selfserv/rest"
+	ie "github.com/self-host/self-host/internal/errors"
+	"github.com/self-host/self-host/internal/services"
 )
 
 func (ra *RestApi) AddGroup(w http.ResponseWriter, r *http.Request) {

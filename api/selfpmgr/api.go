@@ -30,9 +30,9 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/noda/selfhost/api/selfpmgr/worker"
-	ie "github.com/noda/selfhost/internal/errors"
-	pg "github.com/noda/selfhost/postgres"
+	"github.com/self-host/self-host/api/selfpmgr/worker"
+	ie "github.com/self-host/self-host/internal/errors"
+	pg "github.com/self-host/self-host/postgres"
 )
 
 type RestApi struct{}

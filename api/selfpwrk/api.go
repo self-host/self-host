@@ -27,8 +27,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/noda/selfhost/api/selfpwrk/library"
-	ie "github.com/noda/selfhost/internal/errors"
+	"github.com/self-host/self-host/api/selfpwrk/library"
+	ie "github.com/self-host/self-host/internal/errors"
 )
 
 type Error struct {

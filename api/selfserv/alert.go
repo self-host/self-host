@@ -21,7 +21,7 @@ package selfserv
 import (
 	"net/http"
 
-	"github.com/noda/selfhost/api/selfserv/rest"
+	"github.com/self-host/self-host/api/selfserv/rest"
 )
 
 func (ra *RestApi) FindAlerts(w http.ResponseWriter, r *http.Request, p rest.FindAlertsParams) {

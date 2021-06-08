@@ -38,10 +38,10 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
-	"github.com/noda/selfhost/api/selfserv"
-	"github.com/noda/selfhost/api/selfserv/rest"
-	"github.com/noda/selfhost/middleware"
-	pg "github.com/noda/selfhost/postgres"
+	"github.com/self-host/self-host/api/selfserv"
+	"github.com/self-host/self-host/api/selfserv/rest"
+	"github.com/self-host/self-host/middleware"
+	pg "github.com/self-host/self-host/postgres"
 )
 
 var URLParamRegex = regexp.MustCompile(`(?m)\{([^\}]+)\}`)

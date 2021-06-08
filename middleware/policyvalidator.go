@@ -26,9 +26,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	ie "github.com/noda/selfhost/internal/errors"
-	"github.com/noda/selfhost/internal/services"
-	pg "github.com/noda/selfhost/postgres"
+	ie "github.com/self-host/self-host/internal/errors"
+	"github.com/self-host/self-host/internal/services"
+	pg "github.com/self-host/self-host/postgres"
 )
 
 var URLParamRegex = regexp.MustCompile(`(?m)\{([^\}]+)\}`)

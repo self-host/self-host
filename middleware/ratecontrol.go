@@ -25,7 +25,7 @@ import (
 
 	"golang.org/x/time/rate"
 
-	ie "github.com/noda/selfhost/internal/errors"
+	ie "github.com/self-host/self-host/internal/errors"
 )
 
 type visitor struct {

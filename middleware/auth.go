@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"net/http"
 
-	ie "github.com/noda/selfhost/internal/errors"
+	ie "github.com/self-host/self-host/internal/errors"
 )
 
 type BasicAuthItem struct {

@@ -31,8 +31,8 @@ import (
 	"github.com/go-chi/cors"
 	"go.uber.org/zap"
 
-	"github.com/noda/selfhost/api/selfpwrk"
-	"github.com/noda/selfhost/middleware"
+	"github.com/self-host/self-host/api/selfpwrk"
+	"github.com/self-host/self-host/middleware"
 )
 
 var (

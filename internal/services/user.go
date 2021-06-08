@@ -24,9 +24,9 @@ import (
 	"encoding/json"
 
 	"github.com/google/uuid"
-	"github.com/noda/selfhost/api/selfserv/rest"
-	ie "github.com/noda/selfhost/internal/errors"
-	pg "github.com/noda/selfhost/postgres"
+	"github.com/self-host/self-host/api/selfserv/rest"
+	ie "github.com/self-host/self-host/internal/errors"
+	pg "github.com/self-host/self-host/postgres"
 )
 
 const (

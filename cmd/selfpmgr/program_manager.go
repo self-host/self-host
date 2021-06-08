@@ -23,8 +23,8 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 
-	"github.com/noda/selfhost/api/selfpmgr"
-	pg "github.com/noda/selfhost/postgres"
+	"github.com/self-host/self-host/api/selfpmgr"
+	pg "github.com/self-host/self-host/postgres"
 )
 
 func AtInterval(d time.Duration) <-chan time.Time {

@@ -31,8 +31,8 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
-	"github.com/noda/selfhost/api/selfpwrk"
-	"github.com/noda/selfhost/api/selfpwrk/library"
+	"github.com/self-host/self-host/api/selfpwrk"
+	"github.com/self-host/self-host/api/selfpwrk/library"
 )
 
 var logger *zap.Logger

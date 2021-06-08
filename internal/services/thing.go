@@ -23,8 +23,8 @@ import (
 	"database/sql"
 
 	"github.com/google/uuid"
-	"github.com/noda/selfhost/api/selfserv/rest"
-	pg "github.com/noda/selfhost/postgres"
+	"github.com/self-host/self-host/api/selfserv/rest"
+	pg "github.com/self-host/self-host/postgres"
 )
 
 // ThingService represents the repository used for interacting with Thing records.

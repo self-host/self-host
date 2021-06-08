@@ -22,7 +22,7 @@ import (
 	"context"
 	"database/sql"
 
-	pg "github.com/noda/selfhost/postgres"
+	pg "github.com/self-host/self-host/postgres"
 )
 
 type PolicyCheckService struct {

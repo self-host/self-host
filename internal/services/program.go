@@ -28,8 +28,8 @@ import (
 	"github.com/hexops/gotextdiff/myers"
 	"github.com/hexops/gotextdiff/span"
 
-	"github.com/noda/selfhost/api/selfserv/rest"
-	pg "github.com/noda/selfhost/postgres"
+	"github.com/self-host/self-host/api/selfserv/rest"
+	pg "github.com/self-host/self-host/postgres"
 )
 
 // ProgramService represents the repository used for interacting with Program records.

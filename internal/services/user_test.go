@@ -25,8 +25,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/noda/selfhost/api/selfserv/rest"
-	"github.com/noda/selfhost/internal/services"
+	"github.com/self-host/self-host/api/selfserv/rest"
+	"github.com/self-host/self-host/internal/services"
 )
 
 func TestAddUser(t *testing.T) {
