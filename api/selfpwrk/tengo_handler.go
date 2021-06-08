@@ -59,7 +59,7 @@ func moduleMapKeys(m map[string]map[string]tengo.Object) []string {
 	keys := make([]string, len(m))
 
 	i := 0
-	for k, _ := range m {
+	for k := range m {
 		keys[i] = k
 		i++
 	}
@@ -136,7 +136,7 @@ func (p *TengoProgram) AllImports() []string {
 	}
 
 	imports := make([]string, 0)
-	for k, _ := range m {
+	for k := range m {
 		mod := k
 		imports = append(imports, mod)
 	}

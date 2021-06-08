@@ -62,7 +62,7 @@ func (p *ProgramCache) Begin() {
 	defer p.Unlock()
 
 	p.deletes = make(map[string]struct{})
-	for k, _ := range p.m {
+	for k := range p.m {
 		p.deletes[k] = struct{}{}
 	}
 }
@@ -72,7 +72,7 @@ func (p *ProgramCache) Commit() {
 	p.Lock()
 	defer p.Unlock()
 
-	for k, _ := range p.deletes {
+	for k := range p.deletes {
 		if obj, ok := p.m[k]; ok {
 			obj.Stop()
 		}

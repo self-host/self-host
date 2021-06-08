@@ -110,7 +110,7 @@ func Server(address string) (<-chan error, error) {
 	})
 
 	auth := []middleware.BasicAuthItem{
-		middleware.BasicAuthItem{
+		{
 			User:     randomUser,
 			Password: randomPass,
 		},
