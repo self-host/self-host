@@ -1,4 +1,4 @@
-module github.com/noda/selfhost
+module github.com/self-host/self-host
 
 go 1.16
 
