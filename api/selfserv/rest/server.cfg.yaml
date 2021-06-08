@@ -1,0 +1,6 @@
+output:
+  rest/selfhost-server.gen.go
+generate:
+  - chi-server
+  - spec
+package: rest

@@ -1,0 +1,5 @@
+output:
+  rest/selfhost-client.gen.go
+generate:
+  - client
+package: rest

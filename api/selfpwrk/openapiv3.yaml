@@ -1,0 +1,198 @@
+openapi: '3.0.0'
+info:
+
+  description: |
+    ## Welcome to the official documentation of the NODA Selfhost Program Worker API.
+
+  license:
+    name: GPL-3.0-only
+    url: https://opensource.org/licenses/GPL-3.0
+  title: NODA Selfhost Program Worker API
+  version: 0.1.0
+
+servers:
+  - url: '{protocol}://{server}'
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+        description: Protocol
+      server:
+        default: '127.0.0.1:8096'
+        description: Server URL
+
+tags:
+  - name: tasks
+    description: ...
+
+components:
+
+  headers:
+    X-Expires:
+      description: An HTTP-date timestamp.
+      schema:
+        type: string
+      example: 'X-Expires: Wed, 21 Oct 2015 07:28:00 GMT'
+
+  responses:
+    OK:
+      description: Success.
+    Accepted:
+      description: The request has been accepted for processing.
+    Created:
+      description: The request resource was created.
+    Updated:
+      description: The request resource was updated.
+    Deleted:
+      description: The request resource was deleted.
+    BadRequest:
+      description: The request does not follow specification.
+    Unauthorized: 
+      description: Invalid authentication credentials.
+    Forbidden:
+      description: Not allowed to perform the action.
+    NotFound:
+      description: The specified resource was not found.
+    ContentTooLarge:
+      description: The request contains an element that excedes the allowed size.
+    Conflict:
+      description: The request caused a conflict.
+    InternalServerError:
+      description:   Internal server error
+    UnexpectedError:
+      description: Unexpected error
+
+  parameters:
+    uuidParam:
+      in: path
+      name: uuid
+      description: The resource UUID
+      required: true
+      example: '1896048c-bdc9-43c4-af41-4a946b9a341e'
+      schema:
+        type: string
+
+  requestBodies:
+    NewTask:
+      description: Task to assign to the worker.
+      required: true
+      content:
+        application/json:
+          schema:
+            required:
+              - deadline
+              - domain
+              - language
+              - program_uuid
+              - source_code
+            properties:
+              deadline:
+                type: integer
+                minimum: 0
+                maximum: 60000
+                example: 5000
+              domain:
+                type: string
+                example: "mydomain"
+              language:
+                type: string
+                enum: [tengo]
+                example: tengo
+              program_uuid:
+                type: string
+                minLength: 36
+                maxLength: 36
+                example: 'a52ea18d-a3a8-40b1-abe8-32286ee6f6b1'
+              source_code:
+                type: string
+                format: byte
+              http:
+                description: Optional. When in use the task is executed as a HTTP procedure.
+                required:
+                  - headers
+                  - body
+                type: object
+                properties:
+                  headers:
+                    type: object
+                    additionalProperties:
+                      type: string
+                  body:
+                    type: string
+                    format: byte
+
+  schemas:
+
+    Status:
+      required:
+        - load
+      properties:
+        load:
+          type: integer
+          format: int64
+          description: The current load (aggregated deadlines)
+          minimum: 0
+          example: 4
+
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+
+security:
+  - BasicAuth: []
+
+paths:
+  /v1/tasks:
+    post:
+      tags:
+        - tasks
+      security:
+        - BasicAuth:
+          - ""
+      summary: Add a new Task
+      description: Add a new Task
+      operationId: create task
+      requestBody:
+        $ref: '#/components/requestBodies/NewTask'
+      responses:
+        '200':
+          description: Success. A (compiled) program is cached until the date-time specified by the X-Expires header. A cached program will be reused without requiring recompilation of the checksum matches.
+          headers:
+            X-Expires:
+              $ref: "#/components/headers/X-Expires"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          description: When executing a program as a webhook request, the response can be anything.
+
+  /v1/status:
+    get:
+      tags:
+        - status
+      security:
+        - BasicAuth:
+          - ""
+      summary: Get worker status
+      description: Get status
+      operationId: get status
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+

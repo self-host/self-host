@@ -1,0 +1,32 @@
+title Program Manager and Worker
+
+participant Worker
+participant Manager
+database Database
+
+note over Worker: Every 10s
+Worker->Manager: IsSubscribed?
+Manager-->Worker: Response
+note over Worker: Subscribe if not
+Worker->Manager: Subscribe
+Manager-->Worker: OK
+
+note over Manager: At some interval
+
+activate Manager
+Manager->Manager: for allDBs
+activate Manager
+Manager->Database: Get Programs
+Database-->Manager: Response
+Manager->Manager: Track Program
+deactivate Manager
+deactivate Manager
+
+note over Manager: When Program shall run
+Manager->Worker: Do Task
+activate Worker
+Worker->Worker: Compile
+Worker->Worker: Execute
+Worker-->Manager: Response
+deactivate Worker
+

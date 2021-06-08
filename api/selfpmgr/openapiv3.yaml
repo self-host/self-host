@@ -1,0 +1,308 @@
+openapi: '3.0.0'
+info:
+
+  description: |
+    ## Welcome to the official documentation of the NODA Selfhost Program Manager API.
+
+  license:
+    name: GPL-3.0-only
+    url: https://opensource.org/licenses/GPL-3.0
+  title: NODA Selfhost Program Manager API
+  version: 0.1.0
+
+servers:
+  - url: '{protocol}://{server}'
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+        description: Protocol
+      server:
+        default: '127.0.0.1:8097'
+        description: Server URL
+
+tags:
+  - name: subscribe
+    description: Subscription endpoints
+
+components:
+
+  responses:
+    OK:
+      description: Success.
+    Created:
+      description: The request resource was created.
+    Updated:
+      description: The request resource was updated.
+    Deleted:
+      description: The request resource was deleted.
+    Accepted:
+      description: The request has been accepted for processing.
+
+    BadGateway:
+      description: Invalid response from upstream server.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request does not follow specification.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized: 
+      description: Invalid authentication credentials.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Not allowed to perform the action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The specified resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ContentTooLarge:
+      description: The request contains an element that excedes the allowed size.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Conflict:
+      description: The request caused a conflict.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description:   Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnexpectedError:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  parameters:
+    uuidParam:
+      in: path
+      name: uuid
+      description: The resource UUID
+      required: true
+      schema:
+        type: string
+        example: '1896048c-bdc9-43c4-af41-4a946b9a341e'
+
+    domainPathParam:
+      in: path
+      name: domain
+      description: A domain
+      required: true
+      schema:
+        type: string
+        example: 'foo'
+
+    domainQueryParam:
+      in: query
+      name: domain
+      description: A domain
+      required: true
+      schema:
+        type: string
+        example: 'foo'
+
+    languageParam:
+      in: query
+      name: language
+      description: The language of the module
+      required: true
+      schema:
+        type: string
+        example: 'tengo'
+
+    moduleParam:
+      in: query
+      name: module
+      description: The module name
+      required: true
+      schema:
+        type: string
+        example: 'mylib'
+        
+    revisionParam:
+      in: query
+      name: revision
+      description: The module revision. The keyword 'latest' will return the latest revision.
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        example: '2'
+
+  requestBodies:
+    NewSubscriber:
+      description: Subscription information.
+      required: true
+      content:
+        application/json:
+          schema:
+            required:
+              - uuid
+              - scheme
+              - authority
+              - languages
+            properties:
+              uuid:
+                type: string
+                example: '1896048c-bdc9-43c4-af41-4a946b9a341e'
+              scheme:
+                type: string
+                enum: [http, https]
+                example: http
+              authority:
+                description: On the format [userinfo@]host[:port].
+                type: string
+                example: 'user:pass@10.0.127.19:80'
+              languages:
+                description: A list of supported languages.
+                type: array
+                items:
+                  type: string
+                  example: tengo
+
+  schemas:
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: Error code
+        message:
+          type: string
+          description: Error message
+
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+
+security:
+  - BasicAuth: []
+
+paths:
+  /v1/subscribers:
+    post:
+      tags:
+        - subscribe
+      summary: Subscribe as a worker.
+      description: Put me in coach!
+      operationId: worker subscribe
+      requestBody:
+        $ref: '#/components/requestBodies/NewSubscriber'
+      responses:
+        '201':
+          $ref: '#/components/responses/OK'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+  /v1/subscribers/{uuid}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+
+    get:
+      tags:
+        - subscribe
+      summary: Check if subscriber has been added
+      description: Check subscriber. Used by a worker at an interval to ensure that the manager knows about it. If not the worker will subscribe.
+      operationId: check worker
+      responses:
+        '204':
+          $ref: '#/components/responses/OK'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - subscribe
+      summary: Unsubscribe as a worker
+      description: Unsubscribe as a worker
+      operationId: worker unsubscribe
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v1/library:
+    parameters:
+      - $ref: '#/components/parameters/domainQueryParam'
+      - $ref: '#/components/parameters/moduleParam'
+      - $ref: '#/components/parameters/languageParam'
+      - $ref: '#/components/parameters/revisionParam'
+
+    get:
+      tags:
+        - library
+      summary: Get module
+      description: Get the source code for a module @ revision
+      operationId: get module at revision
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain; charset=utf-8:
+              schema:
+                type: string
+                format: binary
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+
+  /v1/webhooks/{domain}/{uuid}:
+    parameters:
+      - $ref: '#/components/parameters/domainPathParam'
+      - $ref: '#/components/parameters/uuidParam'
+  
+    post:
+      tags:
+        - webhook
+      summary: Proxy interface for webhooks
+      description: Proxy interface for webhooks. Forwards the call to a worker and replies with the response.
+      operationId: forward webhook
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+        default:
+          description: Because this is a proxy request, the response can be anything.
+

@@ -1,0 +1,19 @@
+title Webhook example
+
+participant API server
+participant Manager
+participant Worker
+
+
+API server->Manager: Execute Webhook
+activate Manager
+Manager->Manager: Pick Suitable Worker
+Manager->Worker: Execute Program
+activate Worker
+note over Worker: if not cached, then compile
+Worker->Worker: Compile
+Worker->Worker: Execute
+Worker-->Manager: Response
+deactivate Worker
+Manager-->API server: Response
+deactivate Manager

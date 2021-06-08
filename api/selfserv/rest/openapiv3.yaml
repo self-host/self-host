@@ -1,0 +1,2907 @@
+openapi: '3.0.0'
+info:
+  contact:
+    name: API Support
+    url: http://www.noda.se/support
+    email: support@noda.se
+
+  description: |
+    ## Welcome to the official documentation of the NODA Selfhost API.
+
+    The API consists of X categories:
+    
+    - asd
+  
+  license:
+    name: GPL-3.0-only
+    url: https://opensource.org/licenses/GPL-3.0
+  title: NODA Selfhost API
+  version: 0.1.0
+
+servers:
+  - url: '{protocol}://{server}'
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+        description: Protocol
+      server:
+        default: '127.0.0.1:8095'
+        description: Server URL
+
+tags:
+  - name: users
+    description: A User (account) is required to access the API
+  - name: groups
+    description: Groups are assigned to Users to provide access right.
+  - name: policies
+    description: Policies are access rules. They are assigned to Groups.
+  - name: things
+    description: A Thing is a collection of time series. What it should represent depends on you.
+  - name: timeseries
+    description: A Time series is a single data stream.
+  - name: datasets
+    description: Datasets are used to store and retrieve data structures more complex than time series. Configuration files or smaller computed data-sets are good examples.
+  - name: programs
+    description: Programs are code segments executed either as part of another code segment (module), as a program that runs ever so often (program) or as an externaly triggered call (webhook).
+  
+components:
+
+  headers:
+    Etag:
+      description: |
+        The RFC7232 ETag header field in a response provides the current entity-
+        tag for the selected resource. An entity-tag is an opaque identifier for
+        different versions of a resource over time, regardless whether multiple
+        versions are valid at the same time. An entity-tag consists of an opaque
+        quoted string, possibly prefixed by a weakness indicator.
+      example: "7da7a728-f910-11e6-942a-68f728c1ba70"
+      required: false
+      schema:
+        type: string
+    X-RateLimit-Limit:
+      description: Request limit per hour
+      schema:
+        type: integer
+      example: 100
+    #X-RateLimit-Remaining:
+    #  description: Remaining requests for the hour
+    #  schema:
+    #    type: integer
+    #  example: 94
+    #X-RateLimit-Reset:
+    #  description: The number of seconds remaining before the rate limit resets.
+    #  schema:
+    #    type: integer
+    #  example: 123
+
+  responses:
+    OK:
+      description: Success.
+    Created:
+      description: The request resource was created.
+    Updated:
+      description: The request resource was updated.
+    Deleted:
+      description: The request resource was deleted.
+    Accepted:
+      description: The request has been accepted for processing.
+
+    BadGateway:
+      description: Invalid response from upstream server.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: The request does not follow specification.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized: 
+      description: Invalid authentication credentials.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Not allowed to perform the action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The specified resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ContentTooLarge:
+      description: The request contains an element that excedes the allowed size.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Conflict:
+      description: The request caused a conflict.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description:   Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnexpectedError:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TooManyRequests:
+      description: Too many request in the allowed time period.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      headers:
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+
+  parameters:
+    offsetParam:
+      in: query
+      name: offset
+      required: false
+      schema:
+        type: integer
+        format: int64
+        minimum: 0
+        default: 0
+      description: The number of items to skip before starting to collect the result set.
+    limitParam:
+      in: query
+      name: limit
+      required: false
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: The numbers of items to return.
+    uuidParam:
+      in: path
+      name: uuid
+      description: The resource UUID
+      required: true
+      example: '1896048c-bdc9-43c4-af41-4a946b9a341e'
+      schema:
+        type: string
+    rangeStartParam:
+      in: query
+      name: start
+      description: Start of time period. The period (start to end) can **not** exceed 1 year.
+      required: true
+      schema:
+        type: string
+        format: date-time
+        example: '2020-05-01T00:00:00Z'
+        default: 'now'
+    rangeEndParam:
+      in: query
+      name: end
+      description: End of time period. The period (start to end) can **not** exceed 1 year.
+      required: true
+      schema:
+        type: string
+        format: date-time
+        example: '2021-05-01T00:00:00Z'
+        default: 'now'
+    siUnitParam:
+      in: query
+      name: unit
+      description: The SI unit of the result. A cast will occur if the base unit differes.
+      schema:
+        type: string
+        example: "C"
+    greaterThanParam:
+      in: query
+      name: gt
+      description: Value should be greater (>) than this.
+      schema:
+        type: number
+    greaterOrEqParam:
+      in: query
+      name: ge
+      description: Value should be greater or equal to (>=) this.
+      schema:
+        type: number
+    lessThanParam:
+      in: query
+      name: lt
+      description: Value should be less than (<)this.
+      schema:
+        type: number
+    lessOrEqParam:
+      in: query
+      name: le
+      description: Value should be less or equal to (<=) this.
+      schema:
+        type: number
+
+  requestBodies:
+    NewDataset:
+      description: Dataset to add to the system
+      required: true
+      content:
+        application/json:
+          schema:
+            required:
+              - name
+              - format
+              - content
+            properties:
+              name:
+                type: string
+                minLength: 3
+                example: foo
+              format:
+                type: string
+                enum: [csv, ini, json, misc, toml, xml, yaml]
+              content:
+                type: string
+                description: Content of the resource.
+                format: byte
+                example: 'aGVsbG8sIHdvcmxkIQ=='
+                nullable: true
+              belongs_to:
+                type: string
+                nullable: true
+                example: '54295623-c5e3-4085-80cf-542338b1bc30'
+                description: A reference to a Thing
+
+    NewGroup:
+      description: Group to add to the system
+      required: true
+      content:
+        application/json:
+          schema:
+            required:
+              - name
+            properties:
+              name:
+                type: string
+                minLength: 3
+                description: Name of the group
+                example: "operator"
+
+    NewPolicy:
+      description: Policy to add to the system
+      required: true
+      content:
+        application/json:
+          schema:
+            required:
+              - group_uuid
+              - priority
+              - effect
+              - action
+              - resource
+            properties:
+              group_uuid:
+                type: string
+                example: '810d38bb-6a8e-4d36-b853-7350b67cb041'
+              priority:
+                type: integer
+                example: 10
+              effect:
+                type: string
+                enum: [allow, deny]
+                example: allow
+              action:
+                type: string
+                enum: [create, read, update, delete]
+                example: read
+              resource:
+                type: string
+                minLength: 1
+                example: 'timeseries/%'
+
+    NewProgram:
+      description: Program to add to the system
+      required: true
+      content:
+        application/json:
+          schema:
+            required:
+              - name
+              - type
+              - state
+              - schedule
+              - deadline
+              - language
+            properties:
+              name:
+                type: string
+                example: "My program"
+              type:
+                description: Routines are executed at an interval. Webhooks are called using the REST API. Modules are used by Routines and Webhooks to extend their functionality.
+                type: string
+                enum: [module, routine, webhook]
+                example: "routine"
+              state:
+                type: string
+                enum: [active, inactive, failed]
+              schedule:
+                description: Ignored for Modules and Webhooks. An interval at which this Program (routine) shall execute. An interval string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+                type: string
+                example: "1h"
+              deadline:
+                description: Ignored for Modules. An duration (in milliseconds) after which a Program (routine, webhook) shall terminate, to avoid long running programs.
+                type: integer
+                example: "500"
+              language:
+                type: string
+                enum: [tengo]
+                example: tengo
+
+    NewThing:
+      description: Thing to add to the system
+      required: true
+      content:
+        application/json:
+          schema:
+            required:
+              - name
+            properties:
+              name:
+                type: string
+                minLength: 3
+                description: Name of the thing
+                example: "My Thing"
+              type:
+                type: string
+                minLength: 3
+                description: Thing type declaration
+                example: "building/office"
+
+    NewTimeseries:
+      description: Time series to add to the system
+      required: true
+      content:
+        application/json:
+          schema:
+            required:
+            - name
+            - si_unit
+            properties:
+              thing_uuid:
+                type: string
+                description: Optional reference to a thing
+                nullable: true
+                example: 'e21ae595-15a5-4f11-8992-9d33600cc1ee'
+              name:
+                type: string
+                minLength: 3
+                description: Name of the time series
+                example: 'My Time Series'
+              si_unit:
+                type: string
+                minLength: 1
+                description: The SI unit assigned to this time series.
+                example: 'C'
+              lower_bound:
+                type: number
+                format: double
+                example: -50
+              upper_bound:
+                type: number
+                format: double
+                example: 50
+              tags:
+                type: array
+                default: []
+                items:
+                  type: string
+                example: '["GT31","ODT"]'
+
+    NewToken:
+      description: Add a new token to a user
+      required: true
+      content:
+        application/json:
+          schema:
+            required:
+              - name
+            properties:
+              name:
+                type: string
+                minLength: 3
+                description: Name/label for the Token
+                example: "My first secret token"
+
+    NewTsData:
+      description: Time series data
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/TsRow'
+
+    NewUser:
+      description: User to add to the system
+      required: true
+      content:
+        application/json:
+          schema:
+            required:
+              - name
+            properties:
+              name:
+                type: string
+                minLength: 3
+                description: Name of the user
+                example: "alice"
+
+    UpdateDataset:
+      description: Dataset object for update
+      required: true
+      content:
+        application/json:
+          schema:
+            description: >
+                The max allowed size of the complete request body is 1048576 bytes (1 MB).
+                Performing a request with a Content-Length over this limit will result in a 400, malformed request error.
+            properties:
+              name:
+                type: string
+                minLength: 3
+                example: foo.yaml
+              format:
+                type: string
+                enum: [csv, ini, json, misc, toml, xml, yaml]
+                example: yaml
+              content:
+                description: Base64 encoded content. Used for smaller uploads.
+                type: string
+                format: byte
+                example: 'LS0tCiBkb2U6ICJhIGRlZXIsIGEgZmVtYWxlIGRlZXIiCiBwaTogMy4xNDE1OQo='
+
+    UpdateGroup:
+      description: Group object for update
+      required: true
+      content:
+        application/json:
+          schema:
+            required:
+              - name
+            properties:
+              name:
+                type: string
+                minLength: 3
+                example: mygroup
+
+    UpdatePolicy:
+      description: Policy object used for update
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              group_uuid:
+                type: string
+                example: '810d38bb-6a8e-4d36-b853-7350b67cb041'
+              priority:
+                type: integer
+                example: 10
+              effect:
+                type: string
+                enum: [allow, deny]
+                example: allow
+              action:
+                type: string
+                enum: [create, read, update, delete]
+                example: create
+              resource:
+                type: string
+                minLength: 1
+                example: 'things'
+
+    UpdateProgram:
+      description: Policy object used for update
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              name:
+                type: string
+                example: "My program"
+              type:
+                description: Routines are executed at an interval. Webhooks are called using the REST API. Modules are used by Routines and Webhooks to extend their functionality.
+                type: string
+                enum: [module, routine, webhook]
+                example: "routine"
+              state:
+                type: string
+                enum: [active, inactive, failed]
+              schedule:
+                description: Ignored for Modules and Webhooks. An interval at which this Program (routine) shall execute. An interval string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+                type: string
+                example: "1h"
+              deadline:
+                description: Ignored for Modules. An duration (in milliseconds) after which a Program (routine, webhook) shall terminate, to avoid long running programs.
+                type: integer
+                example: "500"
+              language:
+                type: string
+                enum: [tengo]
+                example: tengo
+            
+
+    UpdateRequestRate:
+      description: Set the request rate (number of requests per hour) for a user.
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              rate:
+                type: number
+                minimum: 0
+                maximum: 10000
+
+    UpdateThing:
+      description: Thing object used for update
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              name:
+                description: The name of the Thing.
+                type: string
+                minLength: 3
+                example: 'My Thing'
+              state:
+                description: The state of the thing.
+                type: string
+                enum: [active, inactive, passive, archived]
+                example: 'active'
+              type:
+                description: A text label to organize Things into different types.
+                nullable: true
+                type: string
+                example: 'building/office'
+
+    UpdateTimeseries:
+      description: Timeseries object used for update
+      required: true
+      content:
+        application/json:
+           schema:
+            properties:
+              name:
+                description: >
+                  Name of the time-series.
+                type: string
+                example: 'Oz Yellow Brick Road, South Entrance; Temperature'
+              thing_uuid:
+                description: >
+                  Optional reference to a Thing.
+                type: string
+                nullable: true
+                example: '60919547-0f48-4890-90bc-15b71f219f1b'
+              si_unit:
+                description: >
+                  SI unit.
+                type: string
+                example: 'C'
+              lower_bound:
+                description: >
+                  An optional lower bound at which values are accepted and stored. Values *less* than this will be rejected.
+                type: number
+                nullable: true
+                format: double
+                example: -50
+              upper_bound:
+                type: number
+                nullable: true
+                format: double
+                example: 50
+                description: >
+                  An optional upper bound at which values are accepted and stored. Values *greater* than this will be rejected.
+              tags:
+                description: An array of text labels (tags) for tracking and filtering purposes.
+                type: array
+                items:
+                  type: string
+                example: '["temperature", "GATE31", "avg1h"]'
+
+    UpdateUser:
+      description: User object used for update
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              name:
+                type: string
+              groups:
+                description: >
+                  Set the user groups. This parameter is incompatible with `groups_add` and `groups_remove`.
+                type: array
+                items:
+                  type: string
+                  description: UUID of groups
+              groups_add:
+                description: >
+                  Add the user to these groups. This parameter is incompatible with `groups`.
+                type: array
+                items:
+                  type: string
+                  description: UUID of groups
+              groups_remove:
+                description: >
+                  Remove the user from these groups. This parameter is incompatible with `groups`.
+                type: array
+                items:
+                  type: string
+                  description: UUID of groups
+
+  schemas:
+    Alert:
+      properties:
+        uuid:
+          type: string
+
+    CodeRevision:
+      required:
+        - revision
+        - created
+        - created_by
+        - signed
+        - signed_by
+        - checksum
+      properties:
+        revision:
+          type: integer
+          description: The revision number
+          minimum: 0
+          example: 4
+        created:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        created_by:
+          type: string
+          description: User UUID
+          example: 'ff58add1-29ad-4534-b7f8-947bfce6dab4'
+        signed:
+          type: string
+          format: date-time
+          example: null
+          nullable: true
+        signed_by:
+          type: string
+          description: User UUID
+          example: null
+          nullable: true
+        checksum:
+          type: string
+          minLength: 64
+          maxLength: 64
+          example: '87cbebfeebc05f7c54ac9336c4b4bbec831227a641951a4bde7edd56020f8590'
+
+    Dataset:
+      required:
+        - uuid
+        - name
+        - format
+        - content
+        - size
+        - created
+        - updated
+        - belongs_to
+        - created_by
+        - updated_by
+      properties:
+        uuid:
+          type: string
+          description: Unique identifier.
+          example: '5e029cdf-4fee-42d2-9196-afbdfbdb9d8f'
+        name:
+          type: string
+          description: Name of the resource. Does *not* have to be unique.
+          example: 'ML model yTgvX7z'
+        format:
+          type: string
+          description: File format of the data set.
+          enum: [csv, ini, json, misc, toml, xml, yaml]
+          example: json
+        size:
+          type: integer
+          format: int64
+          description: The size of the content in number of bytes.
+        belongs_to:
+          type: string
+          description: UUID reference to a Thing as a way to track data-sets to things.
+          nullable: true
+        created:
+          type: string
+          description: Date-time when created, as defined by RFC 3339, section 5.6.
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        created_by:
+          type: string
+          description: User UUID reference.
+          example: 'f36834fb-8d96-4c01-b0e4-0bd85906bc25'
+        updated:
+          type: string
+          description: Date-time of last change, as defined by RFC 3339, section 5.6.
+          format: date-time
+          example: '2017-07-21T17:32:28Z'
+        updated_by:
+          type: string
+          description: User UUID reference.
+          example: 'f36834fb-8d96-4c01-b0e4-0bd85906bc25'
+
+    Domain:
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        active:
+          type: boolean
+
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: Error code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: "foo error"
+
+    Group:
+      required:
+        - uuid
+        - name
+      properties:
+        uuid:
+          type: string
+          example: "7e7823cc-44fa-403d-853f-d5ce48a002e4"
+        name:
+          type: string
+          minLength: 3
+          example: "alice"
+
+    Policy:
+      required:
+        - uuid
+        - group_uuid
+        - priority
+        - effect
+        - action
+        - resource
+      properties:
+        uuid:
+          type: string
+          example: '5ce5d3cd-ff99-4342-a19e-fdb1b5805178'
+        group_uuid:
+          type: string
+          example: '810d38bb-6a8e-4d36-b853-7350b67cb041'
+        priority:
+          type: integer
+          format: int32
+          example: 10
+        effect:
+          type: string
+          enum: [allow, deny]
+          example: allow
+        action:
+          type: string
+          enum: [create, read, update, delete]
+          example: read
+        resource:
+          type: string
+          example: 'timeseries/%'
+
+    Program:
+      required:
+        - uuid
+        - name
+        - type
+        - state
+        - schedule
+        - deadline
+        - language
+      properties:
+        uuid:
+          type: string
+          example: "47daa6eb-bd1c-49de-9782-1e9422a206f5"
+        name:
+          type: string
+          example: "My program"
+        type:
+          description: Routines are executed at an interval. Webhooks are called using the REST API. Modules are used by Routines and Webhooks to extend their functionality.
+          type: string
+          enum: [module, routine, webhook]
+          example: "routine"
+        state:
+          type: string
+          enum: [active, inactive, failed]
+        schedule:
+          description: Ignored for Modules and Webhooks. An interval at which this Program (routine) shall execute. An interval string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+          type: string
+          example: "1h"
+        deadline:
+          description: Ignored for Modules. An duration (in milliseconds) after which a Program (routine, webhook) shall terminate, to avoid long running programs.
+          type: integer
+          example: "500"
+        language:
+          type: string
+          enum: [tengo]
+          example: tengo
+      
+    Thing:
+      required:
+        - uuid
+        - name
+        - state
+        - type
+        - created_by
+      properties:
+        uuid:
+          type: string
+          example: "d2538949-90e9-4127-8251-764a4a7426cf"
+        name:
+          type: string
+          minLength: 3
+          example: "My Thing"
+        state:
+          type: string
+          enum: [active, inactive, passive, archived]
+          example: 'active'
+        type:
+          nullable: true
+          type: string
+          example: "office/building"
+        created_by:
+          description: Reference to a User
+          type: string
+          example: '5d8c23d7-3a78-4159-aa40-e3ef3d9bfe55'
+
+    Timeseries:
+      required:  
+        - uuid
+        - thing_uuid
+        - created_by
+        - name
+        - si_unit
+        - lower_bound
+        - upper_bound
+        - tags
+      properties:
+        uuid:
+          type: string
+        thing_uuid:
+          type: string
+          nullable: true
+        created_by:
+          type: string
+        name:
+          type: string
+        si_unit:
+          type: string
+        lower_bound:
+          type: number
+          nullable: true
+          format: double
+        upper_bound:
+          type: number
+          nullable: true
+          format: double
+        tags:
+          type: array
+          items:
+            type: string
+
+    Token:
+      required:
+        - uuid
+        - name
+      properties:
+        uuid:
+          type: string
+          example: '1740f1e4-d2c6-4943-9976-9ff10eab90b2'
+        name:
+          type: string
+          example: 'My first secret token'
+          
+    TokenWithSecret:
+      required:
+        - uuid
+        - name
+        - secret
+      properties:
+        uuid:
+          type: string
+          example: '1740f1e4-d2c6-4943-9976-9ff10eab90b2'
+        name:
+          type: string
+          example: 'My first secret token'
+        secret:
+          type: string
+          format: password
+          example: 'secret-token.Ya4bd4za6GzDaaT43dplq'
+
+    TsRow:
+      required:
+        - v
+        - ts
+      properties:
+        v:
+          description: Any number
+          type: number
+          example: 3.14
+        ts:
+          description: Date-time when created, as defined by RFC 3339, section 5.6.
+          type: string
+          format: date-time
+
+    TsQuery:
+      properties:
+        timeseries_uuid:
+          description: Reference to a Timeseries
+          type: string
+          example: '8181623c-aeb8-4ae3-8aa5-720d9408193e'
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              v:
+                description: Any number
+                type: number
+                example: 3.14
+              ts:
+                description: Date-time when created, as defined by RFC 3339, section 5.6.
+                type: string
+                format: date-time
+  
+    User:
+      required:  
+        - uuid
+        - name
+        - groups
+      properties:
+        uuid:
+          type: string
+          example: "5ecb8dbc-9b7f-4eae-97b2-7c286ec97d86"
+        name:
+          type: string
+          minLength: 3
+          example: "alice"
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/Group'
+
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+
+security:
+  - BasicAuth: []
+
+paths:
+  /v2/alerts:
+    get:
+      security:
+        - BasicAuth:
+          - "read:alerts"
+      summary: Get alerts. TBD
+      description: List and filter alerts.
+      operationId: find alerts
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+
+      responses:
+        '200':
+          description: Array of alerts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alert'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/datasets:
+    get:
+      tags:
+        - datasets
+      security:
+        - BasicAuth:
+          - "read:datasets"
+      summary: Get datasets.
+      description: >
+        List and filter datasets.
+
+        A dataset is an object intended for the storage of configuration and smaller computed data-sets.
+        This interface is **not** intended for the storage of large objects such as; backups, machine learning models, images, video-clips etc.
+        Large files *can* be stored as long as the size does not excede the absolute maximum size limit (imposed by PostgreSQL) of *1GB*. However, we do advice against using the API this way as the transmission and storage of large files may have an adverce impact on performance and througput.
+      operationId: find datasets
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        '200':
+          description: List of datasets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dataset'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - datasets
+      security:
+        - BasicAuth:
+          - "create:datasets"
+      summary: Add dataset.
+      description: Add a new datasets.
+      operationId: add datasets
+      requestBody:
+        $ref: '#/components/requestBodies/NewDataset'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dataset'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/datasets/{uuid}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+    get:
+      tags:
+        - datasets
+      security:
+        - BasicAuth:
+          - "read:datasets/{uuid}"
+      summary: Get a specific dataset.
+      description: Return a dataset by UUID.
+      operationId: find dataset by uuid
+      responses:
+        '200':
+          description: A dataset object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dataset'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - datasets
+      security:
+        - BasicAuth:
+          - "update:datasets/{uuid}"
+      summary: Update a specific dataset.
+      description: Update a dataset by UUID
+      operationId: update dataset by uuid
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateDataset"
+      responses:
+        '204':
+          description: Dataset updated
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          description: Validation exception
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - datasets
+      security:
+        - BasicAuth:
+          - "delete:datasets/{uuid}"
+      summary: Delete a specific dataset.
+      description: Deletes a dataset based on the UUID.
+      operationId: delete dataset by uuid
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+  /v2/datasets/{uuid}/raw:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+    get:
+      tags:
+        - datasets
+      security:
+        - BasicAuth:
+          - "read:datasets/{uuid}"
+      summary: Download dataset content
+      description: Get the raw content from the dataset.
+      operationId: get raw dataset by uuid
+      responses:
+        '200':
+          headers:
+            Etag:
+              $ref: "#/components/headers/Etag"
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                format: binary
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+            application/toml:
+              schema:
+                type: string
+                format: binary
+            application/xml:
+              schema:
+                type: string
+                format: binary
+            application/yaml:
+              schema:
+                type: string
+                format: binary
+            text/csv:
+              schema:
+                type: string
+                format: binary
+            text/plain; charset=utf-8:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/datasets/{uuid}/assemble:
+    parameters:
+      - in: header
+        name: Content-MD5
+        schema:
+          type: string
+          minLength: 32
+          maxLength: 32
+        required: true
+      - in: query
+        name: partNumber
+        schema:
+          type: integer
+          minimum: 1
+        required: true
+      - in: query
+        name: uploadId
+        schema:
+          type: string
+        required: true
+      - $ref: '#/components/parameters/uuidParam'
+    post:
+      tags:
+        - datasets
+      security:
+        - BasicAuth:
+          - "update:datasets/{uuid}"
+      summary: Assemble the uploaded parts. TBD.
+      operationId: assemble dataset parts by key
+      responses:
+        '400':
+          description: >
+            One of (message);
+              - *EntityTooSmall*: Upload is smaller than the minimum allowed object size. Each part must be at least 5 MB in size, except for the last part.
+              - *InvalidPart*: One or more of the specified parts could not be found.
+              - *InvalidPartOrder*: The list of parts was not in ascending order. The parts list must be specified in order by part number.
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: 'EntityTooSmall'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/datasets/{uuid}/parts:
+    get:
+      tags:
+        - datasets
+      security:
+        - BasicAuth:
+          - "read:datasets/{uuid}"
+      parameters:
+        - in: query
+          name: key
+          schema:
+            type: string
+          required: true
+        - $ref: '#/components/parameters/uuidParam'
+      summary: List parts. TBD.
+      description: List all of the uploaded parts
+      operationId: list dataset parts by key
+      responses:
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - datasets
+      security:
+        - BasicAuth:
+          - "update:datasets/{uuid}"
+      parameters:
+        - in: header
+          name: Content-MD5
+          schema:
+            type: string
+            minLength: 32
+            maxLength: 32
+          required: true
+        - in: query
+          name: partNumber
+          schema:
+            type: integer
+            minimum: 1
+          required: true
+        - in: query
+          name: uploadId
+          schema:
+            type: string
+          required: true
+        - $ref: '#/components/parameters/uuidParam'
+      summary: Upload each part of the data-set content. TBD.
+      description: Upload each part of the data-set content.
+      operationId: upload dataset content by key
+      responses:
+        '200':
+          description: Part was uploaded
+          content:
+            application/json:
+              schema:
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    example: 'EntityTooSmall'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/datasets/{uuid}/uploads:
+    post:
+      tags:
+        - datasets
+      security:
+        - BasicAuth:
+          - "update:datasets/{uuid}"
+      parameters:
+        - $ref: '#/components/parameters/uuidParam'
+      summary: Initialize a content upload. TBD.
+      description: Initialize a content upload.
+      operationId: initialize dataset upload by uuid
+      responses:
+        '200':
+          description: Initialize multipart upload result
+          content:
+            application/json:
+              schema:
+                properties:
+                  uploadId:
+                    type: string
+
+    delete:
+      security:
+        - BasicAuth:
+          - "delete:datasets/{uuid}"
+      parameters:
+        - $ref: '#/components/parameters/uuidParam'
+        - in: query
+          name: key
+          schema:
+            type: string
+          required: true
+      tags:
+        - datasets
+      summary: Cancel content upload. TBD.
+      description: Cancel content upload.
+      operationId: delete dataset upload by key
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/groups:
+    get:
+      tags:
+        - groups
+      security:
+        - BasicAuth:
+          - "read:groups"
+      summary: Get groups.
+      description: Returns a list of groups.
+      operationId: find groups
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/offsetParam'
+      responses:
+        '200':
+          description: List of groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Group'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - groups
+      security:
+        - BasicAuth:
+          - "create:groups"
+      summary: Add a new group.
+      description: Create a new unique group.
+      operationId: add group
+      requestBody:
+        $ref: '#/components/requestBodies/NewGroup'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/groups/{uuid}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+
+    get:
+      tags:
+        - groups
+      security:
+        - BasicAuth:
+          - "read:groups/{uuid}"
+      summary: Get info about a Group
+      description: Return group info
+      operationId: find group by uuid
+      responses:
+        '200':
+          description: A Group object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - groups
+      security:
+        - BasicAuth:
+          - "update:groups/{uuid}"
+      summary: Update a Group
+      description: Update a group
+      operationId: update group by uuid
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateGroup"
+      responses:
+        '204':
+          $ref: '#/components/responses/Updated'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - groups
+      security:
+        - BasicAuth:
+          - "delete:groups/{uuid}"
+      summary: Delete a Group
+      description: deletes a single group based on the UUID supplied
+      operationId: delete group by uuid
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/groups/{uuid}/policies:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+  
+    get:
+      tags:
+        - groups
+      security:
+        - BasicAuth:
+          - "read:groups/{uuid}"
+      summary: List Policies for a Group
+      description: Returns a list of all policies associated with the group
+      operationId: find policies for group
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Policy'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/policies:
+    get:
+      tags:
+        - policies
+      security:
+        - BasicAuth:
+          - "read:policies"
+      summary: List Policies
+      description: Returns a list of policies
+      operationId: find policies
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - in: query
+          name: group_uuids
+          description: Group(s) to filter on
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Domain'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - policies
+      security:
+        - BasicAuth:
+          - "create:policies"
+      summary: Add a new Policy
+      description: Add a new Policy
+      operationId: add policy
+      requestBody:
+        $ref: '#/components/requestBodies/NewPolicy'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Policy'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/policies/{uuid}:
+    parameters:
+     - $ref: '#/components/parameters/uuidParam'
+            
+    get:
+      tags:
+        - policies
+      security:
+        - BasicAuth:
+          - "read:policies/{uuid}"
+      description: Return a Policy by UUID
+      operationId: find policy by uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Policy'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - policies
+      security:
+        - BasicAuth:
+          - "update:policies/{uuid}"
+      description: Update a Policy
+      operationId: update policy by uuid
+      requestBody:
+        $ref: "#/components/requestBodies/UpdatePolicy"
+      responses:
+        '204':
+          $ref: '#/components/responses/Updated'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          description: Validation exception
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - policies
+      security:
+        - BasicAuth:
+          - "delete:policies/{uuid}"
+      description: Deletes a Policy
+      operationId: delete policy by uuid
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/programs:
+    post:
+      tags:
+        - programs
+      security:
+        - BasicAuth:
+          - "create:programs"
+      description: Add a new program
+      operationId: add program
+      requestBody:
+        $ref: '#/components/requestBodies/NewProgram'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  
+    get:
+      tags:
+        - programs
+      security:
+        - BasicAuth:
+          - "read:programs"
+      description: Returns a list of programs
+      operationId: find programs
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Program'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/programs/{uuid}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+
+    get:
+      tags:
+        - programs
+      security:
+        - BasicAuth:
+          - "read:programs/{uuid}"
+      description: Details about a program
+      operationId: find program by uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - programs
+      security:
+        - BasicAuth:
+          - "update:programs/{uuid}"
+      description: Update a program
+      operationId: update program by uuid
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateProgram'
+      responses:
+        '204':
+          $ref: '#/components/responses/Updated'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - programs
+      security:
+        - BasicAuth:
+          - "delete:programs/{uuid}"
+      description: Delete a program
+      operationId: delete program by uuid
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/programs/{uuid}/webhook:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+
+    post:
+      tags:
+        - programs
+      security:
+        - BasicAuth:
+          - "create:programs/{uuid}/webhook"
+      summary: TBD
+      description: An endpoint (webhook) which forwards the request to a Program.
+      operationId: execute program webhook
+      responses:
+        '200':
+          description: Success
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/programs/{uuid}/code:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+
+    post:
+      tags:
+        - programs
+      security:
+        - BasicAuth:
+          - "create:programs/{uuid}/code"
+      description: Upload new code (a new revision) to a Program.
+      operationId: add program code revision
+      requestBody:
+        description: Content
+        content:
+          text/plain; charset=utf-8:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeRevision'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    get:
+      tags:
+        - programs
+      security:
+        - BasicAuth:
+          - "read:programs/{uuid}/code"
+      description: Get the most current (signed) version of the code.
+      operationId: get code from program
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Program'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/programs/{uuid}/diff:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+      - in: query
+        name: rev_a
+        description: Revision A
+        required: true
+        schema:
+          description: Revision number. The value (-1) represents the HEAD, or the newest revision.
+          type: integer
+          minimum: -1
+      - in: query
+        name: rev_b
+        description: Revision B
+        required: true
+        schema:
+          description: Revision number. The value (-1) represents the HEAD, or the newest revision.
+          type: integer
+          minimum: -1
+    get:
+      tags:
+        - programs
+      security:
+        - BasicAuth:
+          - "read:programs/{uuid}/revisions/diff"
+      description: Get the diff for two code revisions
+      operationId: get program code revisions diff
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain; charset=utf-8:
+              schema:
+                type: string
+                format: binary
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/programs/{uuid}/revisions:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+
+    get:
+      tags:
+        - programs
+      security:
+        - BasicAuth:
+          - "read:programs/{uuid}/revisions"
+      description: Get all revisions of the code for a Program.
+      operationId: get program code revisions
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CodeRevision'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  
+  /v2/programs/{uuid}/revisions/{revision_id}/sign:        
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+      - in: path
+        name: revision_id
+        description: The code revision id
+        required: true
+        example: 4
+        schema:
+          type: integer
+          minimum: 0
+
+    put:
+      tags:
+        - programs
+      security:
+        - BasicAuth:
+          - "update:programs/{uuid}/revisions/{revision_id}"
+      description: Sign a code revision
+      operationId: sign program code revisions
+      responses:
+        '204':
+          $ref: '#/components/responses/Updated'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  
+  /v2/programs/{uuid}/revisions/{revision_id}:        
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+      - in: path
+        name: revision_id
+        description: The code revision id
+        required: true
+        example: 4
+        schema:
+          type: integer
+          minimum: 0
+
+    delete:
+      tags:
+        - programs
+      security:
+        - BasicAuth:
+          - "delete:programs/{uuid}/revisions/{revision_id}"
+      description: Delete a code revision.
+      operationId: delete program code revisions
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/things:
+    get:
+      tags:
+        - things
+      security:
+        - BasicAuth:
+          - "read:things"
+      description: Return a list of things
+      operationId: find things
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/offsetParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Thing'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - things
+      security:
+        - BasicAuth:
+          - "create:things"
+      description: Add a new thing
+      operationId: add thing
+      requestBody:
+        $ref: '#/components/requestBodies/NewThing'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Thing'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+
+  /v2/things/{uuid}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+
+    get:
+      tags:
+        - things
+      security:
+        - BasicAuth:
+          - "read:things/{uuid}"
+      description: Return a thing by UUID
+      operationId: find thing by uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Thing'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - things
+      security:
+        - BasicAuth:
+          - "update:things/{uuid}"
+      summary: Update Thing.
+      description: Update a Thing.
+      operationId: update thing by uuid
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateThing"
+      responses:
+        '204':
+          $ref: '#/components/responses/Updated'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - things
+      security:
+        - BasicAuth:
+          - "delete:things/{uuid}"
+      description: Deletes a Thing by UUID
+      operationId: delete thing by uuid
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/things/{uuid}/datasets:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+  
+    get:
+      tags:
+        - things
+      security:
+        - BasicAuth:
+          - "read:things/{uuid}/datasets"
+      summary: List Datasets assigned to a Thing.
+      description: Return a list of Datasets
+      operationId: find datasets for thing
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Timeseries'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/things/{uuid}/timeseries:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+  
+    get:
+      tags:
+        - things
+      security:
+        - BasicAuth:
+          - "read:things/{uuid}"
+      summary: List Timeseries assigned to a Thing.
+      description: Return a list of thing time series
+      operationId: find time series for thing
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Timeseries'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/timeseries:
+    get:
+      tags:
+       - timeseries
+      security:
+        - BasicAuth:
+          - "read:timeseries"
+      description: Returns a list of timeseries
+      operationId: find time series
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/offsetParam'
+        - in: query
+          name: tags
+          description: Array of tags to filter on
+          required: false
+          style: form
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Timeseries'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - timeseries
+      security:
+        - BasicAuth:
+          - "create:timeseries"
+      description: Add a new time series
+      operationId: add time series
+      requestBody:
+        $ref: '#/components/requestBodies/NewTimeseries'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Timeseries'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/timeseries/{uuid}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+    get:
+      tags:
+       - timeseries
+      security:
+        - BasicAuth:
+          - "read:timeseries/{uuid}"
+      description: Return a time series by UUID
+      operationId: find time series by uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Timeseries'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+       - timeseries
+      security:
+        - BasicAuth:
+          - "update:timeseries/{uuid}"
+      summary: Update Timeseries.
+      description: Update a Timeseries.
+      operationId: update timeseries by uuid
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateTimeseries"
+      responses:
+        '204':
+          $ref: '#/components/responses/Updated'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - timeseries
+      security:
+        - BasicAuth:
+          - "delete:timeseries/{uuid}"
+      description: deletes a single time series based on the UUID supplied
+      operationId: delete time series by uuid
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/timeseries/{uuid}/data:
+    get:
+      tags:
+        - timeseries
+      security:
+        - BasicAuth:
+          - "read:timeseries/{uuid}/data"
+      parameters:
+        - $ref: '#/components/parameters/uuidParam'
+        - $ref: '#/components/parameters/rangeStartParam'
+        - $ref: '#/components/parameters/rangeEndParam'
+        - $ref: '#/components/parameters/siUnitParam'
+        - $ref: '#/components/parameters/greaterOrEqParam'
+        - $ref: '#/components/parameters/lessOrEqParam'
+      summary: Get a range of Timeseries data.
+      description: Query a Timeseries range for data.
+      operationId: query timeseries for data
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TsRow'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - timeseries
+      summary: Add data to Timeseries
+      description: Add data points to a Timeseries
+      operationId: add data to timeseries
+      security:
+        - BasicAuth:
+          - "create:timeseries/{uuid}/data"
+      parameters:
+        - $ref: '#/components/parameters/uuidParam'
+        - $ref: '#/components/parameters/siUnitParam'
+      requestBody:
+        $ref: '#/components/requestBodies/NewTsData'
+      responses:
+        '201':
+          $ref: '#/components/responses/Created'
+        '204':
+          description: No data inserted due to filtering by boundary checks
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - timeseries
+      security:
+        - BasicAuth:
+          - "delete:timeseries/{uuid}/data"
+      parameters:
+        - $ref: '#/components/parameters/uuidParam'
+        - $ref: '#/components/parameters/rangeStartParam'
+        - $ref: '#/components/parameters/rangeEndParam'
+        - $ref: '#/components/parameters/greaterOrEqParam'
+        - $ref: '#/components/parameters/lessOrEqParam'
+      summary: Delete a range of Timeseries data.
+      description: Delete a range of data from a Timeseries.
+      operationId: delete data from time series
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/tsquery:
+    get:
+      tags:
+        - timeseries
+      security:
+        - BasicAuth:
+          - "read:tsquery"
+      summary: Query for data from Time series. TBD.
+      description: Query one or several Time series for data.
+      operationId: find tsdata by query
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TsQuery'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/users:
+    get:
+      tags:
+        - users
+      security:
+        - BasicAuth:
+          - "read:users"
+      summary: Returns a list of user objects.
+      description: ...
+      operationId: find users
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/offsetParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - users
+      security:
+        - BasicAuth:
+          - "create:users"
+      description: Add a new user
+      operationId: add user
+      requestBody:
+        $ref: '#/components/requestBodies/NewUser'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          links:
+            FindUserByUserUUID:
+              operationId: find user by uuid
+              parameters:
+                uuid: '$response.body#/uuid'
+            UpdateUserByUUID:
+              operationId: update user by uuid
+              parameters:
+                uuid: '$response.body#/uuid'
+            DeleteUserByUUID:
+              operationId: delete user by uuid
+              parameters:
+                uuid: '$response.body#/uuid'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/users/me:
+    get:
+      tags:
+        - users
+      security:
+        - BasicAuth:
+          - "read:users/me"
+      summary: Who am I
+      description: Returns the current user (you)
+      operationId: whoami
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/users/{uuid}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+    get:
+      tags:
+        - users
+      security:
+        - BasicAuth:
+          - "read:users/{uuid}"
+      description: Returns a user by UUID
+      operationId: find user by uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - users
+      security:
+        - BasicAuth:
+          - "update:users/{uuid}"
+      summary: Update a User
+      description: Update a User
+      operationId: update user by uuid
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateUser"
+      responses:
+        '204':
+          $ref: '#/components/responses/Updated'
+        '400':
+          description: Either `groups` by itself or `groups_add` and/or `groups_remove` are required.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          description: Validation exception
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - users
+      security:
+        - BasicAuth:
+          - "delete:users/{uuid}"
+      summary: Delete a User
+      description: Delete a User
+      operationId: delete user by uuid
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/users/{uuid}/policies:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+    get:
+      tags:
+        - users
+      security:
+        - BasicAuth:
+          - "read:users/{uuid}/policies"
+      description: Returns a list of all policies associated with a User
+      operationId: find policies for user
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Policy'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/users/{uuid}/rate:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+    put:
+      tags:
+        - users
+      security:
+        - BasicAuth:
+          - "update:users/{uuid}/rate"
+      summary: TBD
+      description: Change the allowed request rate for a user
+      operationId: set request rate for user
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateRequestRate"
+      responses:
+        '204':
+          $ref: '#/components/responses/Updated'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/users/{uuid}/tokens:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+    get:
+      tags:
+        - users
+      security:
+        - BasicAuth:
+          - "read:users/{uuid}/tokens"
+      summary: Access tokens
+      description: Returns a list of all secret tokens associated with a User
+      operationId: find tokens for user
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Token'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - users
+      security:
+        - BasicAuth:
+          - "create:users/{uuid}/tokens"
+      summary: Generate a new access token.
+      description: Add a new token to the system. The secret will be generated and returned.
+      operationId: add new token to user
+      requestBody:
+        $ref: "#/components/requestBodies/NewToken"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenWithSecret'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/users/{uuid}/tokens/{token_uuid}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+      - in: path
+        name: token_uuid
+        description: The Token UUID
+        required: true
+        example: 'b67d9071-4649-4de4-aafa-ba7d9db7b3df'
+        schema:
+          type: string
+    delete:
+      tags:
+        - users
+      security:
+        - BasicAuth:
+          - "delete:users/{uuid}/tokens/{token_uuid}"
+      summary: Delete access token.
+      description: Delete a token for a User.
+      operationId: delete token for user
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+

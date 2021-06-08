@@ -1,0 +1,6 @@
+BEGIN;
+
+DROP FUNCTION tsdata_insert;
+DROP TABLE tsdata CASCADE;
+
+COMMIT;

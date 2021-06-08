@@ -1,0 +1,6 @@
+output:
+  rest/selfhost-types.gen.go
+generate:
+  - types
+package: rest
+
