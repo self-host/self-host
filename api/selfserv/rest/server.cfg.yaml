@@ -1,5 +1,5 @@
 output:
-  rest/selfhost-server.gen.go
+  rest/server.gen.go
 generate:
   - chi-server
   - spec

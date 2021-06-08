@@ -1,5 +1,5 @@
 output:
-  rest/selfhost-types.gen.go
+  rest/types.gen.go
 generate:
   - types
 package: rest
