@@ -15,7 +15,7 @@ info:
   license:
     name: GPL-3.0-only
     url: https://opensource.org/licenses/GPL-3.0
-  title: NODA Selfhost API
+  title: NODA Self-host API
   version: 0.1.0
 
 servers:
@@ -2903,5 +2903,4 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
         '500':
           $ref: '#/components/responses/InternalServerError'
-
 
