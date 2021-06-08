@@ -93,6 +93,7 @@ Steps:
 
 # Documentation
 
+- [Glossary](docs/glossary.md)
 - [Tools of the Trade](docs/tools_of_the_trade.md)
 - [Design](docs/design.md)
 - [Resource Requirements](docs/resource_requirements.md)

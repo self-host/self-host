@@ -10,10 +10,6 @@ The system is split up into several separate softwares.
 
 [design drawing]
 
-# Glossary
-
-- `Domain`: An contained environment. Used to enforce separation of concern between grander structures.
-- 
 
 # Note on Configuration
 
@@ -21,9 +17,11 @@ We decided on using config files instead of Environment variables as a way to "a
 
 Environment variables are good for things like INSTANCES=10 and TIMEOUT=3600. But not so good for DBURL=postgres://postgres:secret@mydbms.com:5432/mydatabase since it exposes secret information.
 
+
 # Database
 
 The only supported database is PostgreSQL version 12 or newer.
+
 
 # Primus database (Work in Progress)
 
@@ -42,6 +40,7 @@ From configuration (file, env, etc) the Self-host should establish a few items;
 - A configurable SQL query to delete a domain.
 
 The return values from these queries must always be defined for the Golang code to interpret the result. The code should of-course come with excelent examples and SQL code to create a table if none exists. Maybe this should be part of the `selfctl` cli program?
+
 
 # Self-host API
 
@@ -81,6 +80,7 @@ A single colon (":") separates the domain and token parts, and a single dot ("."
 The domain part is used to check the secret against the correct domain as each access token is unique to a specific domain. We chose this structure as it is a straightforward extension of a well-established authentication process.
 
 **NOTE**: The value of secret-token-scheme must always be *secret-token*. This value aims to ease automatic identification and prevention of keys in source code.
+
 
 ## Questions and Answers
 
