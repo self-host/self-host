@@ -28,7 +28,7 @@ import (
 	"github.com/self-host/self-host/internal/services"
 )
 
-// Tests can run in any order, so we need to run everyting (Timeseries related) in one function
+// Tests can run in any order, so we need to run everything (Timeseries related) in one function
 // as we are required to do things in a certain order since we are not mocking the PostgreSQL data-store.
 func TestTimeseriesAll(t *testing.T) {
 	svc := services.NewTimeseriesService(db)

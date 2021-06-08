@@ -53,7 +53,7 @@ var (
 	ErrorMalformedRequest = &HTTPError{
 		Code:    400,
 		Cause:   nil,
-		Message: "An error occured due to a malformed request",
+		Message: "An error occurred due to a malformed request",
 	}
 	ErrorUnauthorized = &HTTPError{
 		Code:    401,
