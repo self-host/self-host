@@ -260,7 +260,7 @@ func (u *UserService) FindTokensForUser(ctx context.Context, user_uuid uuid.UUID
 	count, err := u.q.ExistsUser(ctx, user_uuid)
 	if err != nil {
 		return nil, err
-	} else if count >= 0 {
+	} else if count == 0 {
 		return nil, ie.ErrorNotFound
 	}
 
