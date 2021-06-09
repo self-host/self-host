@@ -6,6 +6,7 @@ If this sounds like any number of already existing software deployment systems, 
 
 This software is written with the sole intent to provide an easy way to deploy small bits of code without having to do a project out of it and without having to have deep knowledge of either Docker or Kubernetes.
 
+
 # How it Works
 
 Two components are working together, one Program Manager (selfpmgr) and one or several instances of the Program Worker (selfpwrk).
@@ -14,15 +15,18 @@ At set intervals, the Program Manager queries all domains for all active program
 
 ![Interaction Program Manager and Worker][InteractionDiag1]
 
+
 # Programs and Domains
 
 Programs are declared on a Domain level. This means that there is no way to share programs between domains. It is by design as we wanted to keep hard isolation between different domains.
+
 
 # Program Languages
 
 There is currently only support for one language; [Tengo](https://github.com/d5/tengo).
 
 Support for other languages has was considered in the design process, and the API interface between the Program Worker and Program Manager does take program language into account.
+
 
 # Different types of Programs
 
@@ -31,6 +35,7 @@ There are three different variants of a program.
 - module
 - routine
 - webhook
+
 
 ## Modules
 A `module` is a program with the sole purpose of providing support for other programs. In Tengo, to import a module, do;
@@ -41,10 +46,12 @@ mymod := import("mymod")
 
 You can use an imported module throughout the program is of it was part of the program.
 
+
 ## Routines
 A `routine` is a typical "program". It executes at a given `interval`, e.g. every five minutes. It has a `deadline` that ensures that the Worker will kill the program if it takes too long to execute.
 
 It is an excellent practice to place code that is the same in several different `routines` into a `module`, making the `routine` program smaller.
+
 
 ## Webhooks
 A `webhook` is a particular type of program that differs from a `routine` by not executing at a set interval. Instead, it runs upon a call to a webhook endpoint on the Self-host API server.
@@ -52,6 +59,7 @@ A `webhook` is a particular type of program that differs from a `routine` by not
 Internally this is similar (yet not-similar-at-all) to how CGI binaries worker "back in the day".
 
 ![Interaction Webhook][InteractionDiag2]
+
 
 # Allowed Tengo (core) Modules
 
@@ -79,6 +87,7 @@ Allowed Tengo modules are thus;
 For more details about Tengo modules, see the official [documentation](https://github.com/d5/tengo/blob/master/docs/stdlib.md).
 
 For details about the extended modules, see our documentation [here](extendedlibs.md).
+
 
 # Program example
 
@@ -124,6 +133,7 @@ obj := json.decode(response.Body)
 
 The example is nothing more than an example of what an HTTP request could look like. It is up to you to invent something useful with it.
 
+
 ## Named modules from the Self-host API
 
 ```golang
@@ -136,83 +146,6 @@ x := simplemath.add(1, 5)
 Modules declared via the Self-host API is revision based. That means that each new commit of source code represents a new revision (integer). Before anyone can use a code revision, it first has to be signed. Un-signed code will not work as the `Library Manager` (Program Manager) will ignore such revisions.
 
 To always use the latest version of the code for a module, suffix it with `@latest`. To use a specific revision, use `@X` where X is a positive integer.
-
-# Deployment
-
-To deploy the system, you are going to need three things;
-
-- A PostgreSQL DBMS server with at least one Self-host database.
-- Somewhere to run an instance of the Program Manager (selfpmgr)
-- Somewhere to run one/several instances of the Program Worker (selfpwrk)
-
-The name of the configuration file is declared with the environment variable `CONFIG_FILENAME`. The file is then looked for in;
-
-- /etc/selfhost
-- $HOME/.config/selfhost"
-- . (current directory)
-
-Make sure to place the file in any of these three locations.
-
-## The Domain Database
-
-Creation of the database is part of all new Self-host domain deployment, so please refer to that documentation.
-
-## Program Manager
-
-The Program Manager needs network access to all DBs for which it should manage programs. It also needs network access over HTTP to the Program Workers.
-
-A typical configuration file for a Program Manager looks like this;
-
-```yaml
--- example.conf.yaml
-domainfile: domains.yaml
-
-listen:
-  host: "172.16.0.1"
-  port: 80
-```
-
-The `listen.host` parameter can be either IP or hostname.
-
-The `domainfile` parameter points to a YAML file with connection information to all databases.
-
-A typical `domains.yaml` file can look like this:
-
-```yaml
-domains:
-  test0: postgresql://postgres:secret@myhost.mydomain:5432/selfhost-test0
-  test1: postgresql://postgres:secret@myhost.mydomain:5432/selfhost-test1
-  test2: postgresql://postgres:secret@myhost.mydomain:5432/selfhost-test2
-  test3: postgresql://postgres:secret@myhost.mydomain:5432/selfhost-test3
-```
-
-## Program Worker
-
-A Program Worker needs access to the Program Manager and, depending on the situation, especially if HTTP request to the Internet at large is required, access the Internet.
-
-**NOTE**: For a program to interact with the Self-host API server (selfserv) using the HTTP module is a requirement.
-
-It is also a requirement to have access to the Program Manager, as the Worker has to keep the Manager updated on its state constantly. The Program Manager is also the `Library Manager`, which supplies the Worker (on request) with the source code to `modules`.
-
-A typical configuration file for a Program Worker looks like this;
-
-```yaml
-listen:
-  host: 172.16.0.151
-  port: 80
-
-cache:
-  library_timeout: 10
-  program_timeout: 5
-
-module_library:
-  scheme: http
-  authority: 172.16.0.1:80
-
-program_manager:
-  scheme: http
-  authority: 172.16.0.1:80
-```
 
 
 [InteractionDiag1]: assets/diag_interaction_pmgr_pwrk.svg "Interaction Program Manager and Worker"
