@@ -149,7 +149,11 @@ func Server(address string) (<-chan error, error) {
 	// These are executed after all Chi Middleware, right before the RestAPI function
 	inlineMiddlewares := make([]rest.MiddlewareFunc, 0)
 	inlineMiddlewares = append(inlineMiddlewares, middleware.SetHeader("Content-Type", "application/json"))
-	inlineMiddlewares = append(inlineMiddlewares, middleware.RateControl(600, 10, 3*time.Minute))
+	inlineMiddlewares = append(inlineMiddlewares, middleware.RateControl(
+		viper.GetInt("rate_control.req_per_hour"),
+		viper.GetInt("rate_control.maxburst"),
+		viper.GetDuration("rate_control.cleanup"),
+	))
 	inlineMiddlewares = append(inlineMiddlewares, middleware.OapiRequestValidator(swagger))
 	inlineMiddlewares = append(inlineMiddlewares, middleware.PolicyValidator())
 	rest.HandlerWithOptions(restApi, rest.ChiServerOptions{

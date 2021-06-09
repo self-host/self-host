@@ -21,6 +21,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -30,13 +31,12 @@ var logger *zap.Logger
 
 func init() {
 	var err error
+
 	logger, err = zap.NewProduction()
 	if err != nil {
 		panic("zap.NewProduction " + err.Error())
 	}
-}
 
-func main() {
 	viper.SetConfigName(os.Getenv("CONFIG_FILENAME"))
 	viper.SetConfigType("yaml")
 
@@ -45,11 +45,19 @@ func main() {
 	viper.AddConfigPath("$HOME/.config/selfhost")
 	viper.AddConfigPath(".")
 
-	err := viper.ReadInConfig()
+	// Default settings
+	viper.SetDefault("rate_control.req_per_hour", 600)
+	viper.SetDefault("rate_control.maxburst", 10)
+	viper.SetDefault("rate_control.cleanup", 3*time.Minute)
+
+	err = viper.ReadInConfig()
 	if err != nil {
 		logger.Fatal("Fatal error config file", zap.Error(err))
 	}
 
+}
+
+func main() {
 	errC, err := Server(fmt.Sprintf("%v:%v", viper.GetString("listen.host"), viper.GetInt("listen.port")))
 	if err != nil {
 		logger.Fatal("Fatal error couldn't run", zap.Error(err))
