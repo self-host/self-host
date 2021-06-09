@@ -7,21 +7,29 @@
 
 Create a separate user-defined network. Calling it 'selfhost'.
 
-> docker network create -d bridge selfhost
+```text
+docker network create -d bridge selfhost
+```
 
 Start a container with PostgreSQL 12 or PostgreSQL 13.
 
-> docker run --name pg13 --network selfhost -e POSTGRES_PASSWORD=mysecretpassword -d postgres:13-alpine
+```text
+docker run --name pg13 --network selfhost -e POSTGRES_PASSWORD=mysecretpassword -d postgres:13-alpine
+```
 
 Create a new database on the PostgreSQL DBMS.
 
-> docker run -it --rm --network selfhost -e PGPASSWORD=mysecretpassword postgres:13-alpine psql -h pg13 -U postgres
+```text
+docker run -it --rm --network selfhost -e PGPASSWORD=mysecretpassword postgres:13-alpine psql -h pg13 -U postgres
+```
 
 At the prompt;
 
-> CREATE DATABASE "selfhost-test" WITH ENCODING 'UTF-8';
+```sql
+CREATE DATABASE "selfhost-test" WITH ENCODING 'UTF-8';
+```
 
-Then type '\q' to close the connection.
+Then type `\q` to close the connection.
 
 
 # 2) Deploy the DB schema (Manually without selfctl)
@@ -32,7 +40,9 @@ Download the source code from; https://github.com/self-host/self-host
 
 The folder we are interested in is "postgres/migrations".
 
-> docker run --rm -v {{ migration_dir }}:/migrations --network selfhost migrate/migrate -path=/migrations/ -database postgresql://postgres:mysecretpassword@pg13.selfhost:5432/selfhost-test?sslmode=disable up
+```text
+docker run --rm -v {{ migration_dir }}:/migrations --network selfhost migrate/migrate -path=/migrations/ -database postgresql://postgres:mysecretpassword@pg13.selfhost:5432/selfhost-test?sslmode=disable up
+```
 
 The database is now ready.
 
@@ -61,7 +71,9 @@ domains:
 
 Start a container instance of the `selfserv` program.
 
-> docker run --name selfserv --network selfhost -p 127.0.0.1:8080:80 -e CONFIG_FILENAME=selfserv.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfserv:main
+```text
+docker run --name selfserv --network selfhost -p 127.0.0.1:8080:80 -e CONFIG_FILENAME=selfserv.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfserv:main
+```
 
 
 # 4) Deploy the Self-host Program Manager (selfpmgr)
@@ -82,7 +94,9 @@ It is OK in this test scenario to share the same `domains.yaml` file.
 
 Then deploy the container instance.
 
-> docker run --name selfpmgr --network selfhost -e CONFIG_FILENAME=selfpmgr.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfpmgr:main
+```text
+docker run --name selfpmgr --network selfhost -e CONFIG_FILENAME=selfpmgr.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfpmgr:main
+```
 
 
 # 5) Deploy the Self-host Program Worker (selfpwrk)
@@ -111,7 +125,9 @@ module_library:
 
 Then deploy the container instance.
 
-> docker run --name selfpwrk --network selfhost -e CONFIG_FILENAME=selfpwrk.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfpwrk:main
+```text
+docker run --name selfpwrk --network selfhost -e CONFIG_FILENAME=selfpwrk.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfpwrk:main
+```
 
 
 # 6) Done
@@ -122,7 +138,6 @@ The default secret key is "root" and belongs to the "root" user.
 
 The API server listens for connections on port 8080 on localhost.
 
-Using a browser, visit; `http://127.0.0.1:8080/static/swagger-ui/`, and the API documentation page should greet you.
+Using a browser, visit [http://127.0.0.1:8080/static/swagger-ui/](http://127.0.0.1:8080/static/swagger-ui/), and the API documentation page should greet you.
 
 When authenticating, use "test" as the username and "root" as the password.
-
