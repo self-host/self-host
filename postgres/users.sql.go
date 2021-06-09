@@ -5,6 +5,7 @@ package postgresql
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -13,7 +14,7 @@ import (
 const addTokenToUser = `-- name: AddTokenToUser :one
 INSERT INTO user_tokens(user_uuid, name, token_hash)
 VALUES ($1, $2, sha256($3))
-RETURNING uuid, user_uuid, name, token_hash
+RETURNING uuid, user_uuid, name, token_hash, created
 `
 
 type AddTokenToUserParams struct {
@@ -30,6 +31,7 @@ func (q *Queries) AddTokenToUser(ctx context.Context, arg AddTokenToUserParams) 
 		&i.UserUuid,
 		&i.Name,
 		&i.TokenHash,
+		&i.Created,
 	)
 	return i, err
 }
@@ -161,14 +163,15 @@ func (q *Queries) ExistsUser(ctx context.Context, uuid uuid.UUID) (int64, error)
 }
 
 const findTokensByUser = `-- name: FindTokensByUser :many
-SELECT uuid, name
+SELECT uuid, name, created
 FROM user_tokens
 WHERE user_tokens.user_uuid = $1
 `
 
 type FindTokensByUserRow struct {
-	Uuid uuid.UUID
-	Name string
+	Uuid    uuid.UUID
+	Name    string
+	Created time.Time
 }
 
 func (q *Queries) FindTokensByUser(ctx context.Context, uuid uuid.UUID) ([]FindTokensByUserRow, error) {
@@ -180,7 +183,7 @@ func (q *Queries) FindTokensByUser(ctx context.Context, uuid uuid.UUID) ([]FindT
 	items := []FindTokensByUserRow{}
 	for rows.Next() {
 		var i FindTokensByUserRow
-		if err := rows.Scan(&i.Uuid, &i.Name); err != nil {
+		if err := rows.Scan(&i.Uuid, &i.Name, &i.Created); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

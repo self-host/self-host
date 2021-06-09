@@ -16,7 +16,7 @@ VALUES(
   $2,
   sha256($3::bytea)
 )
-RETURNING uuid, user_uuid, name, token_hash
+RETURNING uuid, user_uuid, name, token_hash, created
 `
 
 type CreateUserTokenParams struct {
@@ -33,6 +33,7 @@ func (q *Queries) CreateUserToken(ctx context.Context, arg CreateUserTokenParams
 		&i.UserUuid,
 		&i.Name,
 		&i.TokenHash,
+		&i.Created,
 	)
 	return i, err
 }

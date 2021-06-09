@@ -228,8 +228,9 @@ type Timeseries struct {
 
 // Token defines model for Token.
 type Token struct {
-	Name string `json:"name"`
-	Uuid string `json:"uuid"`
+	Created time.Time `json:"created"`
+	Name    string    `json:"name"`
+	Uuid    string    `json:"uuid"`
 }
 
 // TokenWithSecret defines model for TokenWithSecret.

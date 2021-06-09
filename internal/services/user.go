@@ -271,8 +271,9 @@ func (u *UserService) FindTokensForUser(ctx context.Context, user_uuid uuid.UUID
 
 	for _, v := range token_list {
 		tokens = append(tokens, &rest.Token{
-			Uuid: v.Uuid.String(),
-			Name: v.Name,
+			Uuid:    v.Uuid.String(),
+			Name:    v.Name,
+			Created: v.Created,
 		})
 	}
 

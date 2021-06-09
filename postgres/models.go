@@ -186,4 +186,5 @@ type UserToken struct {
 	UserUuid  uuid.UUID
 	Name      string
 	TokenHash []byte
+	Created   time.Time
 }

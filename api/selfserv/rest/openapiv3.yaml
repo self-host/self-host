@@ -925,6 +925,7 @@ components:
       required:
         - uuid
         - name
+        - created
       properties:
         uuid:
           type: string
@@ -932,6 +933,10 @@ components:
         name:
           type: string
           example: 'My first secret token'
+        created:
+          type: string
+          format: date-time
+          example: '2020-03-09T09:48:30.035Z'
           
     TokenWithSecret:
       required:

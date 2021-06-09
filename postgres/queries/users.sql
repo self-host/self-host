@@ -93,7 +93,7 @@ WHERE users.uuid = sqlc.arg(uuid)
 LIMIT 1;
 
 -- name: FindTokensByUser :many
-SELECT uuid, name
+SELECT uuid, name, created
 FROM user_tokens
 WHERE user_tokens.user_uuid = sqlc.arg(uuid);
 
