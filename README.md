@@ -96,9 +96,11 @@ Hardware and software required;
 - [Tools of the trade](docs/tools_of_the_trade.md)
 - [Design](docs/design.md)
 - [Resource requirements](docs/resource_requirements.md)
-    + Rate Control: It's own section with explanation and pitfalls. golang.org/x/time/rate
+    + [Performance test](docs/performance_test.md)
 - [Deploying to production](docs/production_deployment.md)
-- [Performance test](docs/performance_test.md)
+- [Rate Control](docs/rate_control.md)
+    + golang.org/x/time/rate
+- [Program Manager and Workers](docs/program_manager_worker.md)
 
 
 :hearts: Like this project? Want to improve it but unsure where to begin? Check out the [issue tracker](https://github.com/self-host/self-host/issues).
