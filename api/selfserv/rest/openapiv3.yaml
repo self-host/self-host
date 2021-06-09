@@ -186,23 +186,21 @@ components:
     rangeStartParam:
       in: query
       name: start
-      description: Start of time period. The period (start to end) can **not** exceed 1 year.
+      description: Start of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
       required: true
       schema:
         type: string
         format: date-time
         example: '2020-05-01T00:00:00Z'
-        default: 'now'
     rangeEndParam:
       in: query
       name: end
-      description: End of time period. The period (start to end) can **not** exceed 1 year.
+      description: End of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
       required: true
       schema:
         type: string
         format: date-time
         example: '2021-05-01T00:00:00Z'
-        default: 'now'
     siUnitParam:
       in: query
       name: unit
