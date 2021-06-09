@@ -95,6 +95,7 @@ Hardware and software required;
 - [Glossary](docs/glossary.md)
 - [Tools of the trade](docs/tools_of_the_trade.md)
 - [Design](docs/design.md)
+- [Public-facing API](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/self-host/self-host/main/api/selfserv/rest/openapiv3.yaml)
 - [Resource requirements](docs/resource_requirements.md)
     + [Performance test](docs/performance_test.md)
 - [Deploying to production](docs/production_deployment.md)
