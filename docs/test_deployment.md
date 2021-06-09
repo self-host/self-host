@@ -32,7 +32,7 @@ Download the source code from; https://github.com/self-host/self-host
 
 The folder we are interested in is "postgres/migrations".
 
-> docker run -v {{ migration_dir }}:/migrations --network selfhost migrate/migrate -path=/migrations/ -database postgresql://postgres:mysecretpassword@pg13.selfhost:5432/selfhost-test?sslmode=disable up
+> docker run --rm -v {{ migration_dir }}:/migrations --network selfhost migrate/migrate -path=/migrations/ -database postgresql://postgres:mysecretpassword@pg13.selfhost:5432/selfhost-test?sslmode=disable up
 
 The database is now ready.
 
