@@ -11,13 +11,13 @@ Hardwares used;
 
 |                   |   RPi4   |   R220   | CloudVM* |
 |-------------------|:--------:|:--------:|:--------:|
-| Get 1day          |  28.3 ms |  21.5 ms |     70.9 |
-| Get 1week         |  39.9 ms |  27.4 ms |     94.9 |
-| Get 1month        |  77.6 ms |  43.3 ms |    138.9 |
-| Get 1year         | 684.3 ms | 174.2 ms |    431.9 |
-| Insert 1 point    |  41.3 ms |  22.6 ms |     86.2 |
-| Insert 10 points  |  48.3 ms |  26.8 ms |     88.7 |
-| Insert 100 points |  88.4 ms |  49.1 ms |    121.2 |
+| Get 1day          |  28.3 ms |  21.5 ms |  70.9 ms |
+| Get 1week         |  39.9 ms |  27.4 ms |  94.9 ms |
+| Get 1month        |  77.6 ms |  43.3 ms | 138.9 ms |
+| Get 1year         | 684.3 ms | 174.2 ms | 431.9 ms |
+| Insert 1 point    |  41.3 ms |  22.6 ms |  86.2 ms |
+| Insert 10 points  |  48.3 ms |  26.8 ms |  88.7 ms |
+| Insert 100 points |  88.4 ms |  49.1 ms | 121.2 ms |
 
 *The machine was access over the internet.
 
