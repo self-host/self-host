@@ -142,15 +142,8 @@ type Domain struct {
 	Uuid   *string `json:"uuid,omitempty"`
 }
 
-// Error defines model for Error.
-type Error struct {
-
-	// Error code
-	Code int `json:"code"`
-
-	// Error message
-	Message string `json:"message"`
-}
+// Error message
+type Error string
 
 // Group defines model for Group.
 type Group struct {
@@ -295,24 +288,6 @@ type SiUnitParam string
 
 // UuidParam defines model for uuidParam.
 type UuidParam string
-
-// BadRequest defines model for BadRequest.
-type BadRequest Error
-
-// Forbidden defines model for Forbidden.
-type Forbidden Error
-
-// InternalServerError defines model for InternalServerError.
-type InternalServerError Error
-
-// NotFound defines model for NotFound.
-type NotFound Error
-
-// TooManyRequests defines model for TooManyRequests.
-type TooManyRequests Error
-
-// Unauthorized defines model for Unauthorized.
-type Unauthorized Error
 
 // NewDataset defines model for NewDataset.
 type NewDataset struct {

@@ -18,7 +18,6 @@ along with Self-host.  If not, see <http://www.gnu.org/licenses/>.
 package errors
 
 import (
-	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -172,7 +171,7 @@ func SendHTTPError(w http.ResponseWriter, e ClientError) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 
 	if ce, ok := e.(*HTTPError); ok {
 		w.WriteHeader(ce.Code)
@@ -180,5 +179,5 @@ func SendHTTPError(w http.ResponseWriter, e ClientError) {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 
-	json.NewEncoder(w).Encode(e)
+	w.Write([]byte(e.Error()))
 }

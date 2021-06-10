@@ -92,61 +92,61 @@ components:
     BadGateway:
       description: Invalid response from upstream server.
       content:
-        application/json:
+        text/plain; charset=utf-8:
           schema:
             $ref: '#/components/schemas/Error'
     BadRequest:
       description: The request does not follow specification.
       content:
-        application/json:
+        text/plain; charset=utf-8:
           schema:
             $ref: '#/components/schemas/Error'
     Unauthorized: 
       description: Invalid authentication credentials.
       content:
-        application/json:
+        text/plain; charset=utf-8:
           schema:
             $ref: '#/components/schemas/Error'
     Forbidden:
       description: Not allowed to perform the action.
       content:
-        application/json:
+        text/plain; charset=utf-8:
           schema:
             $ref: '#/components/schemas/Error'
     NotFound:
       description: The specified resource was not found.
       content:
-        application/json:
+        text/plain; charset=utf-8:
           schema:
             $ref: '#/components/schemas/Error'
     ContentTooLarge:
       description: The request contains an element that excedes the allowed size.
       content:
-        application/json:
+        text/plain; charset=utf-8:
           schema:
             $ref: '#/components/schemas/Error'
     Conflict:
       description: The request caused a conflict.
       content:
-        application/json:
+        text/plain; charset=utf-8:
           schema:
             $ref: '#/components/schemas/Error'
     InternalServerError:
       description:   Internal server error
       content:
-        application/json:
+        text/plain; charset=utf-8:
           schema:
             $ref: '#/components/schemas/Error'
     UnexpectedError:
       description: Unexpected error
       content:
-        application/json:
+        text/plain; charset=utf-8:
           schema:
             $ref: '#/components/schemas/Error'
     TooManyRequests:
       description: Too many request in the allowed time period.
       content:
-        application/json:
+        text/plain; charset=utf-8:
           schema:
             $ref: '#/components/schemas/Error'
       headers:
@@ -762,18 +762,9 @@ components:
           type: boolean
 
     Error:
-      required:
-        - code
-        - message
-      properties:
-        code:
-          type: integer
-          description: Error code
-          example: 400
-        message:
-          type: string
-          description: Error message
-          example: "foo error"
+      description: Error message
+      type: string
+      example: "Error message"
 
     Group:
       required:
@@ -2908,4 +2899,5 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
 

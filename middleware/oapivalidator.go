@@ -19,10 +19,13 @@ package middleware
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3filter"
 	legacyrouter "github.com/getkin/kin-openapi/routers/legacy"
-	"net/http"
+
+	ie "github.com/self-host/self-host/internal/errors"
 )
 
 func OapiRequestValidator(swagger *openapi3.Swagger) func(http.HandlerFunc) http.HandlerFunc {
@@ -40,7 +43,7 @@ func OapiRequestValidatorWithOptions(swagger *openapi3.Swagger, options *Options
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			route, pathParams, err := router.FindRoute(r)
 			if err != nil {
-				sendError(w, 400, err.Error())
+				ie.SendHTTPError(w, ie.NewInvalidRequestError(err))
 				return
 			}
 
@@ -57,9 +60,13 @@ func OapiRequestValidatorWithOptions(swagger *openapi3.Swagger, options *Options
 			if err := openapi3filter.ValidateRequest(r.Context(), requestValidationInput); err != nil {
 				e, ok := err.(*openapi3filter.RequestError)
 				if ok {
-					sendError(w, 400, e.Reason)
+					nerr := &ie.HTTPError{
+						Code:    400,
+						Message: e.Reason,
+					}
+					ie.SendHTTPError(w, nerr)
 				} else {
-					sendError(w, 400, err.Error())
+					ie.SendHTTPError(w, ie.NewInvalidRequestError(err))
 				}
 				return
 			}
