@@ -1,6 +1,6 @@
 # Hardware: Cloud VM
 
-Specification of hardware (an ordinary RPi4 8GB with SSD via USB 3.0) used during testing;
+Specification of hardware (a VM at a Vultr) used during testing;
 
 ```txt
 product: VC2
