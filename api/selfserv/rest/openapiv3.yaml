@@ -2473,6 +2473,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TsRow'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':

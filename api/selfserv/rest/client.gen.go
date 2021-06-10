@@ -5637,6 +5637,7 @@ type QueryTimeseriesForDataResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *[]TsRow
+	JSON400      *Error
 	JSON401      *Error
 	JSON403      *Error
 	JSON404      *Error
@@ -9389,6 +9390,13 @@ func ParseQueryTimeseriesForDataResponse(rsp *http.Response) (*QueryTimeseriesFo
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
 		var dest Error
