@@ -1,6 +1,6 @@
 # Hardware: Cloud VM
 
-Specification of hardware (a VM at a Vultr) used during testing;
+Specification of hardware (a VM at Vultr) used during testing;
 
 ```txt
 product: VC2
