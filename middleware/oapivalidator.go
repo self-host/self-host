@@ -62,7 +62,7 @@ func OapiRequestValidatorWithOptions(swagger *openapi3.Swagger, options *Options
 				if ok {
 					nerr := &ie.HTTPError{
 						Code:    400,
-						Message: e.Reason,
+						Message: e.Error(),
 					}
 					ie.SendHTTPError(w, nerr)
 				} else {

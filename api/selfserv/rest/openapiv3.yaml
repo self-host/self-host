@@ -1058,6 +1058,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Dataset'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1085,6 +1087,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Dataset'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1113,6 +1117,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Dataset'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1136,6 +1142,8 @@ paths:
       responses:
         '204':
           description: Dataset updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1161,6 +1169,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Deleted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1217,6 +1227,8 @@ paths:
               schema:
                 type: string
                 format: binary
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1302,6 +1314,8 @@ paths:
       description: List all of the uploaded parts
       operationId: list dataset parts by key
       responses:
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1354,6 +1368,8 @@ paths:
                   message:
                     type: string
                     example: 'EntityTooSmall'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1386,6 +1402,8 @@ paths:
                 properties:
                   uploadId:
                     type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
 
     delete:
       security:
@@ -1406,6 +1424,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Deleted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1439,6 +1459,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Group'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1466,6 +1488,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Group'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1495,6 +1519,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Group'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1520,6 +1546,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Updated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1543,6 +1571,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Deleted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1576,6 +1606,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Policy'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1617,6 +1649,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Domain'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1644,6 +1678,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Policy'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1672,6 +1708,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Policy'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1696,6 +1734,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Updated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1720,6 +1760,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Deleted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1749,6 +1791,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Program'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1778,6 +1822,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Program'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1806,6 +1852,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Program'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1830,6 +1878,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Updated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1852,6 +1902,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Deleted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1879,6 +1931,8 @@ paths:
       responses:
         '200':
           description: Success
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1916,6 +1970,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CodeRevision'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1942,6 +1998,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Program'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -1988,6 +2046,8 @@ paths:
               schema:
                 type: string
                 format: binary
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2020,6 +2080,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CodeRevision'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2054,6 +2116,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Updated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2088,6 +2152,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Deleted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2120,6 +2186,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Thing'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2146,6 +2214,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Thing'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2175,6 +2245,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Thing'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2200,6 +2272,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Updated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2222,6 +2296,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Deleted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2253,6 +2329,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Timeseries'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2286,6 +2364,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Timeseries'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2327,6 +2407,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Timeseries'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2353,6 +2435,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Timeseries'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2380,6 +2464,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Timeseries'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2405,6 +2491,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Updated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2427,6 +2515,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Deleted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2557,6 +2647,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TsQuery'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2590,6 +2682,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2629,6 +2723,8 @@ paths:
               operationId: delete user by uuid
               parameters:
                 uuid: '$response.body#/uuid'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2684,6 +2780,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2710,7 +2808,7 @@ paths:
         '204':
           $ref: '#/components/responses/Updated'
         '400':
-          description: Either `groups` by itself or `groups_add` and/or `groups_remove` are required.
+          description: Either `groups` by itself or `groups_add` and/or `groups_remove` are required. Or some other error.
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2736,6 +2834,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Deleted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2767,6 +2867,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Policy'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2795,6 +2897,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Updated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2827,6 +2931,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Token'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2856,6 +2962,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TokenWithSecret'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2889,6 +2997,8 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Deleted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
