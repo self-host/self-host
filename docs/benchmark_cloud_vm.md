@@ -18,7 +18,7 @@ vendor: DigitalOcean
        size: 160GiB (171GB)
 
 product: DO Database
-vendor: Digital Ocena
+vendor: DigitalOcean
 *-core:
   *-cpu
       product: Intel Xeon (Unknown)
