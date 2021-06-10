@@ -79,13 +79,13 @@ A typical deployment scenario would look something like this;
 
 Skills required;
 
-- Good knowledge of Docker
-- Some knowledge of PostgreSQL
+- Good knowledge of Docker.
+- Some knowledge of PostgreSQL.
 - Some knowledge of GNU+Linux or Unix environments in general.
 
 Hardware and software required;
 
-- Computer with Docker installed
+- Computer with Docker installed.
 
 [Five to fifteen-minute deployment](docs/test_deployment.md)
 
@@ -95,13 +95,14 @@ Hardware and software required;
 - [Glossary](docs/glossary.md)
 - [Tools of the trade](docs/tools_of_the_trade.md)
 - [Design](docs/design.md)
+- [Benchmark](docs/benchmark_overview.md)
+- [Notes on deploying to production](docs/production_deployment.md)
+    + Docker
+    + Kubernetes
 - [Public-facing API specification](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/self-host/self-host/main/api/selfserv/rest/openapiv3.yaml)
-- [Resource requirements](docs/resource_requirements.md)
-    + [Performance test](docs/performance_test.md)
-- [Deploying to production](docs/production_deployment.md)
-- [Rate Control](docs/rate_control.md)
-    + golang.org/x/time/rate
 - [Program Manager and Workers](docs/program_manager_worker.md)
+- Configuration  
+    + [Rate Control](docs/rate_control.md) golang.org/x/time/rate
 
 
 :hearts: Like this project? Want to improve it but unsure where to begin? Check out the [issue tracker](https://github.com/self-host/self-host/issues).
