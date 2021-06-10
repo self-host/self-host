@@ -191,7 +191,7 @@ components:
       schema:
         type: string
         format: date-time
-        example: '2020-05-01T00:00:00Z'
+        example: '2020-05-01T00:00:00+02:00'
     rangeEndParam:
       in: query
       name: end
@@ -200,7 +200,7 @@ components:
       schema:
         type: string
         format: date-time
-        example: '2021-05-01T00:00:00Z'
+        example: '2021-05-01T00:00:00+02:00'
     siUnitParam:
       in: query
       name: unit
@@ -678,7 +678,7 @@ components:
         created:
           type: string
           format: date-time
-          example: '2017-07-21T17:32:28Z'
+          example: '2017-07-21T17:32:28+02:00'
         created_by:
           type: string
           description: User UUID
@@ -737,7 +737,7 @@ components:
           type: string
           description: Date-time when created, as defined by RFC 3339, section 5.6.
           format: date-time
-          example: '2017-07-21T17:32:28Z'
+          example: '2017-07-21T17:32:28+02:00'
         created_by:
           type: string
           description: User UUID reference.
@@ -746,7 +746,7 @@ components:
           type: string
           description: Date-time of last change, as defined by RFC 3339, section 5.6.
           format: date-time
-          example: '2017-07-21T17:32:28Z'
+          example: '2017-07-21T17:32:28+02:00'
         updated_by:
           type: string
           description: User UUID reference.
@@ -934,7 +934,7 @@ components:
         created:
           type: string
           format: date-time
-          example: '2020-03-09T09:48:30.035Z'
+          example: '2020-03-09T09:48:30.035+02:00'
           
     TokenWithSecret:
       required:
