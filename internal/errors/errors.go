@@ -129,6 +129,11 @@ var (
 		Cause:   nil,
 		Message: "Undefined DB error",
 	}
+	ErrorDBDown = &HTTPError{
+		Code:    500,
+		Cause:   nil,
+		Message: "The DB is currently inaccessible",
+	}
 )
 
 func NewInternalServerError(err error) ClientError {
@@ -160,9 +165,13 @@ func ParseDBError(e error) ClientError {
 	} else if strings.Contains(serr, "no rows") {
 		// Expected one row, but got no rows.
 		return ErrorDBNoRows
+	} else if strings.Contains(serr, "failed to connect to") || strings.Contains(serr, "unexpected EOF") {
+		logger.Error("dberror", zap.Error(e)) // log this error
+		return ErrorDBDown
 	}
 
 	logger.Error("dberror", zap.Error(e))
+
 	return ErrorDBUndefined
 }
 

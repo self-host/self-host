@@ -88,7 +88,7 @@ func PolicyValidator() func(http.HandlerFunc) http.HandlerFunc {
 
 				access, err := check.UserHasAccessViaToken(ctx, []byte(api_key), action, resource)
 				if err != nil {
-					ie.SendHTTPError(w, ie.ErrorUnprocessable)
+					ie.SendHTTPError(w, ie.ParseDBError(err))
 					return
 				}
 				if access == false {
