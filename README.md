@@ -42,16 +42,23 @@ To provide clients and potential clients with an alternative platform where they
     + License is GPLv3.
     + The API specification is open, and you can implement it if you don't want to use the existing implementation.
 
+
 # Overview
 
 A typical deployment scenario would look something like this;
 
 ![Overview][fig1]
 
-- One or several instances of the Self-host API server.
-- One instance of the Program Manager.
-- One or server instances of the Program Worker.
-- One DBMS to host all Self-host databases (Domains).
+- One (or more) instances of the `Self-host API server`. This server provides the public REST API and is the only exposed surface from the internet.
+- One instance of the `Program Manager`. This server manages all programs and schedules them.
+- One (or more) instances of the `Program Worker`. This server accepts work from the `Program Manager`
+- One (or more) DBMS to host all Self-host databases (Domains). PostgreSQL 12+ with one (or more) Self-host `Domains`.
+
+The `API server` can accept client request from either the internet or from the intranet. Requests are backed by the `Domain databases`.
+
+The `Program Worker` can execute requests to external services on the internet or to internal services, for example; the `API server`.
+
+A `HTTP Proxy` may be used in front of the `API server` depending on the deployment scenario.
 
 
 # Project structure
