@@ -11,7 +11,7 @@ This software is written with the sole intent to provide an easy way to deploy s
 
 Two components are working together, one Program Manager (selfpmgr) and one or several instances of the Program Worker (selfpwrk).
 
-At set intervals, the Program Manager queries all domains for all active programs. It tracks them and then, based on the program's specification, tells a Program Worker to execute the program. The Program Worker compiles the program (if required), caches the binary and runs the program.
+At set intervals, the Program Manager queries all domains for all active programs. Based on the program's specification, it tracks them and then tells a Program Worker to execute the program. The Program Worker compiles the program (if required), caches the binary and runs the program.
 
 ![Interaction Program Manager and Worker][InteractionDiag1]
 
@@ -25,7 +25,7 @@ Programs are declared on a Domain level. This means that there is no way to shar
 
 There is currently only support for one language; [Tengo](https://github.com/d5/tengo).
 
-Support for other languages has was considered in the design process, and the API interface between the Program Worker and Program Manager does take program language into account.
+We considered support for other languages in the design process, and the API interface between the Program Worker and Program Manager does take program language into account.
 
 
 # Different types of Programs
