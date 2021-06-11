@@ -23,7 +23,7 @@
      pagecolor="#ffffff"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
      inkscape:cx="331.45736"
@@ -102,7 +102,7 @@
     </g>
     <g
        id="g1382"
-       transform="translate(111.96571,-75.317358)">
+       transform="translate(128.59666,-75.317358)">
       <rect
          y="252.60661"
          x="29.695471"
@@ -143,28 +143,6 @@
            x="24.848492"
            y="223.06357"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Century Supra B';-inkscape-font-specification:'Century Supra B';stroke-width:0.0740563">LOCAL</tspan></text>
-    </g>
-    <g
-       id="g1415"
-       transform="translate(12.515597,-42.055453)">
-      <rect
-         y="219.34471"
-         x="169.73564"
-         height="5.4204135"
-         width="19.521326"
-         id="rect1401"
-         style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.25000003;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3.79999995;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal" />
-      <text
-         id="text1405"
-         y="223.06357"
-         x="171.46066"
-         style="font-style:normal;font-weight:normal;font-size:2.96225238px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.0740563"
-         xml:space="preserve"><tspan
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Century Supra B';-inkscape-font-specification:'Century Supra B';stroke-width:0.0740563"
-           y="223.06357"
-           x="171.46066"
-           id="tspan1403"
-           sodipodi:role="line">EXTERNAL</tspan></text>
     </g>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
