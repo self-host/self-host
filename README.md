@@ -33,7 +33,7 @@ To provide clients and potential clients with an alternative platform where they
     + The only dependency is on PostgreSQL.
 - Compiled binaries (Go).
 - Designed to scale with demand.
-    + Domain can be hosted on separate PostgreSQL DBMS.
+    + You can host domains on separate PostgreSQL machines.
     + You can scale the Self-host API to as many instances as you require.
     + The Program Manager and its Workers can be scaled as needed.
 - Can be hosted in your environment.
@@ -51,14 +51,14 @@ A typical deployment scenario would look something like this;
 
 - One (or more) instances of the `Self-host API server`. This server provides the public REST API and is the only exposed surface from the internet.
 - One instance of the `Program Manager`. This server manages all programs and schedules them.
-- One (or more) instances of the `Program Worker`. This server accepts work from the `Program Manager`
+- One (or more) instances of the `Program Worker`. This server accepts work from the `Program Manager`.
 - One (or more) DBMS to host all Self-host databases (Domains). PostgreSQL 12+ with one (or more) Self-host `Domains`.
 
-The `API server` can accept client request from either the internet or from the intranet. Requests are backed by the `Domain databases`.
+The `API server` can accept client request from either the internet or from the intranet. The `Domain databases` backs all `API server` requests.
 
-The `Program Worker` can execute requests to external services on the internet or to internal services, for example; the `API server`.
+The `Program Worker` can execute requests to external services on the internet or internal services, for example, the `API server`.
 
-A `HTTP Proxy` may be used in front of the `API server` depending on the deployment scenario.
+An `HTTP Proxy` may be used in front of the `API server` depending on the deployment scenario.
 
 
 # Project structure
