@@ -86,9 +86,31 @@ func Server(address string) (<-chan error, error) {
 				logger.Error("Error while loading domainfile", zap.Error(err))
 			}
 
-			// FIXME: what about no longer existing domains?
-			// Maybe: pg.SetDatabases
+			// Find inactive databases
+			domains := pg.GetDomains()
+			for domain, _ := range v.GetStringMapString("domains") {
+				index := StringSliceIndex(domains, domain)
+				if index == -1 || len(domains) == 0 {
+					continue
+				} else if len(domains) == 1 {
+					// Absolue last element in the slice
+					domains = make([]string, 0)
+				} else {
+					// Place last element at position
+					domains[index] = domains[len(domains)-1]
+					// "delete" last element
+					domains[len(domains)-1] = ""
+					// Truncate slice
+					domains = domains[:len(domains)-1]
+				}
+			}
 
+			// What remains in "domains" is all domains no longer active in config file
+			for _, domain := range domains {
+				pg.RemoveDB(domain)
+			}
+
+			// Add new/existing domain DBs
 			for domain, pguri := range v.GetStringMapString("domains") {
 				err := pg.AddDB(domain, pguri)
 				if err != nil {
