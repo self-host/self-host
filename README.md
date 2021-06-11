@@ -102,14 +102,17 @@ Hardware and software required;
 - [Glossary](docs/glossary.md)
 - [Tools of the trade](docs/tools_of_the_trade.md)
 - [Design](docs/design.md)
+    + [Authentication](docs/authentication.md)
+    + [Access control](docs/access_control.md)
+    + [Data partitioning](docs/data_partitioning.md)
+    + [Rate control](docs/rate_control.md)
+    + [Program Manager and Workers](docs/program_manager_worker.md)
+    + [Unit handling](docs/unit_handling.md)
 - [Benchmark](docs/benchmark_overview.md)
+- [Public-facing API specification](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/self-host/self-host/main/api/selfserv/rest/openapiv3.yaml)
 - [Notes on deploying to production](docs/production_deployment.md)
     + Docker
     + Kubernetes
-- [Public-facing API specification](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/self-host/self-host/main/api/selfserv/rest/openapiv3.yaml)
-- [Program Manager and Workers](docs/program_manager_worker.md)
-- Configuration  
-    + [Rate Control](docs/rate_control.md) golang.org/x/time/rate
 
 
 :hearts: Like this project? Want to improve it but unsure where to begin? Check out the [issue tracker](https://github.com/self-host/self-host/issues).
