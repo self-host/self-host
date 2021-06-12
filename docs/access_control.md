@@ -72,8 +72,10 @@ Rules are computed such that all `allow` rules are combined, then all `deny` rul
 For details on which resource paths are relevant, see the [openapiv3.yaml](https://github.com/self-host/self-host/blob/main/api/selfserv/rest/openapiv3.yaml) specification. Look at the `BasicAuth` declaration for each endpoint where the required access privilege is declared on the form; `action:resource_path`.
 
 
-## Questions
+## Questions and Answers
 
 #### Why role your own permission system? PostgreSQL already has an excellent RBAC permission system with ROW level security.
 
-This question is a good point, and we considered the existing POLICY system in PostgreSQL. However, some cases where a query will return an empty set instead of a "permission denied" exception caused a little too much headache. We may very well revisit this in the future.
+This question is a good point, and we considered the existing POLICY system in PostgreSQL.
+
+However, some cases where a query will return an empty set instead of a "permission denied" exception caused a little too much headache. We may very well revisit this in the future.

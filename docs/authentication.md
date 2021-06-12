@@ -18,11 +18,13 @@ A single colon (":") separates the domain and token parts, and a single dot ("."
 
 The domain part is used to check the secret against the correct domain as each access token is unique to a specific domain. We chose this structure as it is a straightforward extension of a well-established authentication process.
 
-**NOTE**: The value of secret-token-scheme must always be *secret-token*. This value aims to ease automatic identification and prevention of keys in source code.
+**NOTE**: The value of secret-token-scheme must always be *secret-token*. This value aims to ease the automatic identification and prevention of keys in source code.
 
 
 ## Questions and Answers
 
-### Why not use JWT (JSON Web Token)? Is it an IETF standard? Also, it is an excellent fit for REST API:s
+#### Why not use JWT (JSON Web Token)? Is it an IETF standard? Also, it is an excellent fit for REST API:s
 
-While it is true that JWT is a proposed standard by the IETF, and it is also true that it removes the requirement to authenticate each request. JWT carries a significant transport overhead as each request holds a simple token and an entire encrypted blob of meta-data. We think that this overhead outweighs the benefits of having to authenticate each request. Even more so, since the only way to disown a client is to use a global blacklist. As each request has to be validated against this list, we re-introduce the same overhead we have when authenticating each request. This overhead renders JWT pointless from a performance perspective. 
+While it is true that JWT is a proposed standard by the IETF, and it is also true that it removes the requirement to authenticate each request. But JWT does incur a significant transport overhead as each request holds a simple token and an entire encrypted blob of meta-data.
+
+We think that this overhead outweighs the benefits of having to authenticate each request. Even more so, since the only way to disown a client is to use a global blacklist. By validating each request against this list, we re-introduce the same overhead we have when authenticating each request. In our view, this overhead renders JWT pointless from a performance perspective.
