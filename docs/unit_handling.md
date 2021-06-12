@@ -10,3 +10,27 @@ Having an indoor temperature value on the kelvin scale will always result in con
 
 Most people want to work with value ranges they are confortable with, an indoor temperature of `294.15 K` makes little sense to most people while `21 C` or `80 F` is much clearer.
 
+
+## How we handle units in the Self-host
+
+Each time series requires a unit. For a complete list of supported units, look at the source code in a [fork](https://github.com/ganehag/go-units) of the `go-units` library.
+
+The units you can use are (amongst a few more);
+
+- byte (kilo, mega, etc.)
+- joule (kilo, mega, etc.)
+- watthour (kilo, mega, etc.)
+- meter (milli, kilo, etc.)
+    + inch, foot, yard, mile
+- watt (kilo, mega, etc.)
+- pascal (kilo, mega, etc.)
+    + bar
+    + mmH2O
+    + mmHg
+    + psi
+    + etc.
+- celsius, fahrenheit, kelvin
+- second, minute, hour, day, etc.
+- liter/second, cubicmeter/second
+- liter
+- cubicmeter
