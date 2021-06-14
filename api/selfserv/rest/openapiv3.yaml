@@ -8,10 +8,41 @@ info:
   description: |
     ## Welcome to the official documentation of the NODA Selfhost API.
 
-    The API consists of X categories:
+    The API consists of 8 categories:
     
-    - asd
-  
+    - Users
+    - Groups
+    - Policies
+    - Things
+    - Timeseries
+    - Datasets
+    - Programs
+    - Alerts (TBD)
+    
+    Every call requires you to be authenticated.
+    
+    ### Authentication
+    
+    To authenticate you are going to need a unique `access key` for each `domain` you wish to access.
+    
+    The `domain` name is the `username` part of an ordinary HTTP BasicAuth request, the `access key` is the `password`.
+    
+    ### Status codes
+    All requests will respond with one out of the following status codes:
+
+    - 400 Bad request.
+    - 401 Unauthorized.
+    - 404 Not found.
+    - 409 Conflict.
+    - 429 Too many requests.
+    - 500 Internal server error.
+
+    Many requests may also respond with one out of the following status codes:
+
+    - 200 Success.
+    - 201 Success - resource created.
+    - 204 Success - resource updated, deleted or no reply due to filtering.
+
   license:
     name: GPL-3.0-only
     url: https://opensource.org/licenses/GPL-3.0
