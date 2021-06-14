@@ -111,8 +111,8 @@ Hardware and software required;
 - [Benchmark](docs/benchmark_overview.md)
 - [Public-facing API specification](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/self-host/self-host/main/api/selfserv/rest/openapiv3.yaml)
 - [Notes on deploying to production](docs/production_deployment.md)
-    + Docker
-    + Kubernetes
+    + [Docker](https://github.com/self-host/self-host/blob/main/docs/docker_deployment.md)
+    + [Kubernetes](https://github.com/self-host/self-host/blob/main/docs/k8s_deployment.md)
 
 
 :hearts: Like this project? Want to improve it but unsure where to begin? Check out the [issue tracker](https://github.com/self-host/self-host/issues).

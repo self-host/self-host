@@ -21,9 +21,9 @@ The name of the configuration file is declared with the environment variable `CO
 Make sure to place the file in any of these three locations.
 
 
-# Docker (using Portainer)
+# Docker
 
-For details on how to deploy using Docker, see the following [guide](https://github.com/self-host/self-host/blob/main/docs/portainer_deployment.md).
+For details on how to deploy using Docker, see the following [guide](https://github.com/self-host/self-host/blob/main/docs/docker_deployment.md).
 
 
 # Kubernetes
