@@ -251,6 +251,14 @@ func (ra *RestApi) UpdateUserByUuid(w http.ResponseWriter, r *http.Request, id r
 		return
 	}
 
+	if updUser.Name != nil && len(*updUser.Name) > 3 {
+		_, err := svc.SetUserName(r.Context(), user_uuid, *updUser.Name)
+		if err != nil {
+			ie.SendHTTPError(w, ie.ParseDBError(err))
+			return
+		}
+	}
+
 	// Use multiple DB requests to set each parameter
 	// Use a Transaction!
 	if updUser.Groups != nil {

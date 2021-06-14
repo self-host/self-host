@@ -110,6 +110,10 @@ VALUES(
 	sqlc.arg(group_uuid)::uuid
 );
 
+-- name: SetUserName :execrows
+UPDATE users SET name = sqlc.arg(name)
+WHERE uuid = sqlc.arg(uuid);
+
 -- name: RemoveUserFromGroups :execrows
 DELETE FROM user_groups
 WHERE user_uuid = sqlc.arg(user_uuid)

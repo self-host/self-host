@@ -335,3 +335,21 @@ func (q *Queries) RemoveUserFromGroups(ctx context.Context, arg RemoveUserFromGr
 	}
 	return result.RowsAffected()
 }
+
+const setUserName = `-- name: SetUserName :execrows
+UPDATE users SET name = $1
+WHERE uuid = $2
+`
+
+type SetUserNameParams struct {
+	Name string
+	Uuid uuid.UUID
+}
+
+func (q *Queries) SetUserName(ctx context.Context, arg SetUserNameParams) (int64, error) {
+	result, err := q.exec(ctx, q.setUserNameStmt, setUserName, arg.Name, arg.Uuid)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}

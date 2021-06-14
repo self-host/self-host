@@ -295,6 +295,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.setTimeseriesUpperBoundStmt, err = db.PrepareContext(ctx, setTimeseriesUpperBound); err != nil {
 		return nil, fmt.Errorf("error preparing query SetTimeseriesUpperBound: %w", err)
 	}
+	if q.setUserNameStmt, err = db.PrepareContext(ctx, setUserName); err != nil {
+		return nil, fmt.Errorf("error preparing query SetUserName: %w", err)
+	}
 	if q.signProgramCodeRevisionStmt, err = db.PrepareContext(ctx, signProgramCodeRevision); err != nil {
 		return nil, fmt.Errorf("error preparing query SignProgramCodeRevision: %w", err)
 	}
@@ -758,6 +761,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing setTimeseriesUpperBoundStmt: %w", cerr)
 		}
 	}
+	if q.setUserNameStmt != nil {
+		if cerr := q.setUserNameStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing setUserNameStmt: %w", cerr)
+		}
+	}
 	if q.signProgramCodeRevisionStmt != nil {
 		if cerr := q.signProgramCodeRevisionStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing signProgramCodeRevisionStmt: %w", cerr)
@@ -893,6 +901,7 @@ type Queries struct {
 	setTimeseriesTagsStmt            *sql.Stmt
 	setTimeseriesThingStmt           *sql.Stmt
 	setTimeseriesUpperBoundStmt      *sql.Stmt
+	setUserNameStmt                  *sql.Stmt
 	signProgramCodeRevisionStmt      *sql.Stmt
 }
 
@@ -991,6 +1000,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		setTimeseriesTagsStmt:            q.setTimeseriesTagsStmt,
 		setTimeseriesThingStmt:           q.setTimeseriesThingStmt,
 		setTimeseriesUpperBoundStmt:      q.setTimeseriesUpperBoundStmt,
+		setUserNameStmt:                  q.setUserNameStmt,
 		signProgramCodeRevisionStmt:      q.signProgramCodeRevisionStmt,
 	}
 }

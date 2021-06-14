@@ -326,6 +326,20 @@ func (u *UserService) SetUserGroups(ctx context.Context, user_uuid uuid.UUID, gr
 	return count, nil
 }
 
+func (u *UserService) SetUserName(ctx context.Context, user_uuid uuid.UUID, name string) (int64, error) {
+	count, err := u.q.SetUserName(ctx, pg.SetUserNameParams{
+		Uuid: user_uuid,
+		Name: name,
+	})
+	if err != nil {
+		return 0, err
+	} else if count == 0 {
+		return 0, ie.ErrorNotFound
+	}
+
+	return count, nil
+}
+
 func (u *UserService) DeleteUser(ctx context.Context, user_uuid uuid.UUID) (int64, error) {
 	count, err := u.q.DeleteUser(ctx, user_uuid)
 	if err != nil {
