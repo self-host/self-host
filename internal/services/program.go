@@ -203,7 +203,8 @@ func (s *ProgramService) FindAllCodeRevisions(ctx context.Context, id uuid.UUID)
 			}
 
 			if t.Signed.Valid {
-				rev.Signed = &t.Signed.Time
+				v := t.Signed.Time
+				rev.Signed = &v
 			}
 			if t.SignedBy != NilUUID {
 				u := t.SignedBy.String()
