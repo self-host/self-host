@@ -1,17 +1,14 @@
 # Design
 
-The system is split up into several separate softwares.
+The system exists as a set of interconnected parts.
 
 - Database (PostgreSQL)
 - Self-host API (selfserv)
 - Program Manager (selfpmgr)
 - Program Worker (selfpwrk)
-- Primus (primus)
-- CLI tool (selfctl)
 
-[design drawing]
+![Overview][fig1]
 
-... explain the drawing
 
 # Database
 
@@ -20,7 +17,7 @@ The only supported database is PostgreSQL version 12 or newer.
 
 # Self-host API
 
-The main component of the system. It exposed a `domain` database as a set of API endpoints.
+The Self-host API is the main component of the system. It exposed a `domain` database as a set of API endpoints.
 
 For details about the API specification see: [openapiv3.yaml](https://github.com/self-host/self-host/blob/master/api/selfserv/rest/openapiv3.yaml) file.
 
@@ -28,28 +25,25 @@ Key components of the Self-host API are;
 
 - `Users`: A `User` account is required to access the API.
 - `Groups`: A `User` can belong to one or several different `Groups`.
-- `Policies`: A `Policy` is applied to a `Group` and grants; CREATE, READ, UPDATE or DELETE permission.
-- `Timeseries`: A series of data-points representing a single entity.
+- `Policies`: A `Policy` applies to a `Group` and grants; CREATE, READ, UPDATE or DELETE permission.
+- `Timeseries`: A series of data points representing a single entity.
 - `Things`: A `Thing` is an object used as an (optional) way to group `Timeseries` into logical structures.
-- `Datasets`: A `Dataset` can be used for multiple different purposes. It is a good place to store complex data-series that can't be represented by `Timeseries`.
-- `Programs`: A `Program` is an easy way to deploy trivial code to handle repeated tasks.
+- `Datasets`: We can use a `Dataset` for multiple different purposes. It is an excellent place to store complex data series that we can't represent with `Timeseries`.
+- `Programs`: A `Program` is an easy way to deploy trivial code to handle repetitive tasks.
 
 
-# Primus (Work in Progress)
+# Program Manager
 
-This database contains (probably) only a single table where domains are declared (with PostgreSQL URI).
+The purpose of the Program Manager is to keep track of Program Workers and distribute work in the form of `programs`.
 
-Whenever an instance of the API server starts up, it queries the Primus database to establish the available domains. Whenever a new domain is added, the Primus database will send out a NOTIFY event so that all instances of the API server can update their config.
+For more details, see [Program Manager and Worker](https://github.com/self-host/self-host/blob/main/docs/program_manager_worker.md).
 
-The Self-host should only make few assumptions (demands) on the structure of the Primus database.
 
-From configuration (file, env, etc) the Self-host should establish a few items;
+# Program Worker
 
-- The connection info to connect to the Primus database
-- A configurable SQL query to create a new domain.
-- A configurable SQL query to read all (or a subset) of domains.
-- A configurable SQL query to update the domain info for a domain.
-- A configurable SQL query to delete a domain.
+The purpose of the Program Worker is to execute tasks given to it by the Program Manager. A Worker may implement all or a subset of `languages` depending on implementation limitations.
 
-The return values from these queries must always be defined for the Golang code to interpret the result. The code should of-course come with excelent examples and SQL code to create a table if none exists. Maybe this should be part of the `selfctl` cli program?
+For more details, see [Program Manager and Worker](https://github.com/self-host/self-host/blob/main/docs/program_manager_worker.md).
 
+
+[fig1]: https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/overview.svg "Overview"
