@@ -116,6 +116,8 @@ func (ra *RestApi) CreateTask(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func (ra *RestApi) GetStatus(w http.ResponseWriter, r *http.Request) {
