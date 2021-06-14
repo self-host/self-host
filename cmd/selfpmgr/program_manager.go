@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Self-host.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package main
 
 import (
@@ -22,6 +23,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 
 	"github.com/self-host/self-host/api/selfpmgr"
 	pg "github.com/self-host/self-host/postgres"
@@ -65,13 +67,35 @@ func ProgramManager(quit <-chan struct{}) (<-chan error, error) {
 				errC <- err
 			}
 
-			// FIXME: what about no longer existing domains?
-			// Maybe: pg.SetDatabases
+			// Find inactive databases
+			domains := pg.GetDomains()
+			for domain := range v.GetStringMapString("domains") {
+				index := StringSliceIndex(domains, domain)
+				if index == -1 || len(domains) == 0 {
+					continue
+				} else if len(domains) == 1 {
+					// Absolue last element in the slice
+					domains = make([]string, 0)
+				} else {
+					// Place last element at position
+					domains[index] = domains[len(domains)-1]
+					// "delete" last element
+					domains[len(domains)-1] = ""
+					// Truncate slice
+					domains = domains[:len(domains)-1]
+				}
+			}
 
+			// What remains in "domains" is all domains no longer active in config file
+			for _, domain := range domains {
+				pg.RemoveDB(domain)
+			}
+
+			// Add new/existing domain DBs
 			for domain, pguri := range v.GetStringMapString("domains") {
 				err := pg.AddDB(domain, pguri)
 				if err != nil {
-					errC <- err
+					logger.Error("Error while adding domain", zap.Error(err))
 				}
 			}
 		})
