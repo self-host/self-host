@@ -13,6 +13,7 @@ CREATE TABLE user_tokens (
   user_uuid UUID NOT NULL REFERENCES users(uuid) ON DELETE CASCADE,
   name TEXT NOT NULL,
   token_hash BYTEA NOT NULL
+  created TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX user_tokens_user_uuid_idx ON user_tokens(user_uuid);
