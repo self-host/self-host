@@ -219,7 +219,7 @@ func GetDomains() []string {
 	dbCacheMux.RLock()
 
 	domains := make([]string, 0)
-	for domain, _ := range dbCache {
+	for domain := range dbCache {
 		domains = append(domains, domain)
 	}
 	dbCacheMux.RUnlock()

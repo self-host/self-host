@@ -88,7 +88,7 @@ func Server(address string) (<-chan error, error) {
 
 			// Find inactive databases
 			domains := pg.GetDomains()
-			for domain, _ := range v.GetStringMapString("domains") {
+			for domain := range v.GetStringMapString("domains") {
 				index := StringSliceIndex(domains, domain)
 				if index == -1 || len(domains) == 0 {
 					continue
