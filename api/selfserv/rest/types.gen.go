@@ -135,13 +135,6 @@ type Dataset struct {
 // File format of the data set.
 type DatasetFormat string
 
-// Domain defines model for Domain.
-type Domain struct {
-	Active *bool   `json:"active,omitempty"`
-	Name   *string `json:"name,omitempty"`
-	Uuid   *string `json:"uuid,omitempty"`
-}
-
 // Error message
 type Error string
 

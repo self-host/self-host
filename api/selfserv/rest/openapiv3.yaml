@@ -1648,7 +1648,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Domain'
+                  $ref: '#/components/schemas/Policy'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':

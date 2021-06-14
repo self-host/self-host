@@ -4770,7 +4770,7 @@ func (r FindPoliciesForGroupResponse) StatusCode() int {
 type FindPoliciesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]Domain
+	JSON200      *[]Policy
 }
 
 // Status returns HTTPResponse.Status
@@ -6875,7 +6875,7 @@ func ParseFindPoliciesResponse(rsp *http.Response) (*FindPoliciesResponse, error
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []Domain
+		var dest []Policy
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
