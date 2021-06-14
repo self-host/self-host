@@ -168,19 +168,18 @@ func (svc *DatasetService) FindByThing(ctx context.Context, id uuid.UUID) ([]*re
 	return datasets, nil
 }
 
-func (svc *DatasetService) FindAll(ctx context.Context, token []byte, limit *int64, offset *int64) ([]*rest.Dataset, error) {
+func (svc *DatasetService) FindAll(ctx context.Context, p FindAllParams) ([]*rest.Dataset, error) {
 	datasets := make([]*rest.Dataset, 0)
 
 	params := pg.FindDatasetsParams{
-		Token:     token,
-		ArgLimit:  20,
-		ArgOffset: 0,
+		Token: p.Token,
 	}
-	if limit != nil {
-		params.ArgLimit = *limit
+
+	if p.Limit.Value != 0 {
+		params.ArgLimit = p.Limit.Value
 	}
-	if offset != nil {
-		params.ArgOffset = *offset
+	if p.Offset.Value != 0 {
+		params.ArgOffset = p.Offset.Value
 	}
 
 	datasets_list, err := svc.q.FindDatasets(ctx, params)
@@ -188,6 +187,49 @@ func (svc *DatasetService) FindAll(ctx context.Context, token []byte, limit *int
 		return nil, err
 	} else {
 		for _, t := range datasets_list {
+			dataset := &rest.Dataset{
+				Uuid:      t.Uuid.String(),
+				Name:      t.Name,
+				Size:      int64(t.Size),
+				Format:    rest.DatasetFormat(t.Format),
+				Created:   t.Created,
+				Updated:   t.Updated,
+				CreatedBy: t.CreatedBy.String(),
+				UpdatedBy: t.UpdatedBy.String(),
+				Tags:      t.Tags,
+			}
+
+			if t.BelongsTo != NilUUID {
+				v := t.BelongsTo.String()
+				dataset.BelongsTo = &v
+			}
+
+			datasets = append(datasets, dataset)
+		}
+	}
+
+	return datasets, nil
+}
+
+func (svc *DatasetService) FindByTags(ctx context.Context, p FindByTagsParams) ([]*rest.Dataset, error) {
+	datasets := make([]*rest.Dataset, 0)
+
+	params := pg.FindDatasetsByTagsParams{
+		Tags:  p.Tags,
+		Token: p.Token,
+	}
+	if p.Limit.Value != 0 {
+		params.ArgLimit = p.Limit.Value
+	}
+	if p.Offset.Value != 0 {
+		params.ArgOffset = p.Offset.Value
+	}
+
+	ds_list, err := svc.q.FindDatasetsByTags(ctx, params)
+	if err != nil {
+		return nil, err
+	} else {
+		for _, t := range ds_list {
 			dataset := &rest.Dataset{
 				Uuid:      t.Uuid.String(),
 				Name:      t.Name,

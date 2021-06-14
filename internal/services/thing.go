@@ -128,19 +128,18 @@ func (svc *ThingService) FindThingByUuid(ctx context.Context, thing_uuid uuid.UU
 	return thing, nil
 }
 
-func (svc *ThingService) FindAll(ctx context.Context, token []byte, limit *int64, offset *int64) ([]*rest.Thing, error) {
+func (svc *ThingService) FindAll(ctx context.Context, p FindAllParams) ([]*rest.Thing, error) {
 	things := make([]*rest.Thing, 0)
 
 	params := pg.FindThingsParams{
-		Token:     token,
-		ArgLimit:  20,
-		ArgOffset: 0,
+		Token: p.Token,
 	}
-	if limit != nil {
-		params.ArgLimit = *limit
+
+	if p.Limit.Value != 0 {
+		params.ArgLimit = p.Limit.Value
 	}
-	if offset != nil {
-		params.ArgOffset = *offset
+	if p.Offset.Value != 0 {
+		params.ArgOffset = p.Offset.Value
 	}
 
 	thing_list, err := svc.q.FindThings(ctx, params)
@@ -148,6 +147,43 @@ func (svc *ThingService) FindAll(ctx context.Context, token []byte, limit *int64
 		return nil, err
 	} else {
 		for _, t := range thing_list {
+			thing := &rest.Thing{
+				Uuid:      t.Uuid.String(),
+				Name:      t.Name,
+				State:     rest.ThingState(t.State),
+				CreatedBy: t.CreatedBy.String(),
+				Tags:      t.Tags,
+			}
+			if t.Type.Valid {
+				thing.Type = &t.Type.String
+			}
+
+			things = append(things, thing)
+		}
+	}
+
+	return things, nil
+}
+
+func (svc *ThingService) FindByTags(ctx context.Context, p FindByTagsParams) ([]*rest.Thing, error) {
+	things := make([]*rest.Thing, 0)
+
+	params := pg.FindThingsByTagsParams{
+		Tags:  p.Tags,
+		Token: p.Token,
+	}
+	if p.Limit.Value != 0 {
+		params.ArgLimit = p.Limit.Value
+	}
+	if p.Offset.Value != 0 {
+		params.ArgOffset = p.Offset.Value
+	}
+
+	things_list, err := svc.q.FindThingsByTags(ctx, params)
+	if err != nil {
+		return nil, err
+	} else {
+		for _, t := range things_list {
 			thing := &rest.Thing{
 				Uuid:      t.Uuid.String(),
 				Name:      t.Name,

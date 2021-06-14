@@ -282,6 +282,9 @@ type RangeStartParam time.Time
 // SiUnitParam defines model for siUnitParam.
 type SiUnitParam string
 
+// TagsFilterParam defines model for tagsFilterParam.
+type TagsFilterParam []string
+
 // UuidParam defines model for uuidParam.
 type UuidParam string
 
@@ -501,6 +504,9 @@ type FindDatasetsParams struct {
 
 	// The numbers of items to return.
 	Limit *LimitParam `json:"limit,omitempty"`
+
+	// Array of tags to filter on
+	Tags *TagsFilterParam `json:"tags,omitempty"`
 }
 
 // AddDatasetsJSONBodyFormat defines parameters for AddDatasets.
@@ -576,6 +582,9 @@ type FindProgramsParams struct {
 
 	// The numbers of items to return.
 	Limit *LimitParam `json:"limit,omitempty"`
+
+	// Array of tags to filter on
+	Tags *TagsFilterParam `json:"tags,omitempty"`
 }
 
 // AddProgramJSONBodyLanguage defines parameters for AddProgram.
@@ -614,6 +623,9 @@ type FindThingsParams struct {
 
 	// The number of items to skip before starting to collect the result set.
 	Offset *OffsetParam `json:"offset,omitempty"`
+
+	// Array of tags to filter on
+	Tags *TagsFilterParam `json:"tags,omitempty"`
 }
 
 // UpdateThingByUuidJSONBodyState defines parameters for UpdateThingByUuid.
@@ -629,7 +641,7 @@ type FindTimeSeriesParams struct {
 	Offset *OffsetParam `json:"offset,omitempty"`
 
 	// Array of tags to filter on
-	Tags *[]string `json:"tags,omitempty"`
+	Tags *TagsFilterParam `json:"tags,omitempty"`
 }
 
 // DeleteDataFromTimeSeriesParams defines parameters for DeleteDataFromTimeSeries.

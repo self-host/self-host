@@ -350,6 +350,117 @@ func (q *Queries) FindDatasets(ctx context.Context, arg FindDatasetsParams) ([]F
 	return items, nil
 }
 
+const findDatasetsByTags = `-- name: FindDatasetsByTags :many
+WITH usr AS (
+	SELECT users.uuid
+	FROM users, user_tokens
+	WHERE user_tokens.user_uuid = users.uuid
+	AND user_tokens.token_hash = sha256($3)
+	LIMIT 1
+), policies AS (
+	SELECT group_policies.effect, group_policies.priority, group_policies.resource
+	FROM group_policies, user_groups
+	WHERE user_groups.group_uuid = group_policies.group_uuid
+	AND user_groups.user_uuid = (SELECT uuid FROM usr)
+	AND action = 'read'
+)
+SELECT
+	uuid,
+	name,
+	format,
+	size,
+	belongs_to,
+	created,
+	updated,
+	created_by,
+	updated_by,
+	tags
+FROM datasets
+WHERE 'datasets/'||datasets.uuid LIKE ANY(
+	(SELECT resource FROM policies WHERE effect = 'allow')
+)
+AND $4 && datasets.tags
+EXCEPT
+SELECT
+	uuid,
+	name,
+	format,
+	size,
+	belongs_to,
+	created,
+	updated,
+	created_by,
+	updated_by,
+	tags
+FROM datasets
+WHERE 'datasets/'||datasets.uuid LIKE ANY(
+	(SELECT resource FROM policies WHERE effect = 'deny')
+)
+AND $4 && datasets.tags
+ORDER BY name
+LIMIT $2::BIGINT
+OFFSET $1::BIGINT
+`
+
+type FindDatasetsByTagsParams struct {
+	ArgOffset int64
+	ArgLimit  int64
+	Token     []byte
+	Tags      interface{}
+}
+
+type FindDatasetsByTagsRow struct {
+	Uuid      uuid.UUID
+	Name      string
+	Format    string
+	Size      int32
+	BelongsTo uuid.UUID
+	Created   time.Time
+	Updated   time.Time
+	CreatedBy uuid.UUID
+	UpdatedBy uuid.UUID
+	Tags      []string
+}
+
+func (q *Queries) FindDatasetsByTags(ctx context.Context, arg FindDatasetsByTagsParams) ([]FindDatasetsByTagsRow, error) {
+	rows, err := q.query(ctx, q.findDatasetsByTagsStmt, findDatasetsByTags,
+		arg.ArgOffset,
+		arg.ArgLimit,
+		arg.Token,
+		arg.Tags,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []FindDatasetsByTagsRow{}
+	for rows.Next() {
+		var i FindDatasetsByTagsRow
+		if err := rows.Scan(
+			&i.Uuid,
+			&i.Name,
+			&i.Format,
+			&i.Size,
+			&i.BelongsTo,
+			&i.Created,
+			&i.Updated,
+			&i.CreatedBy,
+			&i.UpdatedBy,
+			pq.Array(&i.Tags),
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getDatasetContentByUUID = `-- name: GetDatasetContentByUUID :one
 SELECT format, content
 FROM datasets

@@ -128,25 +128,18 @@ func (s *ProgramService) AddCodeRevision(ctx context.Context, p AddCodeRevisionP
 	return v, nil
 }
 
-type FindAllProgramsParams struct {
-	Token  []byte
-	Limit  *int64
-	Offset *int64
-}
-
-func (s *ProgramService) FindAll(ctx context.Context, p FindAllProgramsParams) ([]*rest.Program, error) {
+func (s *ProgramService) FindAll(ctx context.Context, p FindAllParams) ([]*rest.Program, error) {
 	programs := make([]*rest.Program, 0)
 
 	params := pg.FindProgramsParams{
-		Token:     p.Token,
-		ArgLimit:  20,
-		ArgOffset: 0,
+		Token: p.Token,
 	}
-	if p.Limit != nil {
-		params.ArgLimit = *p.Limit
+
+	if p.Limit.Value != 0 {
+		params.ArgLimit = p.Limit.Value
 	}
-	if p.Offset != nil {
-		params.ArgOffset = *p.Offset
+	if p.Offset.Value != 0 {
+		params.ArgOffset = p.Offset.Value
 	}
 
 	programs_list, err := s.q.FindPrograms(ctx, params)
@@ -154,6 +147,43 @@ func (s *ProgramService) FindAll(ctx context.Context, p FindAllProgramsParams) (
 		return nil, err
 	} else {
 		for _, t := range programs_list {
+			program := &rest.Program{
+				Uuid:     t.Uuid.String(),
+				Name:     t.Name,
+				Type:     rest.ProgramType(t.Type),
+				State:    rest.ProgramState(t.State),
+				Schedule: t.Schedule,
+				Deadline: int(t.Deadline),
+				Language: rest.ProgramLanguage(t.Language),
+				Tags:     t.Tags,
+			}
+
+			programs = append(programs, program)
+		}
+	}
+
+	return programs, nil
+}
+
+func (svc *ProgramService) FindByTags(ctx context.Context, p FindByTagsParams) ([]*rest.Program, error) {
+	programs := make([]*rest.Program, 0)
+
+	params := pg.FindProgramsByTagsParams{
+		Tags:  p.Tags,
+		Token: p.Token,
+	}
+	if p.Limit.Value != 0 {
+		params.ArgLimit = p.Limit.Value
+	}
+	if p.Offset.Value != 0 {
+		params.ArgOffset = p.Offset.Value
+	}
+
+	prog_list, err := svc.q.FindProgramsByTags(ctx, params)
+	if err != nil {
+		return nil, err
+	} else {
+		for _, t := range prog_list {
 			program := &rest.Program{
 				Uuid:     t.Uuid.String(),
 				Name:     t.Name,

@@ -130,6 +130,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.findDatasetsStmt, err = db.PrepareContext(ctx, findDatasets); err != nil {
 		return nil, fmt.Errorf("error preparing query FindDatasets: %w", err)
 	}
+	if q.findDatasetsByTagsStmt, err = db.PrepareContext(ctx, findDatasetsByTags); err != nil {
+		return nil, fmt.Errorf("error preparing query FindDatasetsByTags: %w", err)
+	}
 	if q.findGroupByUuidStmt, err = db.PrepareContext(ctx, findGroupByUuid); err != nil {
 		return nil, fmt.Errorf("error preparing query FindGroupByUuid: %w", err)
 	}
@@ -160,11 +163,17 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.findProgramsStmt, err = db.PrepareContext(ctx, findPrograms); err != nil {
 		return nil, fmt.Errorf("error preparing query FindPrograms: %w", err)
 	}
+	if q.findProgramsByTagsStmt, err = db.PrepareContext(ctx, findProgramsByTags); err != nil {
+		return nil, fmt.Errorf("error preparing query FindProgramsByTags: %w", err)
+	}
 	if q.findThingByUUIDStmt, err = db.PrepareContext(ctx, findThingByUUID); err != nil {
 		return nil, fmt.Errorf("error preparing query FindThingByUUID: %w", err)
 	}
 	if q.findThingsStmt, err = db.PrepareContext(ctx, findThings); err != nil {
 		return nil, fmt.Errorf("error preparing query FindThings: %w", err)
+	}
+	if q.findThingsByTagsStmt, err = db.PrepareContext(ctx, findThingsByTags); err != nil {
+		return nil, fmt.Errorf("error preparing query FindThingsByTags: %w", err)
 	}
 	if q.findTimeseriesStmt, err = db.PrepareContext(ctx, findTimeseries); err != nil {
 		return nil, fmt.Errorf("error preparing query FindTimeseries: %w", err)
@@ -495,6 +504,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing findDatasetsStmt: %w", cerr)
 		}
 	}
+	if q.findDatasetsByTagsStmt != nil {
+		if cerr := q.findDatasetsByTagsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing findDatasetsByTagsStmt: %w", cerr)
+		}
+	}
 	if q.findGroupByUuidStmt != nil {
 		if cerr := q.findGroupByUuidStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing findGroupByUuidStmt: %w", cerr)
@@ -545,6 +559,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing findProgramsStmt: %w", cerr)
 		}
 	}
+	if q.findProgramsByTagsStmt != nil {
+		if cerr := q.findProgramsByTagsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing findProgramsByTagsStmt: %w", cerr)
+		}
+	}
 	if q.findThingByUUIDStmt != nil {
 		if cerr := q.findThingByUUIDStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing findThingByUUIDStmt: %w", cerr)
@@ -553,6 +572,11 @@ func (q *Queries) Close() error {
 	if q.findThingsStmt != nil {
 		if cerr := q.findThingsStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing findThingsStmt: %w", cerr)
+		}
+	}
+	if q.findThingsByTagsStmt != nil {
+		if cerr := q.findThingsByTagsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing findThingsByTagsStmt: %w", cerr)
 		}
 	}
 	if q.findTimeseriesStmt != nil {
@@ -870,6 +894,7 @@ type Queries struct {
 	findDatasetByThingStmt           *sql.Stmt
 	findDatasetByUUIDStmt            *sql.Stmt
 	findDatasetsStmt                 *sql.Stmt
+	findDatasetsByTagsStmt           *sql.Stmt
 	findGroupByUuidStmt              *sql.Stmt
 	findGroupsStmt                   *sql.Stmt
 	findGroupsByUserStmt             *sql.Stmt
@@ -880,8 +905,10 @@ type Queries struct {
 	findProgramByUUIDStmt            *sql.Stmt
 	findProgramCodeRevisionsStmt     *sql.Stmt
 	findProgramsStmt                 *sql.Stmt
+	findProgramsByTagsStmt           *sql.Stmt
 	findThingByUUIDStmt              *sql.Stmt
 	findThingsStmt                   *sql.Stmt
+	findThingsByTagsStmt             *sql.Stmt
 	findTimeseriesStmt               *sql.Stmt
 	findTimeseriesByTagsStmt         *sql.Stmt
 	findTimeseriesByThingStmt        *sql.Stmt
@@ -972,6 +999,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		findDatasetByThingStmt:           q.findDatasetByThingStmt,
 		findDatasetByUUIDStmt:            q.findDatasetByUUIDStmt,
 		findDatasetsStmt:                 q.findDatasetsStmt,
+		findDatasetsByTagsStmt:           q.findDatasetsByTagsStmt,
 		findGroupByUuidStmt:              q.findGroupByUuidStmt,
 		findGroupsStmt:                   q.findGroupsStmt,
 		findGroupsByUserStmt:             q.findGroupsByUserStmt,
@@ -982,8 +1010,10 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		findProgramByUUIDStmt:            q.findProgramByUUIDStmt,
 		findProgramCodeRevisionsStmt:     q.findProgramCodeRevisionsStmt,
 		findProgramsStmt:                 q.findProgramsStmt,
+		findProgramsByTagsStmt:           q.findProgramsByTagsStmt,
 		findThingByUUIDStmt:              q.findThingByUUIDStmt,
 		findThingsStmt:                   q.findThingsStmt,
+		findThingsByTagsStmt:             q.findThingsByTagsStmt,
 		findTimeseriesStmt:               q.findTimeseriesStmt,
 		findTimeseriesByTagsStmt:         q.findTimeseriesByTagsStmt,
 		findTimeseriesByThingStmt:        q.findTimeseriesByThingStmt,

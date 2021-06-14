@@ -82,6 +82,9 @@ func (ra *RestApi) AddProgram(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ra *RestApi) FindPrograms(w http.ResponseWriter, r *http.Request, p rest.FindProgramsParams) {
+	var err error
+	var programs []*rest.Program
+
 	db, err := ra.GetDB(r)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorUndefined)
@@ -94,15 +97,39 @@ func (ra *RestApi) FindPrograms(w http.ResponseWriter, r *http.Request, p rest.F
 		return
 	}
 
-	s := services.NewProgramService(db)
-	programs, err := s.FindAll(r.Context(), services.FindAllProgramsParams{
-		Token:  []byte(domaintoken.Token),
-		Limit:  (*int64)(p.Limit),
-		Offset: (*int64)(p.Offset),
-	})
-	if err != nil {
-		ie.SendHTTPError(w, ie.ParseDBError(err))
-		return
+	svc := services.NewProgramService(db)
+
+	if p.Tags != nil {
+		params := services.NewFindByTagsParams(
+			[]byte(domaintoken.Token),
+			*p.Tags,
+			(*int64)(p.Limit),
+			(*int64)(p.Offset))
+
+		if params.Limit.Value == 0 {
+			params.Limit.Value = 20
+		}
+
+		programs, err = svc.FindByTags(r.Context(), params)
+		if err != nil {
+			ie.SendHTTPError(w, ie.ParseDBError(err))
+			return
+		}
+	} else {
+		params := services.NewFindAllParams(
+			[]byte(domaintoken.Token),
+			(*int64)(p.Limit),
+			(*int64)(p.Offset))
+
+		if params.Limit.Value == 0 {
+			params.Limit.Value = 20
+		}
+
+		programs, err = svc.FindAll(r.Context(), params)
+		if err != nil {
+			ie.SendHTTPError(w, ie.ParseDBError(err))
+			return
+		}
 	}
 
 	w.WriteHeader(http.StatusOK)

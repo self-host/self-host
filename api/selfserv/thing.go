@@ -80,6 +80,9 @@ func (ra *RestApi) AddThing(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ra *RestApi) FindThings(w http.ResponseWriter, r *http.Request, p rest.FindThingsParams) {
+	var err error
+	var things []*rest.Thing
+
 	db, err := ra.GetDB(r)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorUndefined)
@@ -93,10 +96,38 @@ func (ra *RestApi) FindThings(w http.ResponseWriter, r *http.Request, p rest.Fin
 	}
 
 	svc := services.NewThingService(db)
-	things, err := svc.FindAll(r.Context(), []byte(domaintoken.Token), (*int64)(p.Limit), (*int64)(p.Offset))
-	if err != nil {
-		ie.SendHTTPError(w, ie.ParseDBError(err))
-		return
+
+	if p.Tags != nil {
+		params := services.NewFindByTagsParams(
+			[]byte(domaintoken.Token),
+			*p.Tags,
+			(*int64)(p.Limit),
+			(*int64)(p.Offset))
+
+		if params.Limit.Value == 0 {
+			params.Limit.Value = 20
+		}
+
+		things, err = svc.FindByTags(r.Context(), params)
+		if err != nil {
+			ie.SendHTTPError(w, ie.ParseDBError(err))
+			return
+		}
+	} else {
+		params := services.NewFindAllParams(
+			[]byte(domaintoken.Token),
+			(*int64)(p.Limit),
+			(*int64)(p.Offset))
+
+		if params.Limit.Value == 0 {
+			params.Limit.Value = 20
+		}
+
+		things, err = svc.FindAll(r.Context(), params)
+		if err != nil {
+			ie.SendHTTPError(w, ie.ParseDBError(err))
+			return
+		}
 	}
 
 	w.WriteHeader(http.StatusOK)

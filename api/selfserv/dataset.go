@@ -90,6 +90,9 @@ func (ra *RestApi) AddDatasets(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ra *RestApi) FindDatasets(w http.ResponseWriter, r *http.Request, p rest.FindDatasetsParams) {
+	var err error
+	var datasets []*rest.Dataset
+
 	db, err := ra.GetDB(r)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorUndefined)
@@ -103,10 +106,38 @@ func (ra *RestApi) FindDatasets(w http.ResponseWriter, r *http.Request, p rest.F
 	}
 
 	svc := services.NewDatasetService(db)
-	datasets, err := svc.FindAll(r.Context(), []byte(domaintoken.Token), (*int64)(p.Limit), (*int64)(p.Offset))
-	if err != nil {
-		ie.SendHTTPError(w, ie.ParseDBError(err))
-		return
+
+	if p.Tags != nil {
+		params := services.NewFindByTagsParams(
+			[]byte(domaintoken.Token),
+			*p.Tags,
+			(*int64)(p.Limit),
+			(*int64)(p.Offset))
+
+		if params.Limit.Value == 0 {
+			params.Limit.Value = 20
+		}
+
+		datasets, err = svc.FindByTags(r.Context(), params)
+		if err != nil {
+			ie.SendHTTPError(w, ie.ParseDBError(err))
+			return
+		}
+	} else {
+		params := services.NewFindAllParams(
+			[]byte(domaintoken.Token),
+			(*int64)(p.Limit),
+			(*int64)(p.Offset))
+
+		if params.Limit.Value == 0 {
+			params.Limit.Value = 20
+		}
+
+		datasets, err = svc.FindAll(r.Context(), params)
+		if err != nil {
+			ie.SendHTTPError(w, ie.ParseDBError(err))
+			return
+		}
 	}
 
 	w.WriteHeader(http.StatusOK)

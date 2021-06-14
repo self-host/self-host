@@ -263,6 +263,16 @@ components:
       description: Value should be less or equal to (<=) this.
       schema:
         type: number
+    tagsFilterParam:
+      in: query
+      name: tags
+      description: Array of tags to filter on
+      required: false
+      style: form
+      schema:
+        type: array
+        items:
+          type: string
 
   requestBodies:
     NewDataset:
@@ -1123,6 +1133,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/offsetParam'
         - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/tagsFilterParam'
       responses:
         '200':
           description: List of datasets
@@ -1885,6 +1896,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/offsetParam'
         - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/tagsFilterParam'
       responses:
         '200':
           description: Success
@@ -2249,6 +2261,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/limitParam'
         - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/tagsFilterParam'
       responses:
         '200':
           description: Success
@@ -2461,15 +2474,8 @@ paths:
       parameters:
         - $ref: '#/components/parameters/limitParam'
         - $ref: '#/components/parameters/offsetParam'
-        - in: query
-          name: tags
-          description: Array of tags to filter on
-          required: false
-          style: form
-          schema:
-            type: array
-            items:
-              type: string
+        - $ref: '#/components/parameters/tagsFilterParam'
+
       responses:
         '200':
           description: Success

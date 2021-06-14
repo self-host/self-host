@@ -76,6 +76,38 @@ LIMIT sqlc.arg(arg_limit)::BIGINT
 OFFSET sqlc.arg(arg_offset)::BIGINT
 ;
 
+-- name: FindThingsByTags :many
+WITH usr AS (
+	SELECT users.uuid
+	FROM users, user_tokens
+	WHERE user_tokens.user_uuid = users.uuid
+	AND user_tokens.token_hash = sha256(sqlc.arg(token))
+	LIMIT 1
+), policies AS (
+	SELECT group_policies.effect, group_policies.priority, group_policies.resource
+	FROM group_policies, user_groups
+	WHERE user_groups.group_uuid = group_policies.group_uuid
+	AND user_groups.user_uuid = (SELECT uuid FROM usr)
+	AND action = 'read'
+)
+SELECT *
+FROM things
+WHERE 'things/'||things.uuid LIKE ANY(
+	(SELECT resource FROM policies WHERE effect = 'allow')
+)
+AND sqlc.arg(tags) && things.tags
+EXCEPT
+SELECT *
+FROM things
+WHERE 'things/'||things.uuid LIKE ANY(
+	(SELECT resource FROM policies WHERE effect = 'deny')
+)
+AND sqlc.arg(tags) && things.tags
+ORDER BY name
+LIMIT sqlc.arg(arg_limit)::BIGINT
+OFFSET sqlc.arg(arg_offset)::BIGINT
+;
+
 -- name: SetThingNameByUUID :execrows
 UPDATE things
 SET name = sqlc.arg(name)

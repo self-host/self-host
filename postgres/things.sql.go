@@ -197,6 +197,80 @@ func (q *Queries) FindThings(ctx context.Context, arg FindThingsParams) ([]Thing
 	return items, nil
 }
 
+const findThingsByTags = `-- name: FindThingsByTags :many
+WITH usr AS (
+	SELECT users.uuid
+	FROM users, user_tokens
+	WHERE user_tokens.user_uuid = users.uuid
+	AND user_tokens.token_hash = sha256($3)
+	LIMIT 1
+), policies AS (
+	SELECT group_policies.effect, group_policies.priority, group_policies.resource
+	FROM group_policies, user_groups
+	WHERE user_groups.group_uuid = group_policies.group_uuid
+	AND user_groups.user_uuid = (SELECT uuid FROM usr)
+	AND action = 'read'
+)
+SELECT uuid, name, type, state, created_by, tags
+FROM things
+WHERE 'things/'||things.uuid LIKE ANY(
+	(SELECT resource FROM policies WHERE effect = 'allow')
+)
+AND $4 && things.tags
+EXCEPT
+SELECT uuid, name, type, state, created_by, tags
+FROM things
+WHERE 'things/'||things.uuid LIKE ANY(
+	(SELECT resource FROM policies WHERE effect = 'deny')
+)
+AND $4 && things.tags
+ORDER BY name
+LIMIT $2::BIGINT
+OFFSET $1::BIGINT
+`
+
+type FindThingsByTagsParams struct {
+	ArgOffset int64
+	ArgLimit  int64
+	Token     []byte
+	Tags      interface{}
+}
+
+func (q *Queries) FindThingsByTags(ctx context.Context, arg FindThingsByTagsParams) ([]Thing, error) {
+	rows, err := q.query(ctx, q.findThingsByTagsStmt, findThingsByTags,
+		arg.ArgOffset,
+		arg.ArgLimit,
+		arg.Token,
+		arg.Tags,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Thing{}
+	for rows.Next() {
+		var i Thing
+		if err := rows.Scan(
+			&i.Uuid,
+			&i.Name,
+			&i.Type,
+			&i.State,
+			&i.CreatedBy,
+			pq.Array(&i.Tags),
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const setThingNameByUUID = `-- name: SetThingNameByUUID :execrows
 UPDATE things
 SET name = $1
