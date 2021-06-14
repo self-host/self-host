@@ -58,6 +58,7 @@ type AddProgramParams struct {
 	Deadline  int
 	Language  string
 	CreatedBy uuid.UUID
+	Tags      []string
 }
 
 func (s *ProgramService) AddProgram(ctx context.Context, p AddProgramParams) (*rest.Program, error) {
@@ -69,6 +70,7 @@ func (s *ProgramService) AddProgram(ctx context.Context, p AddProgramParams) (*r
 		Deadline:  int32(p.Deadline),
 		Language:  p.Language,
 		CreatedBy: p.CreatedBy,
+		Tags:      p.Tags,
 	}
 
 	program, err := s.q.CreateProgram(ctx, params)
@@ -84,6 +86,7 @@ func (s *ProgramService) AddProgram(ctx context.Context, p AddProgramParams) (*r
 		Schedule: program.Schedule,
 		Deadline: int(program.Deadline),
 		Language: rest.ProgramLanguage(program.Language),
+		Tags:     p.Tags,
 	}
 
 	return v, nil
@@ -159,6 +162,7 @@ func (s *ProgramService) FindAll(ctx context.Context, p FindAllProgramsParams) (
 				Schedule: t.Schedule,
 				Deadline: int(t.Deadline),
 				Language: rest.ProgramLanguage(t.Language),
+				Tags:     t.Tags,
 			}
 
 			programs = append(programs, program)
@@ -182,6 +186,7 @@ func (s *ProgramService) FindProgramByUuid(ctx context.Context, id uuid.UUID) (*
 		Schedule: program.Schedule,
 		Deadline: int(program.Deadline),
 		Language: rest.ProgramLanguage(program.Language),
+		Tags:     program.Tags,
 	}
 
 	return v, nil
@@ -286,6 +291,7 @@ type UpdateProgramByUuidParams struct {
 	Schedule *string
 	Deadline *int
 	Language *string
+	Tags     *[]string
 }
 
 func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, p UpdateProgramByUuidParams) (int64, error) {
@@ -375,6 +381,19 @@ func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, 
 		} else {
 			count += c
 		}
+	}
+
+	if p.Tags != nil {
+		params := pg.SetProgramTagsParams{
+			Uuid: id,
+			Tags: *p.Tags,
+		}
+		c, err := q.SetProgramTags(ctx, params)
+		if err != nil {
+			tx.Rollback()
+			return 0, err
+		}
+		count += c
 	}
 
 	tx.Commit()

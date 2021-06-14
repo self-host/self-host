@@ -56,6 +56,7 @@ type AddDatasetParams struct {
 	Content   []byte
 	CreatedBy uuid.UUID
 	BelongsTo uuid.UUID
+	Tags      []string
 }
 
 func (svc *DatasetService) Exists(ctx context.Context, id uuid.UUID) (bool, error) {
@@ -68,12 +69,20 @@ func (svc *DatasetService) Exists(ctx context.Context, id uuid.UUID) (bool, erro
 }
 
 func (svc *DatasetService) AddDataset(ctx context.Context, p *AddDatasetParams) (*rest.Dataset, error) {
+	tags := make([]string, 0)
+	if p.Tags != nil {
+		for _, tag := range p.Tags {
+			tags = append(tags, tag)
+		}
+	}
+
 	params := pg.CreateDatasetParams{
 		Name:      p.Name,
 		Content:   p.Content,
 		Format:    p.Format,
 		CreatedBy: p.CreatedBy,
 		BelongsTo: p.BelongsTo,
+		Tags:      tags,
 	}
 
 	dataset, err := svc.q.CreateDataset(ctx, params)
@@ -90,6 +99,7 @@ func (svc *DatasetService) AddDataset(ctx context.Context, p *AddDatasetParams) 
 		Updated:   dataset.Updated,
 		CreatedBy: dataset.CreatedBy.String(),
 		UpdatedBy: dataset.UpdatedBy.String(),
+		Tags:      dataset.Tags,
 	}
 
 	if dataset.BelongsTo != NilUUID {
@@ -115,6 +125,7 @@ func (svc *DatasetService) FindDatasetByUuid(ctx context.Context, id uuid.UUID) 
 		Updated:   dataset.Updated,
 		CreatedBy: dataset.CreatedBy.String(),
 		UpdatedBy: dataset.UpdatedBy.String(),
+		Tags:      dataset.Tags,
 	}
 
 	if dataset.BelongsTo != NilUUID {
@@ -142,6 +153,7 @@ func (svc *DatasetService) FindByThing(ctx context.Context, id uuid.UUID) ([]*re
 				Updated:   t.Updated,
 				CreatedBy: t.CreatedBy.String(),
 				UpdatedBy: t.UpdatedBy.String(),
+				Tags:      t.Tags,
 			}
 
 			if t.BelongsTo != NilUUID {
@@ -185,6 +197,7 @@ func (svc *DatasetService) FindAll(ctx context.Context, token []byte, limit *int
 				Updated:   t.Updated,
 				CreatedBy: t.CreatedBy.String(),
 				UpdatedBy: t.UpdatedBy.String(),
+				Tags:      t.Tags,
 			}
 
 			if t.BelongsTo != NilUUID {
@@ -215,6 +228,7 @@ type UpdateDatasetByUuidParams struct {
 	Content *[]byte
 	Format  *string
 	Name    *string
+	Tags    *[]string
 }
 
 func (svc *DatasetService) UpdateDatasetByUuid(ctx context.Context, id uuid.UUID, p UpdateDatasetByUuidParams) (int64, error) {
@@ -265,6 +279,19 @@ func (svc *DatasetService) UpdateDatasetByUuid(ctx context.Context, id uuid.UUID
 		} else {
 			count += c
 		}
+	}
+
+	if p.Tags != nil {
+		params := pg.SetDatasetTagsParams{
+			Uuid: id,
+			Tags: *p.Tags,
+		}
+		c, err := q.SetDatasetTags(ctx, params)
+		if err != nil {
+			tx.Rollback()
+			return 0, err
+		}
+		count += c
 	}
 
 	tx.Commit()

@@ -7,7 +7,9 @@ CREATE TABLE programs (
         state TEXT NOT NULL DEFAULT 'inactive',
         schedule TEXT NOT NULL DEFAULT '0s',
         deadline INTEGER NOT NULL DEFAULT 1000,
-        language TEXT NOT NULL DEFAULT 'tengo'
+        language TEXT NOT NULL DEFAULT 'tengo',
+
+        tags TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[]
 );
 
 CREATE TABLE program_code_revisions (
@@ -21,5 +23,10 @@ CREATE TABLE program_code_revisions (
         checksum BYTEA,
         PRIMARY KEY (program_uuid, revision)
 );
+
+-- Must use the array operators for this index to work
+-- https://www.postgresql.org/docs/current/functions-array.html#ARRAY-OPERATORS-TABLE
+-- fastupdate = false to spread out the load
+CREATE INDEX programs_tags_idx ON programs USING GIN("tags") WITH (fastupdate = false);
 
 COMMIT;

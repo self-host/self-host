@@ -6,11 +6,12 @@ WHERE things.uuid = sqlc.arg(uuid);
 -- name: CreateThing :one
 WITH t AS (
 	INSERT INTO things (
-		name, type, created_by
+		name, type, created_by, tags
 	) VALUES (
 		sqlc.arg(name),
 		sqlc.arg(type),
-		sqlc.arg(created_by)
+		sqlc.arg(created_by),
+		sqlc.arg(tags)
 	)
 	RETURNING *
 ), grp AS (
@@ -88,6 +89,11 @@ WHERE things.uuid = sqlc.arg(uuid);
 -- name: SetThingStateByUUID :execrows
 UPDATE things
 SET state = sqlc.arg(state)
+WHERE things.uuid = sqlc.arg(uuid);
+
+-- name: SetThingTags :execrows
+UPDATE things
+SET tags = sqlc.arg(tags)
 WHERE things.uuid = sqlc.arg(uuid);
 
 -- name: DeleteThing :execrows

@@ -8,18 +8,20 @@ import (
 	"database/sql"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 const createThing = `-- name: CreateThing :one
 WITH t AS (
 	INSERT INTO things (
-		name, type, created_by
+		name, type, created_by, tags
 	) VALUES (
 		$1,
 		$2,
-		$3
+		$3,
+		$4
 	)
-	RETURNING uuid, name, type, state, created_by
+	RETURNING uuid, name, type, state, created_by, tags
 ), grp AS (
 	SELECT groups.uuid
 	FROM groups, user_groups
@@ -43,7 +45,7 @@ WITH t AS (
 		(SELECT uuid FROM grp), 0, 'allow', 'delete','things/'||(SELECT uuid FROM t)||'/%'
 	)
 )
-SELECT uuid, name, type, state, created_by
+SELECT uuid, name, type, state, created_by, tags
 FROM t LIMIT 1
 `
 
@@ -51,6 +53,7 @@ type CreateThingParams struct {
 	Name      string
 	Type      sql.NullString
 	CreatedBy uuid.UUID
+	Tags      []string
 }
 
 type CreateThingRow struct {
@@ -59,10 +62,16 @@ type CreateThingRow struct {
 	Type      sql.NullString
 	State     ThingState
 	CreatedBy uuid.UUID
+	Tags      []string
 }
 
 func (q *Queries) CreateThing(ctx context.Context, arg CreateThingParams) (CreateThingRow, error) {
-	row := q.queryRow(ctx, q.createThingStmt, createThing, arg.Name, arg.Type, arg.CreatedBy)
+	row := q.queryRow(ctx, q.createThingStmt, createThing,
+		arg.Name,
+		arg.Type,
+		arg.CreatedBy,
+		pq.Array(arg.Tags),
+	)
 	var i CreateThingRow
 	err := row.Scan(
 		&i.Uuid,
@@ -70,6 +79,7 @@ func (q *Queries) CreateThing(ctx context.Context, arg CreateThingParams) (Creat
 		&i.Type,
 		&i.State,
 		&i.CreatedBy,
+		pq.Array(&i.Tags),
 	)
 	return i, err
 }
@@ -101,7 +111,7 @@ func (q *Queries) ExistsThing(ctx context.Context, uuid uuid.UUID) (int64, error
 }
 
 const findThingByUUID = `-- name: FindThingByUUID :one
-SELECT uuid, name, type, state, created_by
+SELECT uuid, name, type, state, created_by, tags
 FROM things
 WHERE things.uuid = $1
 LIMIT 1
@@ -116,6 +126,7 @@ func (q *Queries) FindThingByUUID(ctx context.Context, uuid uuid.UUID) (Thing, e
 		&i.Type,
 		&i.State,
 		&i.CreatedBy,
+		pq.Array(&i.Tags),
 	)
 	return i, err
 }
@@ -134,13 +145,13 @@ WITH usr AS (
 	AND user_groups.user_uuid = (SELECT uuid FROM usr)
 	AND action = 'read'
 )
-SELECT uuid, name, type, state, created_by
+SELECT uuid, name, type, state, created_by, tags
 FROM things
 WHERE 'things/'||things.uuid LIKE ANY(
 	(SELECT resource FROM policies WHERE effect = 'allow')
 )
 EXCEPT
-SELECT uuid, name, type, state, created_by
+SELECT uuid, name, type, state, created_by, tags
 FROM things
 WHERE 'things/'||things.uuid LIKE ANY(
 	(SELECT resource FROM policies WHERE effect = 'deny')
@@ -171,6 +182,7 @@ func (q *Queries) FindThings(ctx context.Context, arg FindThingsParams) ([]Thing
 			&i.Type,
 			&i.State,
 			&i.CreatedBy,
+			pq.Array(&i.Tags),
 		); err != nil {
 			return nil, err
 		}
@@ -217,6 +229,25 @@ type SetThingStateByUUIDParams struct {
 
 func (q *Queries) SetThingStateByUUID(ctx context.Context, arg SetThingStateByUUIDParams) (int64, error) {
 	result, err := q.exec(ctx, q.setThingStateByUUIDStmt, setThingStateByUUID, arg.State, arg.Uuid)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
+const setThingTags = `-- name: SetThingTags :execrows
+UPDATE things
+SET tags = $1
+WHERE things.uuid = $2
+`
+
+type SetThingTagsParams struct {
+	Tags []string
+	Uuid uuid.UUID
+}
+
+func (q *Queries) SetThingTags(ctx context.Context, arg SetThingTagsParams) (int64, error) {
+	result, err := q.exec(ctx, q.setThingTagsStmt, setThingTags, pq.Array(arg.Tags), arg.Uuid)
 	if err != nil {
 		return 0, err
 	}

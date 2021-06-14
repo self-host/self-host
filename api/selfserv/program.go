@@ -55,7 +55,8 @@ func (ra *RestApi) AddProgram(w http.ResponseWriter, r *http.Request) {
 	created_by, err := u.GetUserUuidFromToken(r.Context(), []byte(domaintoken.Token))
 
 	s := services.NewProgramService(db)
-	prog, err := s.AddProgram(r.Context(), services.AddProgramParams{
+
+	params := services.AddProgramParams{
 		Name:      newProgram.Name,
 		Type:      string(newProgram.Type),
 		State:     string(newProgram.State),
@@ -63,7 +64,13 @@ func (ra *RestApi) AddProgram(w http.ResponseWriter, r *http.Request) {
 		Deadline:  newProgram.Deadline,
 		Language:  string(newProgram.Language),
 		CreatedBy: created_by,
-	})
+	}
+
+	if newProgram.Tags != nil {
+		params.Tags = *newProgram.Tags
+	}
+
+	prog, err := s.AddProgram(r.Context(), params)
 
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
@@ -154,6 +161,7 @@ func (ra *RestApi) UpdateProgramByUuid(w http.ResponseWriter, r *http.Request, i
 		Schedule: updProgram.Schedule,
 		Deadline: updProgram.Deadline,
 		Language: (*string)(updProgram.Language),
+		Tags:     updProgram.Tags,
 	}
 
 	count, err := svc.UpdateProgramByUuid(r.Context(), program_uuid, params)

@@ -120,7 +120,8 @@ type Dataset struct {
 	Name string `json:"name"`
 
 	// The size of the content in number of bytes.
-	Size int64 `json:"size"`
+	Size int64    `json:"size"`
+	Tags []string `json:"tags"`
 
 	// Date-time of last change, as defined by RFC 3339, section 5.6.
 	Updated time.Time `json:"updated"`
@@ -171,6 +172,7 @@ type Program struct {
 	// Ignored for Modules and Webhooks. An interval at which this Program (routine) shall execute. An interval string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
 	Schedule string       `json:"schedule"`
 	State    ProgramState `json:"state"`
+	Tags     []string     `json:"tags"`
 
 	// Routines are executed at an interval. Webhooks are called using the REST API. Modules are used by Routines and Webhooks to extend their functionality.
 	Type ProgramType `json:"type"`
@@ -193,6 +195,7 @@ type Thing struct {
 	CreatedBy string     `json:"created_by"`
 	Name      string     `json:"name"`
 	State     ThingState `json:"state"`
+	Tags      []string   `json:"tags"`
 	Type      *string    `json:"type"`
 	Uuid      string     `json:"uuid"`
 }
@@ -292,6 +295,9 @@ type NewDataset struct {
 	Content *[]byte          `json:"content"`
 	Format  NewDatasetFormat `json:"format"`
 	Name    string           `json:"name"`
+
+	// An array of text labels (tags) for tracking and filtering purposes.
+	Tags *[]string `json:"tags,omitempty"`
 }
 
 // NewGroup defines model for NewGroup.
@@ -322,6 +328,9 @@ type NewProgram struct {
 	Schedule string          `json:"schedule"`
 	State    NewProgramState `json:"state"`
 
+	// An array of text labels (tags) for tracking and filtering purposes.
+	Tags *[]string `json:"tags,omitempty"`
+
 	// Routines are executed at an interval. Webhooks are called using the REST API. Modules are used by Routines and Webhooks to extend their functionality.
 	Type NewProgramType `json:"type"`
 }
@@ -331,6 +340,9 @@ type NewThing struct {
 
 	// Name of the thing
 	Name string `json:"name"`
+
+	// An array of text labels (tags) for tracking and filtering purposes.
+	Tags *[]string `json:"tags,omitempty"`
 
 	// Thing type declaration
 	Type *string `json:"type,omitempty"`
@@ -376,6 +388,9 @@ type UpdateDataset struct {
 	Content *[]byte              `json:"content,omitempty"`
 	Format  *UpdateDatasetFormat `json:"format,omitempty"`
 	Name    *string              `json:"name,omitempty"`
+
+	// An array of text labels (tags) for tracking and filtering purposes.
+	Tags *[]string `json:"tags,omitempty"`
 }
 
 // UpdateGroup defines model for UpdateGroup.
@@ -404,6 +419,9 @@ type UpdateProgram struct {
 	Schedule *string             `json:"schedule,omitempty"`
 	State    *UpdateProgramState `json:"state,omitempty"`
 
+	// An array of text labels (tags) for tracking and filtering purposes.
+	Tags *[]string `json:"tags,omitempty"`
+
 	// Routines are executed at an interval. Webhooks are called using the REST API. Modules are used by Routines and Webhooks to extend their functionality.
 	Type *UpdateProgramType `json:"type,omitempty"`
 }
@@ -421,6 +439,9 @@ type UpdateThing struct {
 
 	// The state of the thing.
 	State *UpdateThingState `json:"state,omitempty"`
+
+	// An array of text labels (tags) for tracking and filtering purposes.
+	Tags *[]string `json:"tags,omitempty"`
 
 	// A text label to organize Things into different types.
 	Type *string `json:"type"`

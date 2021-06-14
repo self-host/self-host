@@ -102,6 +102,7 @@ type Dataset struct {
 	Updated   time.Time
 	CreatedBy uuid.UUID
 	UpdatedBy uuid.UUID
+	Tags      []string
 }
 
 type Group struct {
@@ -126,6 +127,7 @@ type Program struct {
 	Schedule string
 	Deadline int32
 	Language string
+	Tags     []string
 }
 
 type ProgramCodeRevision struct {
@@ -145,6 +147,7 @@ type Thing struct {
 	Type      sql.NullString
 	State     ThingState
 	CreatedBy uuid.UUID
+	Tags      []string
 }
 
 type ThingDep struct {

@@ -5,14 +5,15 @@ WHERE programs.uuid = sqlc.arg(uuid);
 
 -- name: CreateProgram :one
 WITH p AS (
-	INSERT INTO programs (name, type, state, schedule, deadline, language)
+	INSERT INTO programs (name, type, state, schedule, deadline, language, tags)
 	VALUES (
 		sqlc.arg(name),
 		sqlc.arg(type),
 		sqlc.arg(state),
 		sqlc.arg(schedule),
 		sqlc.arg(deadline),
-		sqlc.arg(language)
+		sqlc.arg(language),
+		sqlc.arg(tags)
 	) RETURNING *
 ), grp AS (
 	SELECT groups.uuid
@@ -237,6 +238,11 @@ WHERE programs.uuid = sqlc.arg(uuid);
 -- name: SetProgramLanguageByUUID :execrows
 UPDATE programs
 SET language = sqlc.arg(language)
+WHERE programs.uuid = sqlc.arg(uuid);
+
+-- name: SetProgramTags :execrows
+UPDATE programs
+SET tags = sqlc.arg(tags)
 WHERE programs.uuid = sqlc.arg(uuid);
 
 -- name: SignProgramCodeRevision :execrows

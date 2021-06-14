@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 const createCodeRevision = `-- name: CreateCodeRevision :one
@@ -66,20 +67,21 @@ func (q *Queries) CreateCodeRevision(ctx context.Context, arg CreateCodeRevision
 
 const createProgram = `-- name: CreateProgram :one
 WITH p AS (
-	INSERT INTO programs (name, type, state, schedule, deadline, language)
+	INSERT INTO programs (name, type, state, schedule, deadline, language, tags)
 	VALUES (
 		$1,
 		$2,
 		$3,
 		$4,
 		$5,
-		$6
-	) RETURNING uuid, name, type, state, schedule, deadline, language
+		$6,
+		$7
+	) RETURNING uuid, name, type, state, schedule, deadline, language, tags
 ), grp AS (
 	SELECT groups.uuid
 	FROM groups, user_groups
 	WHERE user_groups.group_uuid = groups.uuid
-	AND user_groups.user_uuid = $7
+	AND user_groups.user_uuid = $8
 	AND groups.uuid = (
 		SELECT users.uuid
 		FROM users
@@ -98,7 +100,7 @@ WITH p AS (
 		(SELECT uuid FROM grp), 0, 'allow', 'delete','programs/'||(SELECT uuid FROM p)||'/%'
 	)
 )
-SELECT uuid, name, type, state, schedule, deadline, language
+SELECT uuid, name, type, state, schedule, deadline, language, tags
 FROM p LIMIT 1
 `
 
@@ -109,6 +111,7 @@ type CreateProgramParams struct {
 	Schedule  string
 	Deadline  int32
 	Language  string
+	Tags      []string
 	CreatedBy uuid.UUID
 }
 
@@ -120,6 +123,7 @@ type CreateProgramRow struct {
 	Schedule string
 	Deadline int32
 	Language string
+	Tags     []string
 }
 
 func (q *Queries) CreateProgram(ctx context.Context, arg CreateProgramParams) (CreateProgramRow, error) {
@@ -130,6 +134,7 @@ func (q *Queries) CreateProgram(ctx context.Context, arg CreateProgramParams) (C
 		arg.Schedule,
 		arg.Deadline,
 		arg.Language,
+		pq.Array(arg.Tags),
 		arg.CreatedBy,
 	)
 	var i CreateProgramRow
@@ -141,6 +146,7 @@ func (q *Queries) CreateProgram(ctx context.Context, arg CreateProgramParams) (C
 		&i.Schedule,
 		&i.Deadline,
 		&i.Language,
+		pq.Array(&i.Tags),
 	)
 	return i, err
 }
@@ -260,7 +266,7 @@ const findAllRoutineRevisions = `-- name: FindAllRoutineRevisions :many
 WITH p AS (
 	SELECT
         	pcr.program_uuid, pcr.revision, pcr.created, pcr.signed, pcr.created_by, pcr.signed_by, pcr.code, pcr.checksum,
-		programs.uuid, programs.name, programs.type, programs.state, programs.schedule, programs.deadline, programs.language,
+		programs.uuid, programs.name, programs.type, programs.state, programs.schedule, programs.deadline, programs.language, programs.tags,
 		RANK () OVER (
 			PARTITION BY pcr.program_uuid
 			ORDER BY revision DESC
@@ -332,7 +338,7 @@ func (q *Queries) FindAllRoutineRevisions(ctx context.Context) ([]FindAllRoutine
 
 const findProgramByUUID = `-- name: FindProgramByUUID :one
 SELECT
-	uuid, name, type, state, schedule, deadline, language
+	uuid, name, type, state, schedule, deadline, language, tags
 FROM programs
 WHERE programs.uuid = $1
 LIMIT 1
@@ -349,6 +355,7 @@ func (q *Queries) FindProgramByUUID(ctx context.Context, uuid uuid.UUID) (Progra
 		&i.Schedule,
 		&i.Deadline,
 		&i.Language,
+		pq.Array(&i.Tags),
 	)
 	return i, err
 }
@@ -417,14 +424,14 @@ WITH usr AS (
 	AND action = 'read'
 )
 SELECT
-	uuid, name, type, state, schedule, deadline, language
+	uuid, name, type, state, schedule, deadline, language, tags
 FROM programs
 WHERE 'programs/'||programs.uuid LIKE ANY(
 	(SELECT resource FROM policies WHERE effect = 'allow')
 )
 EXCEPT
 SELECT
-	uuid, name, type, state, schedule, deadline, language
+	uuid, name, type, state, schedule, deadline, language, tags
 FROM programs
 WHERE 'programs/'||programs.uuid LIKE ANY(
 	(SELECT resource FROM policies WHERE effect = 'deny')
@@ -457,6 +464,7 @@ func (q *Queries) FindPrograms(ctx context.Context, arg FindProgramsParams) ([]P
 			&i.Schedule,
 			&i.Deadline,
 			&i.Language,
+			pq.Array(&i.Tags),
 		); err != nil {
 			return nil, err
 		}
@@ -677,6 +685,25 @@ type SetProgramStateByUUIDParams struct {
 
 func (q *Queries) SetProgramStateByUUID(ctx context.Context, arg SetProgramStateByUUIDParams) (int64, error) {
 	result, err := q.exec(ctx, q.setProgramStateByUUIDStmt, setProgramStateByUUID, arg.State, arg.Uuid)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
+const setProgramTags = `-- name: SetProgramTags :execrows
+UPDATE programs
+SET tags = $1
+WHERE programs.uuid = $2
+`
+
+type SetProgramTagsParams struct {
+	Tags []string
+	Uuid uuid.UUID
+}
+
+func (q *Queries) SetProgramTags(ctx context.Context, arg SetProgramTagsParams) (int64, error) {
+	result, err := q.exec(ctx, q.setProgramTagsStmt, setProgramTags, pq.Array(arg.Tags), arg.Uuid)
 	if err != nil {
 		return 0, err
 	}

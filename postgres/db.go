@@ -232,6 +232,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.setDatasetNameByUUIDStmt, err = db.PrepareContext(ctx, setDatasetNameByUUID); err != nil {
 		return nil, fmt.Errorf("error preparing query SetDatasetNameByUUID: %w", err)
 	}
+	if q.setDatasetTagsStmt, err = db.PrepareContext(ctx, setDatasetTags); err != nil {
+		return nil, fmt.Errorf("error preparing query SetDatasetTags: %w", err)
+	}
 	if q.setGroupNameByUUIDStmt, err = db.PrepareContext(ctx, setGroupNameByUUID); err != nil {
 		return nil, fmt.Errorf("error preparing query SetGroupNameByUUID: %w", err)
 	}
@@ -265,6 +268,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.setProgramStateByUUIDStmt, err = db.PrepareContext(ctx, setProgramStateByUUID); err != nil {
 		return nil, fmt.Errorf("error preparing query SetProgramStateByUUID: %w", err)
 	}
+	if q.setProgramTagsStmt, err = db.PrepareContext(ctx, setProgramTags); err != nil {
+		return nil, fmt.Errorf("error preparing query SetProgramTags: %w", err)
+	}
 	if q.setProgramTypeByUUIDStmt, err = db.PrepareContext(ctx, setProgramTypeByUUID); err != nil {
 		return nil, fmt.Errorf("error preparing query SetProgramTypeByUUID: %w", err)
 	}
@@ -273,6 +279,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	}
 	if q.setThingStateByUUIDStmt, err = db.PrepareContext(ctx, setThingStateByUUID); err != nil {
 		return nil, fmt.Errorf("error preparing query SetThingStateByUUID: %w", err)
+	}
+	if q.setThingTagsStmt, err = db.PrepareContext(ctx, setThingTags); err != nil {
+		return nil, fmt.Errorf("error preparing query SetThingTags: %w", err)
 	}
 	if q.setThingTypeByUUIDStmt, err = db.PrepareContext(ctx, setThingTypeByUUID); err != nil {
 		return nil, fmt.Errorf("error preparing query SetThingTypeByUUID: %w", err)
@@ -656,6 +665,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing setDatasetNameByUUIDStmt: %w", cerr)
 		}
 	}
+	if q.setDatasetTagsStmt != nil {
+		if cerr := q.setDatasetTagsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing setDatasetTagsStmt: %w", cerr)
+		}
+	}
 	if q.setGroupNameByUUIDStmt != nil {
 		if cerr := q.setGroupNameByUUIDStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing setGroupNameByUUIDStmt: %w", cerr)
@@ -711,6 +725,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing setProgramStateByUUIDStmt: %w", cerr)
 		}
 	}
+	if q.setProgramTagsStmt != nil {
+		if cerr := q.setProgramTagsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing setProgramTagsStmt: %w", cerr)
+		}
+	}
 	if q.setProgramTypeByUUIDStmt != nil {
 		if cerr := q.setProgramTypeByUUIDStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing setProgramTypeByUUIDStmt: %w", cerr)
@@ -724,6 +743,11 @@ func (q *Queries) Close() error {
 	if q.setThingStateByUUIDStmt != nil {
 		if cerr := q.setThingStateByUUIDStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing setThingStateByUUIDStmt: %w", cerr)
+		}
+	}
+	if q.setThingTagsStmt != nil {
+		if cerr := q.setThingTagsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing setThingTagsStmt: %w", cerr)
 		}
 	}
 	if q.setThingTypeByUUIDStmt != nil {
@@ -880,6 +904,7 @@ type Queries struct {
 	setDatasetContentByUUIDStmt      *sql.Stmt
 	setDatasetFormatByUUIDStmt       *sql.Stmt
 	setDatasetNameByUUIDStmt         *sql.Stmt
+	setDatasetTagsStmt               *sql.Stmt
 	setGroupNameByUUIDStmt           *sql.Stmt
 	setPolicyActionStmt              *sql.Stmt
 	setPolicyEffectStmt              *sql.Stmt
@@ -891,9 +916,11 @@ type Queries struct {
 	setProgramNameByUUIDStmt         *sql.Stmt
 	setProgramScheduleByUUIDStmt     *sql.Stmt
 	setProgramStateByUUIDStmt        *sql.Stmt
+	setProgramTagsStmt               *sql.Stmt
 	setProgramTypeByUUIDStmt         *sql.Stmt
 	setThingNameByUUIDStmt           *sql.Stmt
 	setThingStateByUUIDStmt          *sql.Stmt
+	setThingTagsStmt                 *sql.Stmt
 	setThingTypeByUUIDStmt           *sql.Stmt
 	setTimeseriesLowerBoundStmt      *sql.Stmt
 	setTimeseriesNameStmt            *sql.Stmt
@@ -979,6 +1006,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		setDatasetContentByUUIDStmt:      q.setDatasetContentByUUIDStmt,
 		setDatasetFormatByUUIDStmt:       q.setDatasetFormatByUUIDStmt,
 		setDatasetNameByUUIDStmt:         q.setDatasetNameByUUIDStmt,
+		setDatasetTagsStmt:               q.setDatasetTagsStmt,
 		setGroupNameByUUIDStmt:           q.setGroupNameByUUIDStmt,
 		setPolicyActionStmt:              q.setPolicyActionStmt,
 		setPolicyEffectStmt:              q.setPolicyEffectStmt,
@@ -990,9 +1018,11 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		setProgramNameByUUIDStmt:         q.setProgramNameByUUIDStmt,
 		setProgramScheduleByUUIDStmt:     q.setProgramScheduleByUUIDStmt,
 		setProgramStateByUUIDStmt:        q.setProgramStateByUUIDStmt,
+		setProgramTagsStmt:               q.setProgramTagsStmt,
 		setProgramTypeByUUIDStmt:         q.setProgramTypeByUUIDStmt,
 		setThingNameByUUIDStmt:           q.setThingNameByUUIDStmt,
 		setThingStateByUUIDStmt:          q.setThingStateByUUIDStmt,
+		setThingTagsStmt:                 q.setThingTagsStmt,
 		setThingTypeByUUIDStmt:           q.setThingTypeByUUIDStmt,
 		setTimeseriesLowerBoundStmt:      q.setTimeseriesLowerBoundStmt,
 		setTimeseriesNameStmt:            q.setTimeseriesNameStmt,

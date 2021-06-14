@@ -54,7 +54,14 @@ func (svc *ThingService) Exists(ctx context.Context, id uuid.UUID) (bool, error)
 	return found > 0, nil
 }
 
-func (svc *ThingService) AddThing(ctx context.Context, name string, thing_type *string, created_by *uuid.UUID) (*rest.Thing, error) {
+type AddThingParams struct {
+	Name      string
+	Type      *string
+	CreatedBy *uuid.UUID
+	Tags      []string
+}
+
+func (svc *ThingService) AddThing(ctx context.Context, p *AddThingParams) (*rest.Thing, error) {
 	// Use a transaction for this action
 	tx, err := svc.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
@@ -65,15 +72,16 @@ func (svc *ThingService) AddThing(ctx context.Context, name string, thing_type *
 	q := svc.q.WithTx(tx)
 
 	params := pg.CreateThingParams{
-		Name: name,
+		Name: p.Name,
+		Tags: p.Tags,
 	}
 
-	if thing_type != nil {
-		params.Type.Scan(*thing_type)
+	if p.Type != nil {
+		params.Type.Scan(*p.Type)
 	}
 
-	if created_by != nil {
-		params.CreatedBy = *created_by
+	if p.CreatedBy != nil {
+		params.CreatedBy = *p.CreatedBy
 	}
 
 	thing, err := q.CreateThing(ctx, params)
@@ -89,6 +97,7 @@ func (svc *ThingService) AddThing(ctx context.Context, name string, thing_type *
 		Name:      thing.Name,
 		CreatedBy: thing.CreatedBy.String(),
 		State:     rest.ThingState(thing.State),
+		Tags:      thing.Tags,
 	}
 
 	if thing.Type.Valid {
@@ -109,6 +118,7 @@ func (svc *ThingService) FindThingByUuid(ctx context.Context, thing_uuid uuid.UU
 		Name:      t.Name,
 		State:     rest.ThingState(t.State),
 		CreatedBy: t.CreatedBy.String(),
+		Tags:      t.Tags,
 	}
 
 	if t.Type.Valid {
@@ -143,6 +153,7 @@ func (svc *ThingService) FindAll(ctx context.Context, token []byte, limit *int64
 				Name:      t.Name,
 				State:     rest.ThingState(t.State),
 				CreatedBy: t.CreatedBy.String(),
+				Tags:      t.Tags,
 			}
 			if t.Type.Valid {
 				thing.Type = &t.Type.String
@@ -155,7 +166,15 @@ func (svc *ThingService) FindAll(ctx context.Context, token []byte, limit *int64
 	return things, nil
 }
 
-func (svc *ThingService) UpdateByUuid(ctx context.Context, id uuid.UUID, name *string, thingtype *string, state *string) (int64, error) {
+type UpdateThingParams struct {
+	Uuid  uuid.UUID
+	Name  *string
+	Type  *string
+	State *string
+	Tags  *[]string
+}
+
+func (svc *ThingService) UpdateByUuid(ctx context.Context, p UpdateThingParams) (int64, error) {
 	// Use a transaction for this action
 	tx, err := svc.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
@@ -166,10 +185,10 @@ func (svc *ThingService) UpdateByUuid(ctx context.Context, id uuid.UUID, name *s
 
 	var count int64
 
-	if name != nil {
+	if p.Name != nil {
 		params := pg.SetThingNameByUUIDParams{
-			Uuid: id,
-			Name: *name,
+			Uuid: p.Uuid,
+			Name: *p.Name,
 		}
 		c, err := q.SetThingNameByUUID(ctx, params)
 		if err != nil {
@@ -179,12 +198,12 @@ func (svc *ThingService) UpdateByUuid(ctx context.Context, id uuid.UUID, name *s
 		count += c
 	}
 
-	if thingtype != nil {
+	if p.Type != nil {
 		var ns sql.NullString
-		ns.Scan(thingtype)
+		ns.Scan(p.Type)
 
 		params := pg.SetThingTypeByUUIDParams{
-			Uuid: id,
+			Uuid: p.Uuid,
 			Type: ns,
 		}
 		c, err := q.SetThingTypeByUUID(ctx, params)
@@ -195,12 +214,25 @@ func (svc *ThingService) UpdateByUuid(ctx context.Context, id uuid.UUID, name *s
 		count += c
 	}
 
-	if state != nil {
+	if p.State != nil {
 		params := pg.SetThingStateByUUIDParams{
-			Uuid:  id,
-			State: pg.ThingState(*state),
+			Uuid:  p.Uuid,
+			State: pg.ThingState(*p.State),
 		}
 		c, err := q.SetThingStateByUUID(ctx, params)
+		if err != nil {
+			tx.Rollback()
+			return 0, err
+		}
+		count += c
+	}
+
+	if p.Tags != nil {
+		params := pg.SetThingTagsParams{
+			Uuid: p.Uuid,
+			Tags: *p.Tags,
+		}
+		c, err := q.SetThingTags(ctx, params)
 		if err != nil {
 			tx.Rollback()
 			return 0, err

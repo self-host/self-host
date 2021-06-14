@@ -3,57 +3,9 @@ SELECT COUNT(*) AS count
 FROM datasets
 WHERE datasets.uuid = sqlc.arg(uuid);
 
--- name: FindDatasets :many
-WITH usr AS (
-	SELECT users.uuid
-	FROM users, user_tokens
-	WHERE user_tokens.user_uuid = users.uuid
-	AND user_tokens.token_hash = sha256(sqlc.arg(token))
-	LIMIT 1
-), policies AS (
-	SELECT group_policies.effect, group_policies.priority, group_policies.resource
-	FROM group_policies, user_groups
-	WHERE user_groups.group_uuid = group_policies.group_uuid
-	AND user_groups.user_uuid = (SELECT uuid FROM usr)
-	AND action = 'read'
-)
-SELECT
-	uuid,
-	name,
-	format,
-	size,
-	belongs_to,
-	created,
-	updated,
-	created_by,
-	updated_by
-FROM datasets
-WHERE 'datasets/'||datasets.uuid LIKE ANY(
-	(SELECT resource FROM policies WHERE effect = 'allow')
-)
-EXCEPT
-SELECT
-	uuid,
-	name,
-	format,
-	size,
-	belongs_to,
-	created,
-	updated,
-	created_by,
-	updated_by
-FROM datasets
-WHERE 'datasets/'||datasets.uuid LIKE ANY(
-	(SELECT resource FROM policies WHERE effect = 'deny')
-)
-ORDER BY name
-LIMIT sqlc.arg(arg_limit)::BIGINT
-OFFSET sqlc.arg(arg_offset)::BIGINT
-;
-
 -- name: CreateDataset :one
 WITH ds AS (
-	INSERT INTO datasets (name, format, content, size, belongs_to, created_by, updated_by)
+	INSERT INTO datasets (name, format, content, size, belongs_to, created_by, updated_by, tags)
 	VALUES(
 		sqlc.arg(name)::text,
 		sqlc.arg(format)::text,
@@ -61,7 +13,8 @@ WITH ds AS (
 		length(sqlc.arg(content))::integer,
 		NULLIF(sqlc.arg(belongs_to)::uuid, '00000000-0000-0000-0000-000000000000'::uuid),
 		sqlc.arg(created_by)::uuid,
-		sqlc.arg(created_by)::uuid
+		sqlc.arg(created_by)::uuid,
+		sqlc.arg(tags)
 	)
 	RETURNING
 		uuid,
@@ -72,7 +25,8 @@ WITH ds AS (
 		created,
 		updated,
 		created_by,
-		updated_by
+		updated_by,
+		tags
 ), grp AS (
 	SELECT groups.uuid
 	FROM groups, user_groups
@@ -99,6 +53,56 @@ WITH ds AS (
 SELECT *
 FROM ds LIMIT 1;
 
+-- name: FindDatasets :many
+WITH usr AS (
+	SELECT users.uuid
+	FROM users, user_tokens
+	WHERE user_tokens.user_uuid = users.uuid
+	AND user_tokens.token_hash = sha256(sqlc.arg(token))
+	LIMIT 1
+), policies AS (
+	SELECT group_policies.effect, group_policies.priority, group_policies.resource
+	FROM group_policies, user_groups
+	WHERE user_groups.group_uuid = group_policies.group_uuid
+	AND user_groups.user_uuid = (SELECT uuid FROM usr)
+	AND action = 'read'
+)
+SELECT
+	uuid,
+	name,
+	format,
+	size,
+	belongs_to,
+	created,
+	updated,
+	created_by,
+	updated_by,
+	tags
+FROM datasets
+WHERE 'datasets/'||datasets.uuid LIKE ANY(
+	(SELECT resource FROM policies WHERE effect = 'allow')
+)
+EXCEPT
+SELECT
+	uuid,
+	name,
+	format,
+	size,
+	belongs_to,
+	created,
+	updated,
+	created_by,
+	updated_by,
+	tags
+FROM datasets
+WHERE 'datasets/'||datasets.uuid LIKE ANY(
+	(SELECT resource FROM policies WHERE effect = 'deny')
+)
+ORDER BY name
+LIMIT sqlc.arg(arg_limit)::BIGINT
+OFFSET sqlc.arg(arg_offset)::BIGINT
+;
+
 -- name: FindDatasetByUUID :one
 SELECT
 	uuid,
@@ -109,7 +113,8 @@ SELECT
 	created,
 	updated,
 	created_by,
-	updated_by
+	updated_by,
+	tags
 FROM datasets
 WHERE datasets.uuid = sqlc.arg(uuid)
 LIMIT 1;
@@ -124,7 +129,8 @@ SELECT
 	created,
 	updated,
 	created_by,
-	updated_by
+	updated_by,
+	tags
 FROM datasets
 WHERE datasets.belongs_to = sqlc.arg(thing_uuid)
 ORDER BY name
@@ -149,6 +155,11 @@ WHERE datasets.uuid = sqlc.arg(uuid);
 -- name: SetDatasetContentByUUID :execrows
 UPDATE datasets
 SET content = sqlc.arg(content)
+WHERE datasets.uuid = sqlc.arg(uuid);
+
+-- name: SetDatasetTags :execrows
+UPDATE datasets
+SET tags = sqlc.arg(tags)
 WHERE datasets.uuid = sqlc.arg(uuid);
 
 -- name: DeleteDataset :execrows

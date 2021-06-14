@@ -294,6 +294,12 @@ components:
                 nullable: true
                 example: '54295623-c5e3-4085-80cf-542338b1bc30'
                 description: A reference to a Thing
+              tags:
+                description: An array of text labels (tags) for tracking and filtering purposes.
+                type: array
+                items:
+                  type: string
+                example: '["configuration", "external-service"]'
 
     NewGroup:
       description: Group to add to the system
@@ -379,6 +385,12 @@ components:
                 type: string
                 enum: [tengo]
                 example: tengo
+              tags:
+                description: An array of text labels (tags) for tracking and filtering purposes.
+                type: array
+                items:
+                  type: string
+                example: '["myprog", "awesome"]'
 
     NewThing:
       description: Thing to add to the system
@@ -399,6 +411,12 @@ components:
                 minLength: 3
                 description: Thing type declaration
                 example: "building/office"
+              tags:
+                description: An array of text labels (tags) for tracking and filtering purposes.
+                type: array
+                items:
+                  type: string
+                example: '["building", "office"]'
 
     NewTimeseries:
       description: Time series to add to the system
@@ -503,6 +521,12 @@ components:
                 type: string
                 format: byte
                 example: 'LS0tCiBkb2U6ICJhIGRlZXIsIGEgZmVtYWxlIGRlZXIiCiBwaTogMy4xNDE1OQo='
+              tags:
+                description: An array of text labels (tags) for tracking and filtering purposes.
+                type: array
+                items:
+                  type: string
+                example: '["configuration", "external-service"]'
 
     UpdateGroup:
       description: Group object for update
@@ -574,7 +598,12 @@ components:
                 type: string
                 enum: [tengo]
                 example: tengo
-            
+              tags:
+                description: An array of text labels (tags) for tracking and filtering purposes.
+                type: array
+                items:
+                  type: string
+                example: '["myprog", "awesome"]'
 
     UpdateRequestRate:
       description: Set the request rate (number of requests per hour) for a user.
@@ -610,6 +639,12 @@ components:
                 nullable: true
                 type: string
                 example: 'building/office'
+              tags:
+                description: An array of text labels (tags) for tracking and filtering purposes.
+                type: array
+                items:
+                  type: string
+                example: '["building", "office"]'
 
     UpdateTimeseries:
       description: Timeseries object used for update
@@ -742,6 +777,7 @@ components:
         - belongs_to
         - created_by
         - updated_by
+        - tags
       properties:
         uuid:
           type: string
@@ -782,15 +818,10 @@ components:
           type: string
           description: User UUID reference.
           example: 'f36834fb-8d96-4c01-b0e4-0bd85906bc25'
-
-    Domain:
-      properties:
-        uuid:
-          type: string
-        name:
-          type: string
-        active:
-          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
 
     Error:
       description: Error message
@@ -850,6 +881,7 @@ components:
         - schedule
         - deadline
         - language
+        - tags
       properties:
         uuid:
           type: string
@@ -877,6 +909,10 @@ components:
           type: string
           enum: [tengo]
           example: tengo
+        tags:
+          type: array
+          items:
+            type: string
       
     Thing:
       required:
@@ -885,6 +921,7 @@ components:
         - state
         - type
         - created_by
+        - tags
       properties:
         uuid:
           type: string
@@ -905,6 +942,10 @@ components:
           description: Reference to a User
           type: string
           example: '5d8c23d7-3a78-4159-aa40-e3ef3d9bfe55'
+        tags:
+          type: array
+          items:
+            type: string
 
     Timeseries:
       required:  

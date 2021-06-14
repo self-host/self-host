@@ -61,6 +61,9 @@ func (ra *RestApi) AddDatasets(w http.ResponseWriter, r *http.Request) {
 		Format:    string(n.Format),
 		CreatedBy: created_by,
 	}
+	if n.Tags != nil {
+		params.Tags = *n.Tags
+	}
 
 	if n.BelongsTo != nil {
 		params.BelongsTo, err = uuid.Parse(*n.BelongsTo)
@@ -161,6 +164,7 @@ func (ra *RestApi) UpdateDatasetByUuid(w http.ResponseWriter, r *http.Request, i
 	params := services.UpdateDatasetByUuidParams{
 		Name:    updDataset.Name,
 		Content: updDataset.Content,
+		Tags:    updDataset.Tags,
 	}
 
 	if updDataset.Format != nil {

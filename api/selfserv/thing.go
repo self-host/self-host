@@ -59,8 +59,17 @@ func (ra *RestApi) AddThing(w http.ResponseWriter, r *http.Request) {
 
 	s := services.NewThingService(db)
 
+	params := &services.AddThingParams{
+		Name:      n.Name,
+		Type:      n.Type,
+		CreatedBy: &author,
+	}
+	if n.Tags != nil {
+		params.Tags = *n.Tags
+	}
+
 	// Add the thing
-	thing, err := s.AddThing(r.Context(), n.Name, n.Type, &author)
+	thing, err := s.AddThing(r.Context(), params)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -198,7 +207,15 @@ func (ra *RestApi) UpdateThingByUuid(w http.ResponseWriter, r *http.Request, id 
 		return
 	}
 
-	count, err := svc.UpdateByUuid(r.Context(), thing_uuid, obj.Name, obj.Type, (*string)(obj.State))
+	params := services.UpdateThingParams{
+		Uuid:  thing_uuid,
+		Name:  obj.Name,
+		Type:  obj.Type,
+		State: (*string)(obj.State),
+		Tags:  obj.Tags,
+	}
+
+	count, err := svc.UpdateByUuid(r.Context(), params)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return

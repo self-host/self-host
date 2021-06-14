@@ -8,11 +8,12 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 const createDataset = `-- name: CreateDataset :one
 WITH ds AS (
-	INSERT INTO datasets (name, format, content, size, belongs_to, created_by, updated_by)
+	INSERT INTO datasets (name, format, content, size, belongs_to, created_by, updated_by, tags)
 	VALUES(
 		$1::text,
 		$2::text,
@@ -20,7 +21,8 @@ WITH ds AS (
 		length($3)::integer,
 		NULLIF($4::uuid, '00000000-0000-0000-0000-000000000000'::uuid),
 		$5::uuid,
-		$5::uuid
+		$5::uuid,
+		$6
 	)
 	RETURNING
 		uuid,
@@ -31,7 +33,8 @@ WITH ds AS (
 		created,
 		updated,
 		created_by,
-		updated_by
+		updated_by,
+		tags
 ), grp AS (
 	SELECT groups.uuid
 	FROM groups, user_groups
@@ -55,7 +58,7 @@ WITH ds AS (
 		(SELECT uuid FROM grp), 0, 'allow', 'delete','datasets/'||(SELECT uuid FROM ds)||'/%'
 	)
 )
-SELECT uuid, name, format, size, belongs_to, created, updated, created_by, updated_by
+SELECT uuid, name, format, size, belongs_to, created, updated, created_by, updated_by, tags
 FROM ds LIMIT 1
 `
 
@@ -65,6 +68,7 @@ type CreateDatasetParams struct {
 	Content   []byte
 	BelongsTo uuid.UUID
 	CreatedBy uuid.UUID
+	Tags      []string
 }
 
 type CreateDatasetRow struct {
@@ -77,6 +81,7 @@ type CreateDatasetRow struct {
 	Updated   time.Time
 	CreatedBy uuid.UUID
 	UpdatedBy uuid.UUID
+	Tags      []string
 }
 
 func (q *Queries) CreateDataset(ctx context.Context, arg CreateDatasetParams) (CreateDatasetRow, error) {
@@ -86,6 +91,7 @@ func (q *Queries) CreateDataset(ctx context.Context, arg CreateDatasetParams) (C
 		arg.Content,
 		arg.BelongsTo,
 		arg.CreatedBy,
+		pq.Array(arg.Tags),
 	)
 	var i CreateDatasetRow
 	err := row.Scan(
@@ -98,6 +104,7 @@ func (q *Queries) CreateDataset(ctx context.Context, arg CreateDatasetParams) (C
 		&i.Updated,
 		&i.CreatedBy,
 		&i.UpdatedBy,
+		pq.Array(&i.Tags),
 	)
 	return i, err
 }
@@ -138,7 +145,8 @@ SELECT
 	created,
 	updated,
 	created_by,
-	updated_by
+	updated_by,
+	tags
 FROM datasets
 WHERE datasets.belongs_to = $1
 ORDER BY name
@@ -154,6 +162,7 @@ type FindDatasetByThingRow struct {
 	Updated   time.Time
 	CreatedBy uuid.UUID
 	UpdatedBy uuid.UUID
+	Tags      []string
 }
 
 func (q *Queries) FindDatasetByThing(ctx context.Context, thingUuid uuid.UUID) ([]FindDatasetByThingRow, error) {
@@ -175,6 +184,7 @@ func (q *Queries) FindDatasetByThing(ctx context.Context, thingUuid uuid.UUID) (
 			&i.Updated,
 			&i.CreatedBy,
 			&i.UpdatedBy,
+			pq.Array(&i.Tags),
 		); err != nil {
 			return nil, err
 		}
@@ -199,7 +209,8 @@ SELECT
 	created,
 	updated,
 	created_by,
-	updated_by
+	updated_by,
+	tags
 FROM datasets
 WHERE datasets.uuid = $1
 LIMIT 1
@@ -215,6 +226,7 @@ type FindDatasetByUUIDRow struct {
 	Updated   time.Time
 	CreatedBy uuid.UUID
 	UpdatedBy uuid.UUID
+	Tags      []string
 }
 
 func (q *Queries) FindDatasetByUUID(ctx context.Context, uuid uuid.UUID) (FindDatasetByUUIDRow, error) {
@@ -230,6 +242,7 @@ func (q *Queries) FindDatasetByUUID(ctx context.Context, uuid uuid.UUID) (FindDa
 		&i.Updated,
 		&i.CreatedBy,
 		&i.UpdatedBy,
+		pq.Array(&i.Tags),
 	)
 	return i, err
 }
@@ -257,7 +270,8 @@ SELECT
 	created,
 	updated,
 	created_by,
-	updated_by
+	updated_by,
+	tags
 FROM datasets
 WHERE 'datasets/'||datasets.uuid LIKE ANY(
 	(SELECT resource FROM policies WHERE effect = 'allow')
@@ -272,7 +286,8 @@ SELECT
 	created,
 	updated,
 	created_by,
-	updated_by
+	updated_by,
+	tags
 FROM datasets
 WHERE 'datasets/'||datasets.uuid LIKE ANY(
 	(SELECT resource FROM policies WHERE effect = 'deny')
@@ -298,6 +313,7 @@ type FindDatasetsRow struct {
 	Updated   time.Time
 	CreatedBy uuid.UUID
 	UpdatedBy uuid.UUID
+	Tags      []string
 }
 
 func (q *Queries) FindDatasets(ctx context.Context, arg FindDatasetsParams) ([]FindDatasetsRow, error) {
@@ -319,6 +335,7 @@ func (q *Queries) FindDatasets(ctx context.Context, arg FindDatasetsParams) ([]F
 			&i.Updated,
 			&i.CreatedBy,
 			&i.UpdatedBy,
+			pq.Array(&i.Tags),
 		); err != nil {
 			return nil, err
 		}
@@ -403,6 +420,25 @@ type SetDatasetNameByUUIDParams struct {
 
 func (q *Queries) SetDatasetNameByUUID(ctx context.Context, arg SetDatasetNameByUUIDParams) (int64, error) {
 	result, err := q.exec(ctx, q.setDatasetNameByUUIDStmt, setDatasetNameByUUID, arg.Name, arg.Uuid)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
+const setDatasetTags = `-- name: SetDatasetTags :execrows
+UPDATE datasets
+SET tags = $1
+WHERE datasets.uuid = $2
+`
+
+type SetDatasetTagsParams struct {
+	Tags []string
+	Uuid uuid.UUID
+}
+
+func (q *Queries) SetDatasetTags(ctx context.Context, arg SetDatasetTagsParams) (int64, error) {
+	result, err := q.exec(ctx, q.setDatasetTagsStmt, setDatasetTags, pq.Array(arg.Tags), arg.Uuid)
 	if err != nil {
 		return 0, err
 	}
