@@ -12,7 +12,7 @@ CREATE TABLE user_tokens (
   uuid UUID DEFAULT uuid_generate_v4 () PRIMARY KEY,
   user_uuid UUID NOT NULL REFERENCES users(uuid) ON DELETE CASCADE,
   name TEXT NOT NULL,
-  token_hash BYTEA NOT NULL
+  token_hash BYTEA NOT NULL,
   created TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
