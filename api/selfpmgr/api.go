@@ -150,7 +150,15 @@ func UpdateProgramCache() error {
 	pcache.Begin()
 
 	for _, item := range dbs {
+		if item.DB == nil {
+			continue
+		}
+
 		q := pg.New(item.DB)
+		if q == nil {
+			continue
+		}
+
 		ctx := context.Background() // FIXME: timeout
 		routines, err := q.FindAllRoutineRevisions(ctx)
 		if err != nil {
