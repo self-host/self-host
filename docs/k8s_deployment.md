@@ -37,7 +37,7 @@ data:
   selfserv.conf.yaml: |-
     listen:
       host: 0.0.0.0
-      port: 8095
+      port: 80
 
     domainfile: domains/domains.yaml
 ```
