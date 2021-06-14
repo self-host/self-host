@@ -55,11 +55,6 @@ func init() {
 	viper.AddConfigPath("$HOME/.config/selfhost")
 	viper.AddConfigPath(".")
 
-	err = viper.ReadInConfig()
-	if err != nil {
-		logger.Fatal("Fatal error config file", zap.Error(err))
-	}
-
 	viper.SetDefault("module_library.scheme", "http")
 	viper.SetDefault("module_library.authority", "127.0.0.1:8097")
 	viper.SetDefault("program_manager.scheme", "http")
@@ -67,6 +62,11 @@ func init() {
 
 	viper.SetDefault("cache.library_timeout", 3600)
 	viper.SetDefault("cache.program_timeout", 3600)
+
+	err = viper.ReadInConfig()
+	if err != nil {
+		logger.Fatal("Fatal error config file", zap.Error(err))
+	}
 
 	subscriberUuid, err = uuid.NewRandom()
 	if err != nil {
