@@ -36,8 +36,8 @@ var (
 )
 
 type DBConnection struct {
-	C *sql.DB
-	Domain string
+	C                *sql.DB
+	Domain           string
 	ConnectionString string
 
 	quit chan struct{}
@@ -114,7 +114,7 @@ func AddDB(domain, connectionInfo string) error {
 	dbCacheMux.RUnlock()
 
 	newDBC := &DBConnection{
-		Domain: domain,
+		Domain:           domain,
 		ConnectionString: connectionInfo,
 	}
 
