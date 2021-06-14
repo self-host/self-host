@@ -93,7 +93,7 @@ func (s *PolicyService) FindByGroup(ctx context.Context, group_uuid uuid.UUID) (
 	count, err := s.q.ExistsGroup(ctx, group_uuid)
 	if err != nil {
 		return nil, err
-	} else if count >= 0 {
+	} else if count == 0 {
 		return nil, ie.ErrorNotFound
 	}
 
