@@ -11,8 +11,10 @@ To ease the effort required when developing a server or client compatible with t
 
 See Swagger Codegen at [Swagger.io](https://swagger.io/tools/swagger-codegen/) for details.
 
-**Q**: Why v3? Why not v2?  
-**A**: We choose OpenAPI v3 (released in 2017) over v2 (released in 2014), as the structure is easier to work with compared to v2. Knowing fully well that there are fewer alternatives when it comes to generating the server code. We still think that v3 is such an improvement over v2 that this limitation is worth it.
+## Questions and Answers
+
+#### Why v3? Why not v2?
+We choose OpenAPI v3 (released in 2017) over v2 (released in 2014), as the structure is easier to work with compared to v2. Knowing fully well that there are fewer alternatives when it comes to generating the server code. We still think that v3 is such an improvement over v2 that this limitation is worth it.
 
 
 # Go (the language)
@@ -25,11 +27,13 @@ One can always argue for or against any choice of language. Using Go for an API 
 - Compiles into a single binary. No need to include X number of dependency packages along with the binary. Looking at you Python and NodeJS.
 - Extremely easy to do cross-compilation for other Operating Systems and other target architectures.
 
-**Q**: Why not use Rust? Or Clojure, or Haskell, or Julia, or C# or *X*?  
-**A**: We are not experienced enough in these languages. Each language has its benefits and drawbacks. Go is well suited for an API server.
+## Questions and Answers
 
-**Q**: We don't understand Go, and it does not fit well into our current stack.  
-**A**: The specification for the API is open. Feel free to implement your API server using any language you want. Go is the chosen language for this software.
+#### Why not use Rust? Or Clojure, or Haskell, or Julia, or C# or *X*?
+We are not experienced enough in these languages. Each language has its benefits and drawbacks. Go is well suited for an API server.
+
+#### We don't understand Go, and it does not fit well into our current stack.
+The specification for the API is open. Feel free to implement your API server using any language you want. Go is the chosen language for this software.
 
 
 # PostgreSQL 12+
@@ -46,11 +50,12 @@ Some of the reasons why we prefer PostgreSQL over the alternatives.
 - JSONB type with operators
 - NOTIFY events
 
-**Q**: Why not Oracle or SQL Server?  
-**A**: As this project is Free Software, we wanted all system components to be Free Software / Open Source.
+## Questions and Answers
+#### Why not Oracle or SQL Server?
+As this project is Free Software, we wanted all system components to be Free Software / Open Source.
 
-**Q**: Why not MySQL or MariaDB?  
-**A**: Personal taste. See the list above. Also, we have better knowledge and experience with PostgreSQL.
+#### Why not MySQL or MariaDB?
+Personal taste. See the list above. Also, we have better knowledge and experience with PostgreSQL.
 
 
 # Tengo
