@@ -30,6 +30,7 @@ jobs:
         overwrite: true
         project_path: ./cmd/selfserv
         binary_name: selfserv
+        release_tag: v0.1-alpha
 
     - name: Go Release Binaries
       uses: wangyoucao577/go-release-action@v1.18
@@ -41,6 +42,7 @@ jobs:
         overwrite: true
         project_path: ./cmd/selfctl
         binary_name: selfctl
+        release_tag: v0.1-alpha
 
     - name: Go Release Binaries
       uses: wangyoucao577/go-release-action@v1.18
@@ -52,6 +54,7 @@ jobs:
         overwrite: true
         project_path: ./cmd/selfpmgr
         binary_name: selfpmgr
+        release_tag: v0.1-alpha
 
     - name: Go Release Binaries
       uses: wangyoucao577/go-release-action@v1.18
@@ -63,3 +66,4 @@ jobs:
         overwrite: true
         project_path: ./cmd/selfpwrk
         binary_name: selfpwrk
+        release_tag: v0.1-alpha
