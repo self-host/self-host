@@ -1,0 +1,69 @@
+on: 
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux]
+        goarch: [amd64, arm64]   
+    
+    steps:
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+      
+    - name: Wait for the deletion
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '30s'
+
+    - name: Go Release Binaries
+      uses: wangyoucao577/go-release-action@v1.18
+      with:
+        goversion: 1.16.5
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        goos: ${{ matrix.goos }}
+        goarch: ${{ matrix.goarch }}
+        overwrite: true
+        release_tag: dev
+        project_path: ./cmd/selfserv
+        binary_name: selfserv
+
+    - name: Go Release Binaries
+      uses: wangyoucao577/go-release-action@v1.18
+      with:
+        goversion: 1.16.5
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        goos: ${{ matrix.goos }}
+        goarch: ${{ matrix.goarch }}
+        overwrite: true
+        release_tag: dev
+        project_path: ./cmd/selfctl
+        binary_name: selfctl
+
+    - name: Go Release Binaries
+      uses: wangyoucao577/go-release-action@v1.18
+      with:
+        goversion: 1.16.5
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        goos: ${{ matrix.goos }}
+        goarch: ${{ matrix.goarch }}
+        overwrite: true
+        release_tag: dev
+        project_path: ./cmd/selfpmgr
+        binary_name: selfpmgr
+
+    - name: Go Release Binaries
+      uses: wangyoucao577/go-release-action@v1.18
+      with:
+        goversion: 1.16.5
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        goos: ${{ matrix.goos }}
+        goarch: ${{ matrix.goarch }}
+        overwrite: true
+        release_tag: dev
+        project_path: ./cmd/selfpwrk
+        binary_name: selfpwrk
