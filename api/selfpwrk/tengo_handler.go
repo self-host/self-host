@@ -32,6 +32,7 @@ import (
 	"github.com/d5/tengo/v2/stdlib"
 
 	"github.com/self-host/self-host/api/selfpwrk/library"
+	"github.com/self-host/self-host/pkg/util"
 )
 
 var AllowedBaseModules = []string{
@@ -65,15 +66,6 @@ func moduleMapKeys(m map[string]map[string]tengo.Object) []string {
 	}
 
 	return keys
-}
-
-func StringSliceContains(haystack []string, needle string) bool {
-	for _, a := range haystack {
-		if a == needle {
-			return true
-		}
-	}
-	return false
 }
 
 type TengoProgram struct {
@@ -148,8 +140,8 @@ func (p *TengoProgram) Modules() []string {
 	libs := make([]string, 0)
 
 	for _, imp := range p.AllImports() {
-		if StringSliceContains(AllowedBaseModules, imp) == false &&
-			StringSliceContains(exkeys, imp) == false {
+		if util.StringSliceContains(AllowedBaseModules, imp) == false &&
+			util.StringSliceContains(exkeys, imp) == false {
 			libs = append(libs, imp)
 		}
 	}

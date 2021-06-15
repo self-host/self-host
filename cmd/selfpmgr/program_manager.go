@@ -26,6 +26,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/self-host/self-host/api/selfpmgr"
+	"github.com/self-host/self-host/pkg/util"
 	pg "github.com/self-host/self-host/postgres"
 )
 
@@ -70,7 +71,7 @@ func ProgramManager(quit <-chan struct{}) (<-chan error, error) {
 			// Find inactive databases
 			domains := pg.GetDomains()
 			for domain := range v.GetStringMapString("domains") {
-				index := StringSliceIndex(domains, domain)
+				index := util.StringSliceIndex(domains, domain)
 				if index == -1 || len(domains) == 0 {
 					continue
 				} else if len(domains) == 1 {

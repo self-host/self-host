@@ -40,6 +40,7 @@ import (
 	"github.com/self-host/self-host/api/selfserv"
 	"github.com/self-host/self-host/api/selfserv/rest"
 	"github.com/self-host/self-host/middleware"
+	"github.com/self-host/self-host/pkg/util"
 	pg "github.com/self-host/self-host/postgres"
 )
 
@@ -89,7 +90,7 @@ func Server(address string) (<-chan error, error) {
 			// Find inactive databases
 			domains := pg.GetDomains()
 			for domain := range v.GetStringMapString("domains") {
-				index := StringSliceIndex(domains, domain)
+				index := util.StringSliceIndex(domains, domain)
 				if index == -1 || len(domains) == 0 {
 					continue
 				} else if len(domains) == 1 {

@@ -26,8 +26,6 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
-
-	"github.com/google/uuid"
 )
 
 type Error struct {
@@ -47,17 +45,4 @@ func (ra *RestApi) GetDB(r *http.Request) (*sql.DB, error) {
 		return nil, errors.New("database handle missing from context")
 	}
 	return db, nil
-}
-
-func StringSliceToUuidSlice(in []string) ([]uuid.UUID, error) {
-	out := make([]uuid.UUID, len(in))
-	for idx, item := range in {
-		id, err := uuid.Parse(item)
-		if err != nil {
-			return out, err
-		}
-		out[idx] = id
-	}
-
-	return out, nil
 }

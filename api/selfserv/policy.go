@@ -27,6 +27,7 @@ import (
 	"github.com/self-host/self-host/api/selfserv/rest"
 	ie "github.com/self-host/self-host/internal/errors"
 	"github.com/self-host/self-host/internal/services"
+	"github.com/self-host/self-host/pkg/util"
 )
 
 func (ra *RestApi) AddPolicy(w http.ResponseWriter, r *http.Request) {
@@ -114,7 +115,7 @@ func (ra *RestApi) FindPolicies(w http.ResponseWriter, r *http.Request, p rest.F
 	}
 
 	if p.GroupUuids != nil {
-		group_uuids, err := StringSliceToUuidSlice(*p.GroupUuids)
+		group_uuids, err := util.StringSliceToUuidSlice(*p.GroupUuids)
 		if err != nil {
 			ie.SendHTTPError(w, ie.ErrorMalformedRequest)
 			return
