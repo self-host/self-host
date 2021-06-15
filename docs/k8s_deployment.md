@@ -5,7 +5,7 @@ When deploying to Kubernetes, there are a few things we recommend you to do;
 - Use [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) when deploying selfserv, selfpmgr and selfpwrk.
 - Store all configuration in [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/)
 - Use an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) for HTTP traffic from the internet.
-- Use [PgBouncer](https://www.pgbouncer.org/) as a Connection Proxy to the DBMS(s). A pre-built container image can be found at [ganehag/pgbouncer:latest](https://hub.docker.com/r/ganehag/pgbouncer
+- Use [PgBouncer](https://www.pgbouncer.org/) as a Connection Proxy to the DBMS(s). A pre-built container image can be found at [ganehag/pgbouncer:latest](https://hub.docker.com/r/ganehag/pgbouncer)
 - Only scale up `selfserv` and `selfpwrk` to more replicas if the load requires it.
 
 
