@@ -82,7 +82,7 @@ var (
 
 func init() {
 	programCache = ProgramCache{
-		timeout: 5 * time.Second,
+		timeout: 0 * time.Second,
 		m:       make(map[string]*ProgramCacheItem),
 	}
 }

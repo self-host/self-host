@@ -60,8 +60,8 @@ func init() {
 	viper.SetDefault("program_manager.scheme", "http")
 	viper.SetDefault("program_manager.authority", "127.0.0.1:8097")
 
-	viper.SetDefault("cache.library_timeout", 3600)
-	viper.SetDefault("cache.program_timeout", 3600)
+	viper.SetDefault("cache.library_timeout", 0) // No cache
+	viper.SetDefault("cache.program_timeout", 0) // No cache
 
 	err = viper.ReadInConfig()
 	if err != nil {
