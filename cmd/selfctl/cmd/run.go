@@ -24,9 +24,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/spf13/cobra"
-	"github.com/self-host/self-host/pkg/util/templates"
 	"github.com/self-host/self-host/api/selfpwrk"
+	"github.com/self-host/self-host/pkg/util/templates"
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -42,9 +42,9 @@ var (
 
 // runCmd represents the run command
 var runCmd = &cobra.Command{
-	Use:   "run -f FILENAME",
-	Short: "Run a program",
-	Long: runCmdLong,
+	Use:     "run -f FILENAME",
+	Short:   "Run a program",
+	Long:    runCmdLong,
 	Example: runCmdExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		if programLanguage != "tengo" {
@@ -76,6 +76,6 @@ func init() {
 	programCmd.AddCommand(runCmd)
 	runCmd.Flags().StringVarP(&programFilename, "filename", "f", "", "Program source file")
 	runCmd.Flags().StringVarP(&programLanguage, "lang", "l", "tengo", "Program language")
-	runCmd.Flags().DurationVarP(&programDeadline, "deadline", "", 5 * time.Second, "Program deadline")
+	runCmd.Flags().DurationVarP(&programDeadline, "deadline", "", 5*time.Second, "Program deadline")
 	runCmd.MarkFlagRequired("filename")
 }

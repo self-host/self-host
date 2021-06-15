@@ -24,9 +24,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/spf13/cobra"
-	"github.com/self-host/self-host/pkg/util/templates"
 	"github.com/self-host/self-host/api/selfpwrk"
+	"github.com/self-host/self-host/pkg/util/templates"
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -41,9 +41,9 @@ var (
 )
 
 var compileCmd = &cobra.Command{
-	Use:   "compile -f FILENAME",
-	Short: "Compile a program",
-	Long: compileCmdLong,
+	Use:     "compile -f FILENAME",
+	Short:   "Compile a program",
+	Long:    compileCmdLong,
 	Example: compileCmdExample,
 	Run: func(cmd *cobra.Command, args []string) {
 		if programLanguage != "tengo" {
@@ -70,7 +70,7 @@ var compileCmd = &cobra.Command{
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
 		}
-        },
+	},
 }
 
 func init() {

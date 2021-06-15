@@ -20,8 +20,8 @@ package cmd
 import (
 	"time"
 
-	"github.com/spf13/cobra"
 	"github.com/self-host/self-host/pkg/util/templates"
+	"github.com/spf13/cobra"
 )
 
 var (
