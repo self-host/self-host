@@ -151,9 +151,6 @@ func NewInvalidRequestError(err error) ClientError {
 
 func ParseDBError(e error) ClientError {
 	if err, ok := e.(*HTTPError); ok == true {
-		if err.Code >= 500 {
-			logger.Error("dberror", zap.Error(err.Cause))
-		}
 		return err
 	}
 
@@ -166,11 +163,10 @@ func ParseDBError(e error) ClientError {
 		// Expected one row, but got no rows.
 		return ErrorDBNoRows
 	} else if strings.Contains(serr, "failed to connect to") || strings.Contains(serr, "unexpected EOF") {
-		logger.Error("dberror", zap.Error(e)) // log this error
-		return ErrorDBDown
+		nerr := *ErrorDBDown
+		nerr.Cause = e
+		return &nerr
 	}
-
-	logger.Error("dberror", zap.Error(e))
 
 	return ErrorDBUndefined
 }
@@ -178,6 +174,17 @@ func ParseDBError(e error) ClientError {
 func SendHTTPError(w http.ResponseWriter, e ClientError) {
 	if e == nil {
 		return
+	}
+
+	if err, ok := e.(*HTTPError); ok == true {
+		if err.Code >= 500 {
+			m := err.Message
+			if err.Cause != nil {
+				m = err.Cause.Error()
+			}
+
+			logger.Error("internal", zap.Int("status", err.Code), zap.String("error", m))
+		}
 	}
 
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
