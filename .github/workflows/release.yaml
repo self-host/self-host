@@ -28,7 +28,6 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         overwrite: true
-        release_tag: dev
         project_path: ./cmd/selfserv
         binary_name: selfserv
 
@@ -40,7 +39,6 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         overwrite: true
-        release_tag: dev
         project_path: ./cmd/selfctl
         binary_name: selfctl
 
@@ -52,7 +50,6 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         overwrite: true
-        release_tag: dev
         project_path: ./cmd/selfpmgr
         binary_name: selfpmgr
 
@@ -64,6 +61,5 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         overwrite: true
-        release_tag: dev
         project_path: ./cmd/selfpwrk
         binary_name: selfpwrk
