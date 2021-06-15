@@ -81,6 +81,10 @@ type SubscribeRequest struct {
 	Languages []string  `json:"languages"`
 }
 
+type UpdateLoadRequest struct {
+	Load int64 `json:"load"`
+}
+
 // Get preferred outbound ip of this machine
 func GetOutboundIP() (net.IP, error) {
 	conn, err := net.Dial("tcp", viper.GetString("program_manager.authority"))
@@ -142,6 +146,39 @@ func Subscribe(ip string) error {
 
 	if resp.StatusCode != 201 {
 		return fmt.Errorf("program manager responded with code: %d", resp.StatusCode)
+	}
+
+	return nil
+}
+
+func ReportLoad(load int64) error {
+	requestBody, err := json.Marshal(UpdateLoadRequest{
+		Load: load,
+	})
+	if err != nil {
+		return err
+	}
+
+	uri := fmt.Sprintf("%v://%v/v1/subscribers/%v/load",
+		viper.GetString("program_manager.scheme"),
+		viper.GetString("program_manager.authority"),
+		subscriberUuid.String())
+
+	req, err := http.NewRequest("PUT", uri, bytes.NewReader(requestBody))
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 204 {
+		return fmt.Errorf("unexpected reponse from program manager: %v", resp.StatusCode)
 	}
 
 	return nil
@@ -211,6 +248,11 @@ func main() {
 						logger.Error("Couldn't check subscription", zap.Error(err))
 					} else if ok == false {
 						Subscribe(outboundip)
+					} else {
+						err = ReportLoad(selfpwrk.ProgramCacheGetLoad())
+						if err != nil {
+							logger.Error("unable to report load", zap.Error(err))
+						}
 					}
 				}
 			}

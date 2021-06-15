@@ -19,8 +19,21 @@ package worker
 
 import (
 	"errors"
+	"sort"
 	"sync"
 )
+
+type ByLoad []*Worker
+
+func (l ByLoad) Len() int {
+	return len(l)
+}
+func (l ByLoad) Less(i, j int) bool {
+	return l[i].Load() < l[j].Load()
+}
+func (l ByLoad) Swap(i, j int) {
+	l[i], l[j] = l[j], l[i]
+}
 
 type WorkerCache struct {
 	sync.RWMutex
@@ -30,6 +43,15 @@ type WorkerCache struct {
 type Worker struct {
 	URI       string
 	Languages []string
+	load      int64
+}
+
+func (w *Worker) SetLoad(l int64) {
+	w.load = l
+}
+
+func (w *Worker) Load() int64 {
+	return w.load
 }
 
 var wcache *WorkerCache
@@ -83,12 +105,30 @@ func (c *WorkerCache) GetAvailable() (string, error) {
 	c.RLock()
 	defer c.RUnlock()
 
-	// FIXME: pick the most suitable worker
+	workers := make([]*Worker, 0)
+
 	for _, worker := range c.workers {
-		return worker.URI, nil
+		w := worker
+		workers = append(workers, w)
+	}
+
+	if len(workers) > 0 {
+		sort.Sort(ByLoad(workers))
+		return workers[0].URI, nil
 	}
 
 	return "", errors.New("no available worker")
+}
+
+func (c *WorkerCache) SetLoad(id string, l int64) {
+	c.Lock()
+	defer c.Unlock()
+
+	for k, worker := range c.workers {
+		if k == id && worker != nil {
+			worker.SetLoad(l)
+		}
+	}
 }
 
 /*
@@ -112,4 +152,8 @@ func GetAvailable() (string, error) {
 
 func Exists(id string) bool {
 	return wcache.Exists(id)
+}
+
+func SetLoad(id string, l int64) {
+	wcache.SetLoad(id, l)
 }

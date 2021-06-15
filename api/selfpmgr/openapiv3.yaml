@@ -183,6 +183,20 @@ components:
                   type: string
                   example: tengo
 
+    UpdateLoad:
+      description: Worker load reporting
+      required: true
+      content:
+        application/json:
+          schema:
+            required:
+              - load
+            properties:
+              load:
+                type: integer
+                format: int64
+                example: 123456
+
   schemas:
     Error:
       required:
@@ -251,6 +265,28 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/Deleted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v1/subscribers/{uuid}/load:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+
+    put:
+      tags:
+        - subscribe
+      summary: Update Load Data
+      description: Notify the manager about the current load
+      operationId: worker load update
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateLoad'
+      responses:
+        '204':
+          $ref: '#/components/responses/Updated'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

@@ -59,6 +59,11 @@ type NewSubscriber struct {
 	Uuid      string              `json:"uuid"`
 }
 
+// UpdateLoad defines model for UpdateLoad.
+type UpdateLoad struct {
+	Load int64 `json:"load"`
+}
+
 // GetModuleAtRevisionParams defines parameters for GetModuleAtRevision.
 type GetModuleAtRevisionParams struct {
 
@@ -80,3 +85,6 @@ type WorkerSubscribeJSONBodyScheme string
 
 // WorkerSubscribeJSONRequestBody defines body for WorkerSubscribe for application/json ContentType.
 type WorkerSubscribeJSONRequestBody NewSubscriber
+
+// WorkerLoadUpdateJSONRequestBody defines body for WorkerLoadUpdate for application/json ContentType.
+type WorkerLoadUpdateJSONRequestBody UpdateLoad

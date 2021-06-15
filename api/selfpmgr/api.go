@@ -63,7 +63,7 @@ func init() {
 func (ra *RestApi) WorkerSubscribe(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	// We expect a NewUser object in the request body.
+	// We expect a NewSubscriber object in the request body.
 	var sub NewSubscriber
 	if err := json.NewDecoder(r.Body).Decode(&sub); err != nil {
 		ie.SendHTTPError(w, ie.ErrorMalformedRequest)
@@ -93,6 +93,24 @@ func (ra *RestApi) CheckWorker(w http.ResponseWriter, r *http.Request, id UuidPa
 		ie.SendHTTPError(w, ie.ErrorNotFound)
 		return
 	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (ra *RestApi) WorkerLoadUpdate(w http.ResponseWriter, r *http.Request, id UuidParam) {
+	if worker.Exists(string(id)) == false {
+		ie.SendHTTPError(w, ie.ErrorNotFound)
+		return
+	}
+
+	// We expect a UpdateLoad object in the request body.
+	var obj UpdateLoad
+	if err := json.NewDecoder(r.Body).Decode(&obj); err != nil {
+		ie.SendHTTPError(w, ie.ErrorMalformedRequest)
+		return
+	}
+
+	worker.SetLoad(string(id), obj.Load)
 
 	w.WriteHeader(http.StatusNoContent)
 }
