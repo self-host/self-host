@@ -67,7 +67,7 @@ spec:
         app: selfserv
     spec:
       containers:
-        - name: tengil
+        - name: selfserv
           image: selfhoster/selfserv:main
           env:
           - name: CONFIG_FILENAME
