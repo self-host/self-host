@@ -1,8 +1,8 @@
 name: Build and update release files
 
 on: 
-  push:
-    branches: [ main ]
+  release:
+    types: [ published ]
 
 jobs:
   build:
