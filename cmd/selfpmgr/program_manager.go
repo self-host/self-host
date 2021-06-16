@@ -27,6 +27,7 @@ import (
 
 	"github.com/self-host/self-host/api/selfpmgr"
 	"github.com/self-host/self-host/pkg/util"
+	"github.com/self-host/self-host/pkg/workforce"
 	pg "github.com/self-host/self-host/postgres"
 )
 
@@ -98,24 +99,25 @@ func ProgramManager(quit <-chan struct{}) (<-chan error, error) {
 	}
 
 	go func() {
-		<-quit
-
-		/*
-		   ctxTimeout, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		   defer func() {
-		           stop()
-		           cancel()
-		           close(errC)
-		   }()
-		*/
-	}()
-
-	go func() {
 		selfpmgr.UpdateProgramCache()
+
 		for {
+			every5s := util.AtInterval(5 * time.Second)
+			every1m := util.AtInterval(1 * time.Minute)
+
 			select {
-			case <-util.AtInterval(1 * time.Minute):
+			case <-every1m:
 				selfpmgr.UpdateProgramCache()
+			case <-every5s:
+				rejected := workforce.ClearInactive()
+				for _, obj := range rejected {
+					w, ok := obj.(*selfpmgr.Worker)
+					if ok {
+						logger.Info("fired worker", zap.String("id", w.Id))
+					}
+				}
+			case <-quit:
+				return
 			}
 		}
 	}()

@@ -28,6 +28,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
 	ie "github.com/self-host/self-host/internal/errors"
@@ -71,8 +72,10 @@ func (ra *RestApi) WorkerSubscribe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	workforce.Add(sub.Uuid, NewWorker(
+		sub.Uuid,
 		fmt.Sprintf("%v://%v", sub.Scheme, sub.Authority),
-		sub.Languages))
+		sub.Languages,
+		viper.GetDuration("worker.timeout")))
 
 	w.WriteHeader(http.StatusCreated)
 }

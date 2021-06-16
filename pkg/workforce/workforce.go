@@ -25,6 +25,7 @@ import (
 )
 
 type Worker interface {
+	Alive() bool
 	SetLoad(uint64)
 	GetLoad() uint64
 }
@@ -46,7 +47,9 @@ type Workforce struct {
 	workers map[string]Worker
 }
 
-var wforce *Workforce
+var (
+	wforce *Workforce
+)
 
 func init() {
 	wforce = NewWorkforce()
@@ -93,8 +96,10 @@ func (c *Workforce) GetAvailable() (Worker, error) {
 	workers := make([]Worker, 0)
 
 	for _, worker := range c.workers {
-		w := worker
-		workers = append(workers, w)
+		if worker.Alive() {
+			w := worker
+			workers = append(workers, w)
+		}
 	}
 
 	if len(workers) > 0 {
@@ -114,6 +119,22 @@ func (c *Workforce) SetLoad(id string, l uint64) {
 			worker.SetLoad(l)
 		}
 	}
+}
+
+func (c *Workforce) ClearInactive() []Worker {
+	c.Lock()
+	defer c.Unlock()
+
+	d := make([]Worker, 0)
+
+	for k, worker := range c.workers {
+		if worker.Alive() == false {
+			d = append(d, worker)
+			delete(c.workers, k)
+		}
+	}
+
+	return d
 }
 
 /*
@@ -141,4 +162,8 @@ func Exists(id string) bool {
 
 func SetLoad(id string, l uint64) {
 	wforce.SetLoad(id, l)
+}
+
+func ClearInactive() []Worker {
+	return wforce.ClearInactive()
 }

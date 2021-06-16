@@ -18,10 +18,18 @@ along with Self-host.  If not, see <http://www.gnu.org/licenses/>.
 
 package selfpmgr
 
+import (
+	"time"
+)
+
 type Worker struct {
+	Id        string
 	URI       string
 	Languages []string
-	load      uint64
+
+	load     uint64
+	timeout  time.Duration
+	lastSeen time.Time
 }
 
 func (w *Worker) SetLoad(l uint64) {
@@ -32,9 +40,16 @@ func (w *Worker) GetLoad() uint64 {
 	return w.load
 }
 
-func NewWorker(uri string, langs []string) *Worker {
+func (w *Worker) Alive() bool {
+	return time.Now().Before(w.lastSeen.Add(w.timeout))
+}
+
+func NewWorker(id, uri string, langs []string, timeout time.Duration) *Worker {
 	return &Worker{
+		Id:        id,
 		URI:       uri,
 		Languages: langs,
+		timeout:   timeout,
+		lastSeen:  time.Now(),
 	}
 }

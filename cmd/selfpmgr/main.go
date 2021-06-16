@@ -26,6 +26,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -49,6 +50,8 @@ func main() {
 	viper.AddConfigPath("/etc/selfhost/")
 	viper.AddConfigPath("$HOME/.config/selfhost")
 	viper.AddConfigPath(".")
+
+	viper.SetDefault("worker.timeout", 30*time.Second)
 
 	err := viper.ReadInConfig()
 	if err != nil {
