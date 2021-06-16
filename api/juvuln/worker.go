@@ -19,10 +19,13 @@ along with Self-host.  If not, see <http://www.gnu.org/licenses/>.
 package juvuln
 
 import (
+	"sync"
 	"time"
 )
 
 type Worker struct {
+	sync.Mutex
+
 	Id        string
 	URI       string
 	Languages []string
@@ -33,14 +36,20 @@ type Worker struct {
 }
 
 func (w *Worker) SetLoad(l uint64) {
+	w.Lock()
+	defer w.Unlock()
 	w.load = l
 }
 
 func (w *Worker) GetLoad() uint64 {
+	w.Lock()
+	defer w.Unlock()
 	return w.load
 }
 
 func (w *Worker) Alive() bool {
+	w.Lock()
+	defer w.Unlock()
 	return time.Now().Before(w.lastSeen.Add(w.timeout))
 }
 

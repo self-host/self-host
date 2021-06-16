@@ -37,6 +37,7 @@ var (
 )
 
 type DBConnection struct {
+	sync.RWMutex
 	C                *sql.DB
 	Domain           string
 	ConnectionString string
@@ -45,41 +46,62 @@ type DBConnection struct {
 }
 
 func (c *DBConnection) Equals(d *DBConnection) bool {
+	c.RLock()
+	d.RLock()
+	defer c.RUnlock()
+	defer d.RUnlock()
+
 	return c.ConnectionString == d.ConnectionString
 }
 
 func (c *DBConnection) Connect() {
+	c.Lock()
+	defer c.Unlock()
+
 	if c.quit != nil {
 		return
 	}
-
 	c.quit = make(chan struct{})
 
 	go func() {
 		for {
+			c.RLock()
+			connection := c.C
+			connStr := c.ConnectionString
+			domain := c.Domain
+			quitChan := c.quit
+			c.RUnlock()
+
 			// No connection
-			if c.C == nil {
-				conn, err := sql.Open("pgx", c.ConnectionString)
+			if connection == nil {
+				conn, err := sql.Open("pgx", connStr)
 				if err != nil {
-					logger.Error("unable to connect to DB", zap.String("domain", c.Domain), zap.Error(err))
+					logger.Error("unable to connect to DB", zap.String("domain", domain), zap.Error(err))
 				}
+				c.Lock()
 				c.C = conn
+				c.Unlock()
 			}
 
 			select {
 			case <-time.After(30 * time.Second):
+				c.RLock()
+				connection = c.C
+				c.RUnlock()
 				// Active connection (maybe)
-				if c.C != nil {
-					err := PingDB(c.C)
+				if connection != nil {
+					err := PingDB(connection)
 					if err != nil {
 						// Unable to ping the DB, set the DB handle to nil
+						c.Lock()
 						c.C = nil
+						c.Unlock()
 
 						// Report error
 						logger.Error("unable to access DB", zap.String("domain", c.Domain), zap.Error(err))
 					}
 				}
-			case <-c.quit:
+			case <-quitChan:
 				return
 			}
 		}
@@ -87,6 +109,9 @@ func (c *DBConnection) Connect() {
 }
 
 func (c *DBConnection) Close() {
+	c.Lock()
+	defer c.Unlock()
+
 	if c.quit != nil {
 		close(c.quit)
 		c.quit = nil
@@ -195,21 +220,27 @@ func GetDB(domain string) (*sql.DB, error) {
 		return nil, fmt.Errorf("no such domain '%v'", domain)
 	}
 
-	if res.C == nil {
+	res.Lock()
+	c := res.C
+	res.Unlock()
+
+	if c == nil {
 		return nil, fmt.Errorf("no active connection to domain '%v'", domain)
 	}
 
-	return res.C, nil
+	return c, nil
 }
 
 func GetAllDB() []DomainDB {
 	dbCacheMux.RLock()
 	dbs := make([]DomainDB, 0)
 	for domain, db := range dbCache {
+		db.RLock()
 		dbs = append(dbs, DomainDB{
 			Domain: domain,
 			DB:     db.C,
 		})
+		db.RUnlock()
 	}
 	dbCacheMux.RUnlock()
 

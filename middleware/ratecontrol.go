@@ -29,8 +29,33 @@ import (
 )
 
 type visitor struct {
+	sync.Mutex
 	limiter  *rate.Limiter
 	lastSeen time.Time
+}
+
+func (v *visitor) SetLimiter(r *rate.Limiter) {
+	v.Lock()
+	defer v.Unlock()
+	v.limiter = r
+}
+
+func (v *visitor) GetLimiter() *rate.Limiter {
+	v.Lock()
+	defer v.Unlock()
+	return v.limiter
+}
+
+func (v *visitor) SetLastSeen(t time.Time) {
+	v.Lock()
+	defer v.Unlock()
+	v.lastSeen = t
+}
+
+func (v *visitor) GetLastSeen() time.Time {
+	v.Lock()
+	defer v.Unlock()
+	return v.lastSeen
 }
 
 type visitorController struct {
@@ -53,9 +78,13 @@ func (c *visitorController) GetVisitor(token string) (*rate.Limiter, time.Time) 
 
 	if !exists {
 		// Should this be a viper config?
+		lastSeen := time.Now()
+
+		c.RLock()
 		rt := rate.Every(time.Hour / time.Duration(c.rateLimit))
 		limiter := rate.NewLimiter(rt, c.maxBurst)
-		lastSeen := time.Now()
+		c.RUnlock()
+
 		c.Lock()
 		c.visitors[token] = &visitor{
 			limiter:  limiter,
@@ -65,8 +94,9 @@ func (c *visitorController) GetVisitor(token string) (*rate.Limiter, time.Time) 
 		return limiter, lastSeen
 	}
 
-	v.lastSeen = time.Now()
-	return v.limiter, v.lastSeen
+	v.SetLastSeen(time.Now())
+
+	return v.GetLimiter(), v.GetLastSeen()
 }
 
 func (c *visitorController) Start() {
@@ -76,7 +106,7 @@ func (c *visitorController) Start() {
 			case <-time.After(time.Minute / 10.0):
 				c.Lock()
 				for token, v := range c.visitors {
-					if v == nil || time.Since(v.lastSeen) > c.cleanUpInterval {
+					if v == nil || time.Since(v.GetLastSeen()) > c.cleanUpInterval {
 						delete(c.visitors, token)
 					}
 				}

@@ -221,8 +221,9 @@ func Server(address string) (<-chan error, error) {
 		}()
 
 		srv.SetKeepAlivesEnabled(false)
+		err := srv.Shutdown(ctxTimeout)
 
-		if err := srv.Shutdown(ctxTimeout); err != nil {
+		if err != nil {
 			errC <- err
 		}
 
