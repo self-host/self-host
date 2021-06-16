@@ -117,5 +117,5 @@ Hardware and software required;
 :hearts: Like this project? Want to improve it but unsure where to begin? Check out the [issue tracker](https://github.com/self-host/self-host/issues).
 
 
-[vimpel] https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/vimpel.svg "Vimpel"
+[vimpel]: https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/vimpel.svg "Vimpel"
 [fig1]: https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/overview.svg "Overview"
