@@ -178,7 +178,7 @@ func ReportLoad(load int64) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 204 {
-		return fmt.Errorf("unexpected reponse from program manager: %v", resp.StatusCode)
+		return fmt.Errorf("unexpected response from program manager: %v", resp.StatusCode)
 	}
 
 	return nil

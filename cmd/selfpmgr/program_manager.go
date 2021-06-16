@@ -71,7 +71,7 @@ func ProgramManager(quit <-chan struct{}) (<-chan error, error) {
 				if index == -1 || len(domains) == 0 {
 					continue
 				} else if len(domains) == 1 {
-					// Absolue last element in the slice
+					// Absolute last element in the slice
 					domains = make([]string, 0)
 				} else {
 					// Place last element at position
