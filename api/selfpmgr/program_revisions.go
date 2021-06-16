@@ -54,11 +54,6 @@ type WorkerTask struct {
 	SourceCode  string    `json:"source_code"`
 }
 
-func AtInterval(d time.Duration) <-chan time.Time {
-	t := time.Now().Truncate(d).Add(d).Sub(time.Now())
-	return time.After(t)
-}
-
 func NewProgramRevision(domain string, name string, program_uuid uuid.UUID, ptype string, schedule string,
 	deadline int32, language string, revision int32, code []byte, checksum string) (*ProgramRevision, error) {
 	p := &ProgramRevision{
@@ -105,7 +100,7 @@ func (p *ProgramRevision) Start() {
 			select {
 			case <-p.terminate:
 				return
-			case <-AtInterval(p.Schedule):
+			case <-util.AtInterval(p.Schedule):
 				err := p.Execute()
 				if err != nil {
 					logger.Error("unable to execute task", zap.Error(err))

@@ -30,11 +30,6 @@ import (
 	pg "github.com/self-host/self-host/postgres"
 )
 
-func AtInterval(d time.Duration) <-chan time.Time {
-	t := time.Now().Truncate(d).Add(d).Sub(time.Now())
-	return time.After(t)
-}
-
 func ProgramManager(quit <-chan struct{}) (<-chan error, error) {
 	errC := make(chan error, 1)
 
@@ -119,7 +114,7 @@ func ProgramManager(quit <-chan struct{}) (<-chan error, error) {
 		selfpmgr.UpdateProgramCache()
 		for {
 			select {
-			case <-AtInterval(1 * time.Minute):
+			case <-util.AtInterval(1 * time.Minute):
 				selfpmgr.UpdateProgramCache()
 			}
 		}
