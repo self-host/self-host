@@ -13,6 +13,51 @@ jobs:
     - name: Check out the repo
       uses: actions/checkout@v2
 
+    - name: Docker selfserv meta
+      id: serv-meta
+      uses: docker/metadata-action@v3
+      with:
+        images: |
+          selfhoster/selfserv
+        tags: |
+          type=schedule
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}
+          type=sha
+
+    - name: Docker meta
+      id: pmgr-meta
+      uses: docker/metadata-action@v3
+      with:
+        images: |
+          selfhoster/selfpmgr
+        tags: |
+          type=schedule
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}
+          type=sha
+
+    - name: Docker meta
+      id: pwrk-meta
+      uses: docker/metadata-action@v3
+      with:
+        images: |
+          selfhoster/selfpwrk
+        tags: |
+          type=schedule
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}
+          type=sha
+
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
 
@@ -32,9 +77,8 @@ jobs:
         platforms: linux/amd64,linux/arm64
         file: build/selfserv/Dockerfile
         push: true
-        tags: |
-          selfhoster/selfserv:latest
-          selfhoster/selfserv:main
+        tags: ${{ steps.serv-meta.outputs.tags }}
+        labels: ${{ steps.serv-meta.outputs.labels }}
 
     - name: Update selfserv repo description
       uses: peter-evans/dockerhub-description@v2
@@ -42,3 +86,37 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
         repository: selfhoster/selfserv
+
+    - name: Build selfpmgr and push to Docker Hub
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        file: build/selfpmgr/Dockerfile
+        push: true
+        tags: ${{ steps.pmgr-meta.outputs.tags }}
+        labels: ${{ steps.pmgr-meta.outputs.labels }}
+
+    - name: Update selfpmgr repo description
+      uses: peter-evans/dockerhub-description@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        repository: selfhoster/selfpmgr
+
+    - name: Build selfpwrk and push to Docker Hub
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        file: build/selfpwrk/Dockerfile
+        push: true
+        tags: ${{ steps.pwrk-meta.outputs.tags }}
+        labels: ${{ steps.pwrk-meta.outputs.labels }}
+
+    - name: Update selfpwrk repo description
+      uses: peter-evans/dockerhub-description@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        repository: selfhoster/selfpwrk
