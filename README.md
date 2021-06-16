@@ -11,9 +11,7 @@
 
 [![GPLv3 License](https://img.shields.io/badge/license-GPLv3-blue)](https://github.com/self-host/self-host/blob/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/self-host/self-host)](https://goreportcard.com/report/github.com/self-host/self-host)
-[![Docker](https://img.shields.io/docker/cloud/build/selfhoster/selfserv?label=selfserv&style=flat)](https://hub.docker.com/r/selfhoster/selfserv/builds)
-[![Docker](https://img.shields.io/docker/cloud/build/selfhoster/selfpmgr?label=selfpmgr&style=flat)](https://hub.docker.com/r/selfhoster/selfpmgr/builds)
-[![Docker](https://img.shields.io/docker/cloud/build/selfhoster/selfpwrk?label=selfpwrk&style=flat)](https://hub.docker.com/r/selfhoster/selfpwrk/builds)
+[![Docker](https://github.com/self-host/self-host/actions/workflows/docker.yml/badge.svg)](https://github.com/self-host/self-host/actions/workflows/docker.yml)
 
 # Self-host by NODA
 
