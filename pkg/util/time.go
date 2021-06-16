@@ -26,5 +26,3 @@ func AtInterval(d time.Duration) <-chan time.Time {
 	t := time.Now().Truncate(d).Add(d).Sub(time.Now())
 	return time.After(t)
 }
-
-

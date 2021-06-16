@@ -26,10 +26,10 @@ import (
 	"net/http"
 	"time"
 
-	"go.uber.org/zap"
 	"github.com/google/uuid"
-	"github.com/self-host/self-host/pkg/workforce"
 	"github.com/self-host/self-host/pkg/util"
+	"github.com/self-host/self-host/pkg/workforce"
+	"go.uber.org/zap"
 )
 
 type ProgramRevision struct {

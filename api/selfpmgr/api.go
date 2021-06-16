@@ -30,8 +30,8 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/self-host/self-host/pkg/workforce"
 	ie "github.com/self-host/self-host/internal/errors"
+	"github.com/self-host/self-host/pkg/workforce"
 	pg "github.com/self-host/self-host/postgres"
 )
 
