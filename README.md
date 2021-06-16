@@ -7,7 +7,8 @@
     <i>- A lot of people</i>
 </p>
 
----
+
+![Vimpel][vimpel]
 
 [![GPLv3 License](https://img.shields.io/badge/license-GPLv3-blue)](https://github.com/self-host/self-host/blob/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/self-host/self-host)](https://goreportcard.com/report/github.com/self-host/self-host)
@@ -116,4 +117,5 @@ Hardware and software required;
 :hearts: Like this project? Want to improve it but unsure where to begin? Check out the [issue tracker](https://github.com/self-host/self-host/issues).
 
 
+[vimpel] https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/vimpel.svg "Vimpel"
 [fig1]: https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/overview.svg "Overview"
