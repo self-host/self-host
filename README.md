@@ -7,8 +7,7 @@
     <i>- A lot of people</i>
 </p>
 
-
-![Vimpel][vimpel]
+---
 
 [![GPLv3 License](https://img.shields.io/badge/license-GPLv3-blue)](https://github.com/self-host/self-host/blob/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/self-host/self-host)](https://goreportcard.com/report/github.com/self-host/self-host)

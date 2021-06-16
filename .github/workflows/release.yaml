@@ -1,4 +1,4 @@
-name: Build and update release files
+name: Release
 
 on: 
   release:
