@@ -27,15 +27,8 @@ import (
 	"go.uber.org/zap"
 )
 
-var logger *zap.Logger
-
 func init() {
 	var err error
-
-	logger, err = zap.NewProduction()
-	if err != nil {
-		panic("zap.NewProduction " + err.Error())
-	}
 
 	viper.SetConfigName(os.Getenv("CONFIG_FILENAME"))
 	viper.SetConfigType("yaml")
