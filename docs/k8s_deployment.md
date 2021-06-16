@@ -68,7 +68,7 @@ spec:
     spec:
       containers:
         - name: selfserv
-          image: selfhoster/selfserv:main
+          image: selfhoster/selfserv:latest
           env:
           - name: CONFIG_FILENAME
             value: selfserv.conf.yaml

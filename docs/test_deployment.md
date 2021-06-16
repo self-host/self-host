@@ -72,7 +72,7 @@ domains:
 Start a container instance of the `selfserv` program.
 
 ```text
-docker run --name selfserv --network selfhost -p 127.0.0.1:8080:80 -e CONFIG_FILENAME=selfserv.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfserv:main
+docker run --name selfserv --network selfhost -p 127.0.0.1:8080:80 -e CONFIG_FILENAME=selfserv.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfserv:latest
 ```
 
 
@@ -95,7 +95,7 @@ It is OK in this test scenario to share the same `domains.yaml` file.
 Then deploy the container instance.
 
 ```text
-docker run --name selfpmgr --network selfhost -e CONFIG_FILENAME=selfpmgr.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfpmgr:main
+docker run --name selfpmgr --network selfhost -e CONFIG_FILENAME=selfpmgr.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfpmgr:latest
 ```
 
 
@@ -126,7 +126,7 @@ module_library:
 Then deploy the container instance.
 
 ```text
-docker run --name selfpwrk --network selfhost -e CONFIG_FILENAME=selfpwrk.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfpwrk:main
+docker run --name selfpwrk --network selfhost -e CONFIG_FILENAME=selfpwrk.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfpwrk:latest
 ```
 
 
