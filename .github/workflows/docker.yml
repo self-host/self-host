@@ -1,8 +1,14 @@
-name: Publish Docker image
+name: Build and publish Docker images
 
 on:
-  release:
-    types: [ published ]
+  push:
+    branches:
+      - 'main'
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - 'main'
 
 jobs:
   push_to_registry:
@@ -76,12 +82,13 @@ jobs:
         context: .
         platforms: linux/amd64,linux/arm64
         file: build/selfserv/Dockerfile
-        push: true
+        push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.serv-meta.outputs.tags }}
         labels: ${{ steps.serv-meta.outputs.labels }}
 
     - name: Update selfserv repo description
       uses: peter-evans/dockerhub-description@v2
+      if: github.event_name == 'push'
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -93,11 +100,12 @@ jobs:
         context: .
         platforms: linux/amd64,linux/arm64
         file: build/selfpmgr/Dockerfile
-        push: true
+        push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.pmgr-meta.outputs.tags }}
         labels: ${{ steps.pmgr-meta.outputs.labels }}
 
     - name: Update selfpmgr repo description
+      if: github.event_name == 'push'
       uses: peter-evans/dockerhub-description@v2
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -110,11 +118,12 @@ jobs:
         context: .
         platforms: linux/amd64,linux/arm64
         file: build/selfpwrk/Dockerfile
-        push: true
+        push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.pwrk-meta.outputs.tags }}
         labels: ${{ steps.pwrk-meta.outputs.labels }}
 
     - name: Update selfpwrk repo description
+      if: github.event_name == 'push'
       uses: peter-evans/dockerhub-description@v2
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
