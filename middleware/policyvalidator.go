@@ -28,7 +28,7 @@ import (
 
 	ie "github.com/self-host/self-host/internal/errors"
 	"github.com/self-host/self-host/internal/services"
-	pg "github.com/self-host/self-host/postgres"
+	"github.com/self-host/self-host/postgres"
 )
 
 var URLParamRegex = regexp.MustCompile(`(?m)\{([^\}]+)\}`)
@@ -55,7 +55,7 @@ func PolicyValidator() func(http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 
-			db, err := pg.GetDB(domain)
+			db, err := postgres.GetDB(domain)
 			if err != nil {
 				ie.SendHTTPError(w, ie.NewInvalidRequestError(err))
 				return

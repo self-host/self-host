@@ -24,12 +24,12 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/self-host/self-host/api/selfserv/rest"
-	pg "github.com/self-host/self-host/postgres"
+	"github.com/self-host/self-host/postgres"
 )
 
 // ThingService represents the repository used for interacting with Thing records.
 type ThingService struct {
-	q  *pg.Queries
+	q  *postgres.Queries
 	db *sql.DB
 }
 
@@ -40,7 +40,7 @@ func NewThingService(db *sql.DB) *ThingService {
 	}
 
 	return &ThingService{
-		q:  pg.New(db),
+		q:  postgres.New(db),
 		db: db,
 	}
 }
@@ -71,7 +71,7 @@ func (svc *ThingService) AddThing(ctx context.Context, p *AddThingParams) (*rest
 
 	q := svc.q.WithTx(tx)
 
-	params := pg.CreateThingParams{
+	params := postgres.CreateThingParams{
 		Name: p.Name,
 		Tags: p.Tags,
 	}
@@ -131,7 +131,7 @@ func (svc *ThingService) FindThingByUuid(ctx context.Context, thing_uuid uuid.UU
 func (svc *ThingService) FindAll(ctx context.Context, p FindAllParams) ([]*rest.Thing, error) {
 	things := make([]*rest.Thing, 0)
 
-	params := pg.FindThingsParams{
+	params := postgres.FindThingsParams{
 		Token: p.Token,
 	}
 
@@ -168,7 +168,7 @@ func (svc *ThingService) FindAll(ctx context.Context, p FindAllParams) ([]*rest.
 func (svc *ThingService) FindByTags(ctx context.Context, p FindByTagsParams) ([]*rest.Thing, error) {
 	things := make([]*rest.Thing, 0)
 
-	params := pg.FindThingsByTagsParams{
+	params := postgres.FindThingsByTagsParams{
 		Tags:  p.Tags,
 		Token: p.Token,
 	}
@@ -222,7 +222,7 @@ func (svc *ThingService) UpdateByUuid(ctx context.Context, p UpdateThingParams) 
 	var count int64
 
 	if p.Name != nil {
-		params := pg.SetThingNameByUUIDParams{
+		params := postgres.SetThingNameByUUIDParams{
 			Uuid: p.Uuid,
 			Name: *p.Name,
 		}
@@ -238,7 +238,7 @@ func (svc *ThingService) UpdateByUuid(ctx context.Context, p UpdateThingParams) 
 		var ns sql.NullString
 		ns.Scan(p.Type)
 
-		params := pg.SetThingTypeByUUIDParams{
+		params := postgres.SetThingTypeByUUIDParams{
 			Uuid: p.Uuid,
 			Type: ns,
 		}
@@ -251,9 +251,9 @@ func (svc *ThingService) UpdateByUuid(ctx context.Context, p UpdateThingParams) 
 	}
 
 	if p.State != nil {
-		params := pg.SetThingStateByUUIDParams{
+		params := postgres.SetThingStateByUUIDParams{
 			Uuid:  p.Uuid,
-			State: pg.ThingState(*p.State),
+			State: postgres.ThingState(*p.State),
 		}
 		c, err := q.SetThingStateByUUID(ctx, params)
 		if err != nil {
@@ -264,7 +264,7 @@ func (svc *ThingService) UpdateByUuid(ctx context.Context, p UpdateThingParams) 
 	}
 
 	if p.Tags != nil {
-		params := pg.SetThingTagsParams{
+		params := postgres.SetThingTagsParams{
 			Uuid: p.Uuid,
 			Tags: *p.Tags,
 		}

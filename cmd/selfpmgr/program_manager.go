@@ -28,7 +28,7 @@ import (
 	"github.com/self-host/self-host/api/selfpmgr"
 	"github.com/self-host/self-host/pkg/util"
 	"github.com/self-host/self-host/pkg/workforce"
-	pg "github.com/self-host/self-host/postgres"
+	"github.com/self-host/self-host/postgres"
 )
 
 func ProgramManager(quit <-chan struct{}) (<-chan error, error) {
@@ -50,7 +50,7 @@ func ProgramManager(quit <-chan struct{}) (<-chan error, error) {
 
 		if v.IsSet("domains") {
 			for domain, pguri := range v.GetStringMapString("domains") {
-				err := pg.AddDB(domain, pguri)
+				err := postgres.AddDB(domain, pguri)
 				if err != nil {
 					errC <- err
 				}
@@ -65,7 +65,7 @@ func ProgramManager(quit <-chan struct{}) (<-chan error, error) {
 			}
 
 			// Find inactive databases
-			domains := pg.GetDomains()
+			domains := postgres.GetDomains()
 			for domain := range v.GetStringMapString("domains") {
 				index := util.StringSliceIndex(domains, domain)
 				if index == -1 || len(domains) == 0 {
@@ -85,12 +85,12 @@ func ProgramManager(quit <-chan struct{}) (<-chan error, error) {
 
 			// What remains in "domains" is all domains no longer active in config file
 			for _, domain := range domains {
-				pg.RemoveDB(domain)
+				postgres.RemoveDB(domain)
 			}
 
 			// Add new/existing domain DBs
 			for domain, pguri := range v.GetStringMapString("domains") {
-				err := pg.AddDB(domain, pguri)
+				err := postgres.AddDB(domain, pguri)
 				if err != nil {
 					logger.Error("Error while adding domain", zap.Error(err))
 				}

@@ -25,7 +25,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/self-host/self-host/api/selfserv/rest"
 	ie "github.com/self-host/self-host/internal/errors"
-	pg "github.com/self-host/self-host/postgres"
+	"github.com/self-host/self-host/postgres"
 )
 
 type FindAllPoliciesParams struct {
@@ -37,14 +37,14 @@ type FindAllPoliciesParams struct {
 
 // PolicyService represents the repository used for interacting with Policy records.
 type PolicyService struct {
-	q  *pg.Queries
+	q  *postgres.Queries
 	db *sql.DB
 }
 
 // NewPolicyService instantiates the PolicyService repository.
 func NewPolicyService(db *sql.DB) *PolicyService {
 	return &PolicyService{
-		q:  pg.New(db),
+		q:  postgres.New(db),
 		db: db,
 	}
 }
@@ -67,11 +67,11 @@ func (u *PolicyService) Exists(ctx context.Context, id uuid.UUID) (bool, error) 
 }
 
 func (s *PolicyService) Add(ctx context.Context, p NewPolicyParams) (*rest.Policy, error) {
-	policy, err := s.q.CreatePolicy(ctx, pg.CreatePolicyParams{
+	policy, err := s.q.CreatePolicy(ctx, postgres.CreatePolicyParams{
 		GroupUuid: p.GroupUuid,
 		Priority:  p.Priority,
-		Effect:    pg.PolicyEffect(p.Effect),
-		Action:    pg.PolicyAction(p.Action),
+		Effect:    postgres.PolicyEffect(p.Effect),
+		Action:    postgres.PolicyAction(p.Action),
 		Resource:  p.Resource,
 	})
 	if err != nil {
@@ -165,7 +165,7 @@ func (s *PolicyService) FindByUuid(ctx context.Context, policy_uuid uuid.UUID) (
 func (s *PolicyService) FindAll(ctx context.Context, p FindAllPoliciesParams) ([]*rest.Policy, error) {
 	policies := make([]*rest.Policy, 0)
 
-	params := pg.FindPoliciesParams{
+	params := postgres.FindPoliciesParams{
 		Token:     p.Token,
 		ArgLimit:  20,
 		ArgOffset: 0,
@@ -227,7 +227,7 @@ func (s *PolicyService) Update(ctx context.Context, id uuid.UUID, p UpdatePolicy
 	q := s.q.WithTx(tx)
 
 	if p.GroupUuid != nil {
-		c, err := q.SetPolicyGroup(ctx, pg.SetPolicyGroupParams{
+		c, err := q.SetPolicyGroup(ctx, postgres.SetPolicyGroupParams{
 			Uuid:      id,
 			GroupUuid: *p.GroupUuid,
 		})
@@ -239,7 +239,7 @@ func (s *PolicyService) Update(ctx context.Context, id uuid.UUID, p UpdatePolicy
 	}
 
 	if p.Priority != nil {
-		c, err := q.SetPolicyPriority(ctx, pg.SetPolicyPriorityParams{
+		c, err := q.SetPolicyPriority(ctx, postgres.SetPolicyPriorityParams{
 			Uuid:     id,
 			Priority: int32(*p.Priority),
 		})
@@ -251,9 +251,9 @@ func (s *PolicyService) Update(ctx context.Context, id uuid.UUID, p UpdatePolicy
 	}
 
 	if p.Effect != nil {
-		c, err := q.SetPolicyEffect(ctx, pg.SetPolicyEffectParams{
+		c, err := q.SetPolicyEffect(ctx, postgres.SetPolicyEffectParams{
 			Uuid:   id,
-			Effect: pg.PolicyEffect(*p.Effect),
+			Effect: postgres.PolicyEffect(*p.Effect),
 		})
 		if err != nil {
 			tx.Rollback()
@@ -263,9 +263,9 @@ func (s *PolicyService) Update(ctx context.Context, id uuid.UUID, p UpdatePolicy
 	}
 
 	if p.Action != nil {
-		c, err := q.SetPolicyAction(ctx, pg.SetPolicyActionParams{
+		c, err := q.SetPolicyAction(ctx, postgres.SetPolicyActionParams{
 			Uuid:   id,
-			Action: pg.PolicyAction(*p.Action),
+			Action: postgres.PolicyAction(*p.Action),
 		})
 		if err != nil {
 			tx.Rollback()
@@ -275,7 +275,7 @@ func (s *PolicyService) Update(ctx context.Context, id uuid.UUID, p UpdatePolicy
 	}
 
 	if p.Resource != nil {
-		c, err := q.SetPolicyResource(ctx, pg.SetPolicyResourceParams{
+		c, err := q.SetPolicyResource(ctx, postgres.SetPolicyResourceParams{
 			Uuid:     id,
 			Resource: *p.Resource,
 		})

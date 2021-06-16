@@ -29,12 +29,12 @@ import (
 	"github.com/hexops/gotextdiff/span"
 
 	"github.com/self-host/self-host/api/selfserv/rest"
-	pg "github.com/self-host/self-host/postgres"
+	"github.com/self-host/self-host/postgres"
 )
 
 // ProgramService represents the repository used for interacting with Program records.
 type ProgramService struct {
-	q  *pg.Queries
+	q  *postgres.Queries
 	db *sql.DB
 }
 
@@ -45,7 +45,7 @@ func NewProgramService(db *sql.DB) *ProgramService {
 	}
 
 	return &ProgramService{
-		q:  pg.New(db),
+		q:  postgres.New(db),
 		db: db,
 	}
 }
@@ -62,7 +62,7 @@ type AddProgramParams struct {
 }
 
 func (s *ProgramService) AddProgram(ctx context.Context, p AddProgramParams) (*rest.Program, error) {
-	params := pg.CreateProgramParams{
+	params := postgres.CreateProgramParams{
 		Name:      p.Name,
 		Type:      p.Type,
 		State:     p.State,
@@ -99,7 +99,7 @@ type AddCodeRevisionParams struct {
 }
 
 func (s *ProgramService) AddCodeRevision(ctx context.Context, p AddCodeRevisionParams) (*rest.CodeRevision, error) {
-	params := pg.CreateCodeRevisionParams{
+	params := postgres.CreateCodeRevisionParams{
 		ProgramUuid: p.ProgramUuid,
 		CreatedBy:   p.CreatedBy,
 		Code:        p.Code,
@@ -131,7 +131,7 @@ func (s *ProgramService) AddCodeRevision(ctx context.Context, p AddCodeRevisionP
 func (s *ProgramService) FindAll(ctx context.Context, p FindAllParams) ([]*rest.Program, error) {
 	programs := make([]*rest.Program, 0)
 
-	params := pg.FindProgramsParams{
+	params := postgres.FindProgramsParams{
 		Token: p.Token,
 	}
 
@@ -168,7 +168,7 @@ func (s *ProgramService) FindAll(ctx context.Context, p FindAllParams) ([]*rest.
 func (svc *ProgramService) FindByTags(ctx context.Context, p FindByTagsParams) ([]*rest.Program, error) {
 	programs := make([]*rest.Program, 0)
 
-	params := pg.FindProgramsByTagsParams{
+	params := postgres.FindProgramsByTagsParams{
 		Tags:  p.Tags,
 		Token: p.Token,
 	}
@@ -264,7 +264,7 @@ func (s *ProgramService) DiffProgramCodeAtRevisions(ctx context.Context, id uuid
 		codeA = string(cA.Code)
 		revA = int(cA.Revision)
 	} else {
-		cA, err := s.q.GetProgramCodeAtRevision(ctx, pg.GetProgramCodeAtRevisionParams{
+		cA, err := s.q.GetProgramCodeAtRevision(ctx, postgres.GetProgramCodeAtRevisionParams{
 			ProgramUuid: id,
 			Revision:    int32(revA),
 		})
@@ -282,7 +282,7 @@ func (s *ProgramService) DiffProgramCodeAtRevisions(ctx context.Context, id uuid
 		codeB = string(cB.Code)
 		revB = int(cB.Revision)
 	} else {
-		cB, err := s.q.GetProgramCodeAtRevision(ctx, pg.GetProgramCodeAtRevisionParams{
+		cB, err := s.q.GetProgramCodeAtRevision(ctx, postgres.GetProgramCodeAtRevisionParams{
 			ProgramUuid: id,
 			Revision:    int32(revB),
 		})
@@ -336,7 +336,7 @@ func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, 
 	q := s.q.WithTx(tx)
 
 	if p.Name != nil {
-		c, err := q.SetProgramNameByUUID(ctx, pg.SetProgramNameByUUIDParams{
+		c, err := q.SetProgramNameByUUID(ctx, postgres.SetProgramNameByUUIDParams{
 			Uuid: id,
 			Name: *p.Name,
 		})
@@ -349,7 +349,7 @@ func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, 
 	}
 
 	if p.Type != nil {
-		c, err := q.SetProgramTypeByUUID(ctx, pg.SetProgramTypeByUUIDParams{
+		c, err := q.SetProgramTypeByUUID(ctx, postgres.SetProgramTypeByUUIDParams{
 			Uuid: id,
 			Type: *p.Type,
 		})
@@ -362,7 +362,7 @@ func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, 
 	}
 
 	if p.State != nil {
-		c, err := q.SetProgramStateByUUID(ctx, pg.SetProgramStateByUUIDParams{
+		c, err := q.SetProgramStateByUUID(ctx, postgres.SetProgramStateByUUIDParams{
 			Uuid:  id,
 			State: *p.State,
 		})
@@ -375,7 +375,7 @@ func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, 
 	}
 
 	if p.Schedule != nil {
-		c, err := q.SetProgramScheduleByUUID(ctx, pg.SetProgramScheduleByUUIDParams{
+		c, err := q.SetProgramScheduleByUUID(ctx, postgres.SetProgramScheduleByUUIDParams{
 			Uuid:     id,
 			Schedule: *p.Schedule,
 		})
@@ -388,7 +388,7 @@ func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, 
 	}
 
 	if p.Deadline != nil {
-		c, err := q.SetProgramDeadlineByUUID(ctx, pg.SetProgramDeadlineByUUIDParams{
+		c, err := q.SetProgramDeadlineByUUID(ctx, postgres.SetProgramDeadlineByUUIDParams{
 			Uuid:     id,
 			Deadline: int32(*p.Deadline),
 		})
@@ -401,7 +401,7 @@ func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, 
 	}
 
 	if p.Language != nil {
-		c, err := q.SetProgramLanguageByUUID(ctx, pg.SetProgramLanguageByUUIDParams{
+		c, err := q.SetProgramLanguageByUUID(ctx, postgres.SetProgramLanguageByUUIDParams{
 			Uuid:     id,
 			Language: *p.Language,
 		})
@@ -414,7 +414,7 @@ func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, 
 	}
 
 	if p.Tags != nil {
-		params := pg.SetProgramTagsParams{
+		params := postgres.SetProgramTagsParams{
 			Uuid: id,
 			Tags: *p.Tags,
 		}
@@ -438,7 +438,7 @@ type SignCodeRevisionParams struct {
 }
 
 func (s *ProgramService) SignCodeRevision(ctx context.Context, p SignCodeRevisionParams) (int64, error) {
-	count, err := s.q.SignProgramCodeRevision(ctx, pg.SignProgramCodeRevisionParams{
+	count, err := s.q.SignProgramCodeRevision(ctx, postgres.SignProgramCodeRevisionParams{
 		ProgramUuid: p.ProgramUuid,
 		Revision:    int32(p.Revision),
 		SignedBy:    p.SignedBy,
@@ -460,7 +460,7 @@ func (s *ProgramService) DeleteProgram(ctx context.Context, id uuid.UUID) (int64
 }
 
 func (s *ProgramService) DeleteProgramCodeRevision(ctx context.Context, id uuid.UUID, revision int) (int64, error) {
-	count, err := s.q.DeleteProgramCodeRevision(ctx, pg.DeleteProgramCodeRevisionParams{
+	count, err := s.q.DeleteProgramCodeRevision(ctx, postgres.DeleteProgramCodeRevisionParams{
 		ProgramUuid: id,
 		Revision:    int32(revision),
 	})

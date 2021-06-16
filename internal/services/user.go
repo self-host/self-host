@@ -26,7 +26,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/self-host/self-host/api/selfserv/rest"
 	ie "github.com/self-host/self-host/internal/errors"
-	pg "github.com/self-host/self-host/postgres"
+	"github.com/self-host/self-host/postgres"
 )
 
 const (
@@ -35,14 +35,14 @@ const (
 
 // User represents the repository used for interacting with User records.
 type UserService struct {
-	q  *pg.Queries
+	q  *postgres.Queries
 	db *sql.DB
 }
 
 // NewUser instantiates the User repository.
 func NewUserService(db *sql.DB) *UserService {
 	return &UserService{
-		q:  pg.New(db),
+		q:  postgres.New(db),
 		db: db,
 	}
 }
@@ -102,7 +102,7 @@ func (u *UserService) AddTokenToUser(ctx context.Context, user_uuid uuid.UUID, l
 
 	secret := "secret-token." + RandomString(SECRET_TOKEN_LENGTH)
 
-	params := pg.AddTokenToUserParams{
+	params := postgres.AddTokenToUserParams{
 		UserUuid: user_uuid,
 		Name:     label,
 		Secret:   []byte(secret),
@@ -128,7 +128,7 @@ func (u *UserService) AddRemoveUserToGroups(ctx context.Context, user_uuid uuid.
 
 	q := u.q.WithTx(tx)
 
-	params := pg.RemoveUserFromGroupsParams{
+	params := postgres.RemoveUserFromGroupsParams{
 		UserUuid:   user_uuid,
 		GroupUuids: removes,
 	}
@@ -140,7 +140,7 @@ func (u *UserService) AddRemoveUserToGroups(ctx context.Context, user_uuid uuid.
 	}
 
 	for _, group_uuid := range adds {
-		params := pg.AddUserToGroupParams{
+		params := postgres.AddUserToGroupParams{
 			UserUuid:  user_uuid,
 			GroupUuid: group_uuid,
 		}
@@ -167,7 +167,7 @@ func (u *UserService) AddUserToGroups(ctx context.Context, user_uuid uuid.UUID, 
 	q := u.q.WithTx(tx)
 
 	for _, group_uuid := range group_uuids {
-		params := pg.AddUserToGroupParams{
+		params := postgres.AddUserToGroupParams{
 			UserUuid:  user_uuid,
 			GroupUuid: group_uuid,
 		}
@@ -221,7 +221,7 @@ func (u *UserService) GetUserUuidFromToken(ctx context.Context, token []byte) (u
 func (u *UserService) FindAll(ctx context.Context, token []byte, limit *int64, offset *int64) ([]*rest.User, error) {
 	users := make([]*rest.User, 0)
 
-	params := pg.FindUsersParams{
+	params := postgres.FindUsersParams{
 		Token:     token,
 		ArgLimit:  20,
 		ArgOffset: 0,
@@ -281,7 +281,7 @@ func (u *UserService) FindTokensForUser(ctx context.Context, user_uuid uuid.UUID
 }
 
 func (u *UserService) RemoveUserFromGroups(ctx context.Context, user_uuid uuid.UUID, group_uuids []uuid.UUID) (int64, error) {
-	params := pg.RemoveUserFromGroupsParams{
+	params := postgres.RemoveUserFromGroupsParams{
 		UserUuid:   user_uuid,
 		GroupUuids: group_uuids,
 	}
@@ -309,7 +309,7 @@ func (u *UserService) SetUserGroups(ctx context.Context, user_uuid uuid.UUID, gr
 	}
 
 	for _, group_uuid := range group_uuids {
-		params := pg.AddUserToGroupParams{
+		params := postgres.AddUserToGroupParams{
 			UserUuid:  user_uuid,
 			GroupUuid: group_uuid,
 		}
@@ -327,7 +327,7 @@ func (u *UserService) SetUserGroups(ctx context.Context, user_uuid uuid.UUID, gr
 }
 
 func (u *UserService) SetUserName(ctx context.Context, user_uuid uuid.UUID, name string) (int64, error) {
-	count, err := u.q.SetUserName(ctx, pg.SetUserNameParams{
+	count, err := u.q.SetUserName(ctx, postgres.SetUserNameParams{
 		Uuid: user_uuid,
 		Name: name,
 	})
@@ -352,7 +352,7 @@ func (u *UserService) DeleteUser(ctx context.Context, user_uuid uuid.UUID) (int6
 }
 
 func (u *UserService) DeleteTokenFromUser(ctx context.Context, user_uuid, token_uuid uuid.UUID) (int64, error) {
-	count, err := u.q.DeleteTokenFromUser(ctx, pg.DeleteTokenFromUserParams{
+	count, err := u.q.DeleteTokenFromUser(ctx, postgres.DeleteTokenFromUserParams{
 		UserUuid:  user_uuid,
 		TokenUuid: token_uuid,
 	})

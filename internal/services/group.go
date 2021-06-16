@@ -25,19 +25,19 @@ import (
 	"github.com/google/uuid"
 	"github.com/self-host/self-host/api/selfserv/rest"
 	ie "github.com/self-host/self-host/internal/errors"
-	pg "github.com/self-host/self-host/postgres"
+	"github.com/self-host/self-host/postgres"
 )
 
 // User represents the repository used for interacting with User records.
 type GroupService struct {
-	q  *pg.Queries
+	q  *postgres.Queries
 	db *sql.DB
 }
 
 // NewUser instantiates the User repository.
 func NewGroupService(db *sql.DB) *GroupService {
 	return &GroupService{
-		q:  pg.New(db),
+		q:  postgres.New(db),
 		db: db,
 	}
 }
@@ -98,7 +98,7 @@ func (u *GroupService) FindGroupByUuid(ctx context.Context, group_uuid uuid.UUID
 func (u *GroupService) FindAll(ctx context.Context, token []byte, limit *int64, offset *int64) ([]*rest.Group, error) {
 	groups := make([]*rest.Group, 0)
 
-	params := pg.FindGroupsParams{
+	params := postgres.FindGroupsParams{
 		Token:     token,
 		ArgLimit:  20,
 		ArgOffset: 0,
@@ -127,7 +127,7 @@ func (u *GroupService) FindAll(ctx context.Context, token []byte, limit *int64, 
 }
 
 func (u *GroupService) UpdateGroupNameByUuid(ctx context.Context, id uuid.UUID, name string) (int64, error) {
-	count, err := u.q.SetGroupNameByUUID(ctx, pg.SetGroupNameByUUIDParams{
+	count, err := u.q.SetGroupNameByUUID(ctx, postgres.SetGroupNameByUUIDParams{
 		Uuid: id,
 		Name: name,
 	})

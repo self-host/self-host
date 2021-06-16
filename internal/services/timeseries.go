@@ -28,7 +28,7 @@ import (
 
 	"github.com/self-host/self-host/api/selfserv/rest"
 	ie "github.com/self-host/self-host/internal/errors"
-	pg "github.com/self-host/self-host/postgres"
+	"github.com/self-host/self-host/postgres"
 
 	units "github.com/ganehag/go-units"
 )
@@ -57,7 +57,7 @@ type NewTimeseriesParams struct {
 
 // User represents the repository used for interacting with User records.
 type TimeseriesService struct {
-	q  *pg.Queries
+	q  *postgres.Queries
 	db *sql.DB
 }
 
@@ -68,7 +68,7 @@ func NewTimeseriesService(db *sql.DB) *TimeseriesService {
 	}
 
 	return &TimeseriesService{
-		q:  pg.New(db),
+		q:  postgres.New(db),
 		db: db,
 	}
 }
@@ -98,7 +98,7 @@ func (svc *TimeseriesService) AddTimeseries(ctx context.Context, opt *NewTimeser
 		}
 	}
 
-	params := pg.CreateTimeseriesParams{
+	params := postgres.CreateTimeseriesParams{
 		CreatedBy:  opt.CreatedBy,
 		ThingUuid:  opt.ThingUuid,
 		Name:       opt.Name,
@@ -236,7 +236,7 @@ func (svc *TimeseriesService) AddDataToTimeseries(ctx context.Context, p AddData
 func (svc *TimeseriesService) FindByTags(ctx context.Context, p FindByTagsParams) ([]*rest.Timeseries, error) {
 	timeseries := make([]*rest.Timeseries, 0)
 
-	params := pg.FindTimeseriesByTagsParams{
+	params := postgres.FindTimeseriesByTagsParams{
 		Tags:  p.Tags,
 		Token: p.Token,
 	}
@@ -368,7 +368,7 @@ func (svc *TimeseriesService) FindByUuid(ctx context.Context, id uuid.UUID) (*re
 func (svc *TimeseriesService) FindAll(ctx context.Context, p FindAllParams) ([]*rest.Timeseries, error) {
 	timeseries := make([]*rest.Timeseries, 0)
 
-	params := pg.FindTimeseriesParams{
+	params := postgres.FindTimeseriesParams{
 		Token: p.Token,
 	}
 	if p.Limit.Value != 0 {
@@ -458,7 +458,7 @@ func (svc *TimeseriesService) QueryData(ctx context.Context, p QueryDataParams) 
 		}
 	}
 
-	params := pg.GetTsDataRangeParams{
+	params := postgres.GetTsDataRangeParams{
 		TsUuids: tsuuids,
 		Start:   p.Start,
 		Stop:    p.End,
@@ -533,7 +533,7 @@ func (svc *TimeseriesService) UpdateTimeseries(ctx context.Context, p UpdateTime
 	q := svc.q.WithTx(tx)
 
 	if p.Name != nil {
-		params := pg.SetTimeseriesNameParams{
+		params := postgres.SetTimeseriesNameParams{
 			Uuid: p.Uuid,
 			Name: *p.Name,
 		}
@@ -548,7 +548,7 @@ func (svc *TimeseriesService) UpdateTimeseries(ctx context.Context, p UpdateTime
 	if p.SiUnit != nil {
 		// FIXME: Check SI unit against Gonum
 
-		params := pg.SetTimeseriesSiUnitParams{
+		params := postgres.SetTimeseriesSiUnitParams{
 			Uuid:   p.Uuid,
 			SiUnit: *p.SiUnit,
 		}
@@ -561,7 +561,7 @@ func (svc *TimeseriesService) UpdateTimeseries(ctx context.Context, p UpdateTime
 	}
 
 	if p.ThingUuid != nil {
-		params := pg.SetTimeseriesThingParams{
+		params := postgres.SetTimeseriesThingParams{
 			Uuid:      p.Uuid,
 			ThingUuid: *p.ThingUuid,
 		}
@@ -574,7 +574,7 @@ func (svc *TimeseriesService) UpdateTimeseries(ctx context.Context, p UpdateTime
 	}
 
 	if p.LowerBound != nil {
-		params := pg.SetTimeseriesLowerBoundParams{
+		params := postgres.SetTimeseriesLowerBoundParams{
 			Uuid:       p.Uuid,
 			LowerBound: *p.LowerBound,
 		}
@@ -587,7 +587,7 @@ func (svc *TimeseriesService) UpdateTimeseries(ctx context.Context, p UpdateTime
 	}
 
 	if p.UpperBound != nil {
-		params := pg.SetTimeseriesUpperBoundParams{
+		params := postgres.SetTimeseriesUpperBoundParams{
 			Uuid:       p.Uuid,
 			UpperBound: *p.UpperBound,
 		}
@@ -600,7 +600,7 @@ func (svc *TimeseriesService) UpdateTimeseries(ctx context.Context, p UpdateTime
 	}
 
 	if p.Tags != nil {
-		params := pg.SetTimeseriesTagsParams{
+		params := postgres.SetTimeseriesTagsParams{
 			Uuid: p.Uuid,
 			Tags: *p.Tags,
 		}
@@ -640,7 +640,7 @@ func (svc *TimeseriesService) DeleteTsData(ctx context.Context, p DeleteTsDataPa
 		p.Uuid,
 	}
 
-	params := pg.DeleteTsDataRangeParams{
+	params := postgres.DeleteTsDataRangeParams{
 		TsUuids: tsuuids,
 		Start:   p.Start,
 		Stop:    p.End,

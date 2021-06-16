@@ -22,23 +22,23 @@ import (
 	"context"
 	"database/sql"
 
-	pg "github.com/self-host/self-host/postgres"
+	"github.com/self-host/self-host/postgres"
 )
 
 type PolicyCheckService struct {
-	q *pg.Queries
+	q *postgres.Queries
 }
 
 // NewPolicyCheck service
 func NewPolicyCheckService(db *sql.DB) *PolicyCheckService {
 	return &PolicyCheckService{
-		q: pg.New(db),
+		q: postgres.New(db),
 	}
 }
 
 func (pc *PolicyCheckService) UserHasAccessViaToken(ctx context.Context, token []byte, action string, resource string) (bool, error) {
-	params := pg.CheckUserTokenHasAccessParams{
-		Action:   pg.PolicyAction(action),
+	params := postgres.CheckUserTokenHasAccessParams{
+		Action:   postgres.PolicyAction(action),
 		Resource: resource,
 		Token:    token,
 	}

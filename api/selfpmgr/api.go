@@ -33,7 +33,7 @@ import (
 
 	ie "github.com/self-host/self-host/internal/errors"
 	"github.com/self-host/self-host/pkg/workforce"
-	pg "github.com/self-host/self-host/postgres"
+	"github.com/self-host/self-host/postgres"
 )
 
 type RestApi struct{}
@@ -119,17 +119,17 @@ func (ra *RestApi) WorkerLoadUpdate(w http.ResponseWriter, r *http.Request, id U
 }
 
 func (ra *RestApi) GetModuleAtRevision(w http.ResponseWriter, r *http.Request, p GetModuleAtRevisionParams) {
-	db, err := pg.GetDB(string(p.Domain))
+	db, err := postgres.GetDB(string(p.Domain))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorNotFound)
 		return
 	}
 
-	q := pg.New(db)
+	q := postgres.New(db)
 	var code []byte
 
 	if string(p.Revision) == "latest" {
-		code, err = q.GetNamedModuleCodeAtHead(r.Context(), pg.GetNamedModuleCodeAtHeadParams{
+		code, err = q.GetNamedModuleCodeAtHead(r.Context(), postgres.GetNamedModuleCodeAtHeadParams{
 			Name:     string(p.Module),
 			Language: string(p.Language),
 		})
@@ -144,7 +144,7 @@ func (ra *RestApi) GetModuleAtRevision(w http.ResponseWriter, r *http.Request, p
 			return
 		}
 
-		code, err = q.GetNamedModuleCodeAtRevision(r.Context(), pg.GetNamedModuleCodeAtRevisionParams{
+		code, err = q.GetNamedModuleCodeAtRevision(r.Context(), postgres.GetNamedModuleCodeAtRevisionParams{
 			Name:     string(p.Module),
 			Revision: int32(irev),
 			Language: string(p.Language),
@@ -166,7 +166,7 @@ func GetOpenAPIFile() ([]byte, error) {
 }
 
 func UpdateProgramCache() error {
-	dbs := pg.GetAllDB()
+	dbs := postgres.GetAllDB()
 
 	pcache.Begin()
 
@@ -175,7 +175,7 @@ func UpdateProgramCache() error {
 			continue
 		}
 
-		q := pg.New(item.DB)
+		q := postgres.New(item.DB)
 		if q == nil {
 			continue
 		}

@@ -24,7 +24,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/self-host/self-host/api/selfserv/rest"
-	pg "github.com/self-host/self-host/postgres"
+	"github.com/self-host/self-host/postgres"
 )
 
 type DatasetFile struct {
@@ -34,7 +34,7 @@ type DatasetFile struct {
 
 // DatasetService represents the repository used for interacting with Dataset records.
 type DatasetService struct {
-	q  *pg.Queries
+	q  *postgres.Queries
 	db *sql.DB
 }
 
@@ -45,7 +45,7 @@ func NewDatasetService(db *sql.DB) *DatasetService {
 	}
 
 	return &DatasetService{
-		q:  pg.New(db),
+		q:  postgres.New(db),
 		db: db,
 	}
 }
@@ -76,7 +76,7 @@ func (svc *DatasetService) AddDataset(ctx context.Context, p *AddDatasetParams) 
 		}
 	}
 
-	params := pg.CreateDatasetParams{
+	params := postgres.CreateDatasetParams{
 		Name:      p.Name,
 		Content:   p.Content,
 		Format:    p.Format,
@@ -171,7 +171,7 @@ func (svc *DatasetService) FindByThing(ctx context.Context, id uuid.UUID) ([]*re
 func (svc *DatasetService) FindAll(ctx context.Context, p FindAllParams) ([]*rest.Dataset, error) {
 	datasets := make([]*rest.Dataset, 0)
 
-	params := pg.FindDatasetsParams{
+	params := postgres.FindDatasetsParams{
 		Token: p.Token,
 	}
 
@@ -214,7 +214,7 @@ func (svc *DatasetService) FindAll(ctx context.Context, p FindAllParams) ([]*res
 func (svc *DatasetService) FindByTags(ctx context.Context, p FindByTagsParams) ([]*rest.Dataset, error) {
 	datasets := make([]*rest.Dataset, 0)
 
-	params := pg.FindDatasetsByTagsParams{
+	params := postgres.FindDatasetsByTagsParams{
 		Tags:  p.Tags,
 		Token: p.Token,
 	}
@@ -285,7 +285,7 @@ func (svc *DatasetService) UpdateDatasetByUuid(ctx context.Context, id uuid.UUID
 	q := svc.q.WithTx(tx)
 
 	if p.Name != nil {
-		c, err := q.SetDatasetNameByUUID(ctx, pg.SetDatasetNameByUUIDParams{
+		c, err := q.SetDatasetNameByUUID(ctx, postgres.SetDatasetNameByUUIDParams{
 			Uuid: id,
 			Name: *p.Name,
 		})
@@ -298,7 +298,7 @@ func (svc *DatasetService) UpdateDatasetByUuid(ctx context.Context, id uuid.UUID
 	}
 
 	if p.Format != nil {
-		c, err := q.SetDatasetFormatByUUID(ctx, pg.SetDatasetFormatByUUIDParams{
+		c, err := q.SetDatasetFormatByUUID(ctx, postgres.SetDatasetFormatByUUIDParams{
 			Uuid:   id,
 			Format: *p.Format,
 		})
@@ -311,7 +311,7 @@ func (svc *DatasetService) UpdateDatasetByUuid(ctx context.Context, id uuid.UUID
 	}
 
 	if p.Content != nil {
-		c, err := q.SetDatasetContentByUUID(ctx, pg.SetDatasetContentByUUIDParams{
+		c, err := q.SetDatasetContentByUUID(ctx, postgres.SetDatasetContentByUUIDParams{
 			Uuid:    id,
 			Content: *p.Content,
 		})
@@ -324,7 +324,7 @@ func (svc *DatasetService) UpdateDatasetByUuid(ctx context.Context, id uuid.UUID
 	}
 
 	if p.Tags != nil {
-		params := pg.SetDatasetTagsParams{
+		params := postgres.SetDatasetTagsParams{
 			Uuid: id,
 			Tags: *p.Tags,
 		}
