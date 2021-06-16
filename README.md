@@ -94,23 +94,23 @@ Hardware and software required;
 
 - Computer with Docker installed.
 
-[Five to fifteen-minute deployment](docs/test_deployment.md)
+[Five to fifteen-minute deployment](https://github.com/self-host/self-host/blob/main/docs/test_deployment.md)
 
 
 # Documentation
 
-- [Glossary](docs/glossary.md)
-- [Tools of the trade](docs/tools_of_the_trade.md)
-- [Design](docs/design.md)
-    + [Authentication](docs/authentication.md)
-    + [Access control](docs/access_control.md)
-    + [Data partitioning](docs/data_partitioning.md)
-    + [Rate control](docs/rate_control.md)
-    + [Program Manager and Workers](docs/program_manager_worker.md)
-    + [Unit handling](docs/unit_handling.md)
-- [Benchmark](docs/benchmark_overview.md)
+- [Glossary](https://github.com/self-host/self-host/blob/main/docs/glossary.md)
+- [Tools of the trade](https://github.com/self-host/self-host/blob/main/docs/tools_of_the_trade.md)
+- [Design](https://github.com/self-host/self-host/blob/main/docs/design.md)
+    + [Authentication](https://github.com/self-host/self-host/blob/main/docs/authentication.md)
+    + [Access control](https://github.com/self-host/self-host/blob/main/docs/access_control.md)
+    + [Data partitioning](https://github.com/self-host/self-host/blob/main/docs/data_partitioning.md)
+    + [Rate control](https://github.com/self-host/self-host/blob/main/docs/rate_control.md)
+    + [Program Manager and Workers](https://github.com/self-host/self-host/blob/main/docs/program_manager_worker.md)
+    + [Unit handling](https://github.com/self-host/self-host/blob/main/docs/unit_handling.md)
+- [Benchmark](https://github.com/self-host/self-host/blob/main/docs/benchmark_overview.md)
 - [Public-facing API specification](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/self-host/self-host/main/api/selfserv/rest/openapiv3.yaml)
-- [Notes on deploying to production](docs/production_deployment.md)
+- [Notes on deploying to production](https://github.com/self-host/self-host/blob/main/docs/production_deployment.md)
     + [Docker](https://github.com/self-host/self-host/blob/main/docs/docker_deployment.md)
     + [Kubernetes](https://github.com/self-host/self-host/blob/main/docs/k8s_deployment.md)
 
