@@ -3,14 +3,14 @@
 To deploy the system, you are going to need three things;
 
 - A PostgreSQL DBMS server with at least one Self-host database (Domain).
-- One or several instances of the API server (selfserv).
-- An instance of the Program Manager (selfpmgr).
-- One or several instances of the Program Worker (selfpwrk).
+- One or several instances of the API server (aapije).
+- An instance of the Program Manager (juvuln).
+- One or several instances of the Program Worker (malgomaj).
 
 If you want the quick and dirty way to deploy a test environment, then take a look at the [five to fifteen-minute deployment](https://github.com/self-host/self-host/blob/main/docs/test_deployment.md).
 
 
-# Configuration files (applies to selfserv, selfpmgr, selfpwrk)
+# Configuration files (applies to aapije, juvuln, malgomaj)
 
 The name of the configuration file is declared with the environment variable `CONFIG_FILENAME`. The file is then looked for in;
 
@@ -38,7 +38,7 @@ The API server (seflserv) needs network access to all DBs for which it should ho
 A typical configuration file for an API server looks like this;
 
 ```yaml
--- selfserv.conf.yaml
+-- aapije.conf.yaml
 domainfile: domains.yaml
 
 listen:
@@ -70,7 +70,7 @@ The Program Manager needs network access to all DBs for which it should manage p
 A typical configuration file for a Program Manager looks like this;
 
 ```yaml
--- selfpmgr.conf.yaml
+-- juvuln.conf.yaml
 domainfile: domains.yaml
 
 listen:
@@ -99,7 +99,7 @@ Once running, the server software listens for changes to the file declared by th
 
 A Program Worker needs access to the Program Manager and, depending on the situation, especially if HTTP request to the Internet at large is required, access the Internet.
 
-**NOTE**: For a program to interact with the Self-host API server (selfserv) using the HTTP module is a requirement.
+**NOTE**: For a program to interact with the Self-host API server (aapije) using the HTTP module is a requirement.
 
 It is also a requirement to have access to the Program Manager, as the Worker has to keep the Manager updated on its state constantly. The Program Manager is also the `Library Manager`, which supplies the Worker (on request) with the source code to `modules`.
 
@@ -141,7 +141,7 @@ For Docker, there are as many different solutions as there are Ingress Controlle
 
 Depending on how many Self-host programs you have running, how often they run and for how long they run, you might want to have more than one Program Worker.
 
-Deploying more Program Workers is as simple as starting more instances of the `selfpwrk` server, having the configuration pointing to the same Program Manager.
+Deploying more Program Workers is as simple as starting more instances of the `malgomaj` server, having the configuration pointing to the same Program Manager.
 
 The Program Manager will take care of the rest and distribute the load across all workers.
 

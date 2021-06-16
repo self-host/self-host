@@ -9,7 +9,7 @@ This software is written with the sole intent to provide an easy way to deploy s
 
 # How it Works
 
-Two components are working together, one Program Manager (selfpmgr) and one or several instances of the Program Worker (selfpwrk).
+Two components are working together, one Program Manager (juvuln) and one or several instances of the Program Worker (malgomaj).
 
 At set intervals, the Program Manager queries all domains for all active programs. Based on the program's specification, it tracks them and then tells a Program Worker to execute the program. The Program Worker compiles the program (if required), caches the binary and runs the program.
 

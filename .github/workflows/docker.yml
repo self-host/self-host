@@ -19,12 +19,12 @@ jobs:
     - name: Check out the repo
       uses: actions/checkout@v2
 
-    - name: Docker selfserv meta
+    - name: Docker aapije meta
       id: serv-meta
       uses: docker/metadata-action@v3
       with:
         images: |
-          selfhoster/selfserv
+          selfhoster/aapije
         tags: |
           type=schedule
           type=ref,event=branch
@@ -39,7 +39,7 @@ jobs:
       uses: docker/metadata-action@v3
       with:
         images: |
-          selfhoster/selfpmgr
+          selfhoster/juvuln
         tags: |
           type=schedule
           type=ref,event=branch
@@ -54,7 +54,7 @@ jobs:
       uses: docker/metadata-action@v3
       with:
         images: |
-          selfhoster/selfpwrk
+          selfhoster/malgomaj
         tags: |
           type=schedule
           type=ref,event=branch
@@ -76,56 +76,56 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     
-    - name: Build selfserv and push to Docker Hub
+    - name: Build aapije and push to Docker Hub
       uses: docker/build-push-action@v2
       with:
         context: .
         platforms: linux/amd64,linux/arm64
-        file: build/selfserv/Dockerfile
+        file: build/aapije/Dockerfile
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.serv-meta.outputs.tags }}
         labels: ${{ steps.serv-meta.outputs.labels }}
 
-    - name: Update selfserv repo description
+    - name: Update aapije repo description
       uses: peter-evans/dockerhub-description@v2
       if: github.event_name == 'push'
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
-        repository: selfhoster/selfserv
+        repository: selfhoster/aapije
 
-    - name: Build selfpmgr and push to Docker Hub
+    - name: Build juvuln and push to Docker Hub
       uses: docker/build-push-action@v2
       with:
         context: .
         platforms: linux/amd64,linux/arm64
-        file: build/selfpmgr/Dockerfile
+        file: build/juvuln/Dockerfile
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.pmgr-meta.outputs.tags }}
         labels: ${{ steps.pmgr-meta.outputs.labels }}
 
-    - name: Update selfpmgr repo description
+    - name: Update juvuln repo description
       if: github.event_name == 'push'
       uses: peter-evans/dockerhub-description@v2
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
-        repository: selfhoster/selfpmgr
+        repository: selfhoster/juvuln
 
-    - name: Build selfpwrk and push to Docker Hub
+    - name: Build malgomaj and push to Docker Hub
       uses: docker/build-push-action@v2
       with:
         context: .
         platforms: linux/amd64,linux/arm64
-        file: build/selfpwrk/Dockerfile
+        file: build/malgomaj/Dockerfile
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.pwrk-meta.outputs.tags }}
         labels: ${{ steps.pwrk-meta.outputs.labels }}
 
-    - name: Update selfpwrk repo description
+    - name: Update malgomaj repo description
       if: github.event_name == 'push'
       uses: peter-evans/dockerhub-description@v2
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
-        repository: selfhoster/selfpwrk
+        repository: selfhoster/malgomaj

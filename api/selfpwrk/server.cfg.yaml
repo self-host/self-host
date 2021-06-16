@@ -1,6 +1,0 @@
-output:
-  api-server.gen.go
-generate:
-  - chi-server
-  - spec
-package: selfpwrk

@@ -24,7 +24,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/self-host/self-host/api/selfpwrk"
+	"github.com/self-host/self-host/api/malgomaj"
 	"github.com/self-host/self-host/pkg/util/templates"
 	"github.com/spf13/cobra"
 )
@@ -59,7 +59,7 @@ var compileCmd = &cobra.Command{
 
 		deadline := 5 * time.Second
 
-		program, err := selfpwrk.NewProgram("selfctl", programFilename, programLanguage, deadline, source_code)
+		program, err := malgomaj.NewProgram("selfctl", programFilename, programLanguage, deadline, source_code)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)

@@ -3,9 +3,9 @@
 The system exists as a set of interconnected parts.
 
 - Database (PostgreSQL)
-- Self-host API (selfserv)
-- Program Manager (selfpmgr)
-- Program Worker (selfpwrk)
+- Self-host API (aapije)
+- Program Manager (juvuln)
+- Program Worker (malgomaj)
 
 ![Overview][fig1]
 
@@ -19,7 +19,7 @@ The only supported database is PostgreSQL version 12 or newer.
 
 The Self-host API is the main component of the system. It exposed a `domain` database as a set of API endpoints.
 
-For details about the API specification see: [openapiv3.yaml](https://github.com/self-host/self-host/blob/master/api/selfserv/rest/openapiv3.yaml) file.
+For details about the API specification see: [openapiv3.yaml](https://github.com/self-host/self-host/blob/master/api/aapije/rest/openapiv3.yaml) file.
 
 Key components of the Self-host API are;
 

@@ -62,14 +62,14 @@ An `HTTP Proxy` may be used in front of the `API server` depending on the deploy
 # Project structure
 
 - `api`:
-    + `selfserv`: REST API interface for the Self-host central API server.
-    + `selfpmgr`: REST API interface for the Program Manager.
-    + `selfpwrk`: REST API interface for the Program Worker.
+    + `aapije`: REST API interface for the Self-host central API server.
+    + `juvuln`: REST API interface for the Program Manager.
+    + `malgomaj`: REST API interface for the Program Worker.
 - `cmd`:
     + `selfctl`: Self Control; self-host CLI program.
-    + `selfserv`: Self Server; self-host main API server.
-    + `selfpmgr`: Self Program Manager; self-host Program Manager.
-    + `selfpwrk`: Self Program Worker; self-host Program Worker.
+    + `aapije`: Self Server; self-host main API server.
+    + `juvuln`: Self Program Manager; self-host Program Manager.
+    + `malgomaj`: Self Program Worker; self-host Program Worker.
 - `docs`: Documentation
 - `internal`:
     + `services`: Handlers for interfaces to the PostgreSQL backend.
@@ -107,7 +107,7 @@ Hardware and software required;
     + [Program Manager and Workers](https://github.com/self-host/self-host/blob/main/docs/program_manager_worker.md)
     + [Unit handling](https://github.com/self-host/self-host/blob/main/docs/unit_handling.md)
 - [Benchmark](https://github.com/self-host/self-host/blob/main/docs/benchmark_overview.md)
-- [Public-facing API specification](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/self-host/self-host/main/api/selfserv/rest/openapiv3.yaml)
+- [Public-facing API specification](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/self-host/self-host/main/api/aapije/rest/openapiv3.yaml)
 - [Notes on deploying to production](https://github.com/self-host/self-host/blob/main/docs/production_deployment.md)
     + [Docker](https://github.com/self-host/self-host/blob/main/docs/docker_deployment.md)
     + [Kubernetes](https://github.com/self-host/self-host/blob/main/docs/k8s_deployment.md)

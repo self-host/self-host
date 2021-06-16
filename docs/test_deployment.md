@@ -47,13 +47,13 @@ docker run --rm -v {{ migration_dir }}:/migrations --network selfhost migrate/mi
 The database is now ready.
 
 
-# 3) Deploy the Self-host API (selfserv)
+# 3) Deploy the Self-host API (aapije)
 
 *Estimated time required: 1-3 minutes*
 
 Choose a good place in your filesystem to store configuration files, as we will have to mount several files.
 
-Save the following file as `selfserv.conf.yaml`.
+Save the following file as `aapije.conf.yaml`.
 
 ```yaml
 listen:
@@ -69,18 +69,18 @@ domains:
   test: postgresql://postgres:mysecretpassword@pg13.selfhost:5432/selfhost-test
 ```
 
-Start a container instance of the `selfserv` program.
+Start a container instance of the `aapije` program.
 
 ```text
-docker run --name selfserv --network selfhost -p 127.0.0.1:8080:80 -e CONFIG_FILENAME=selfserv.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfserv:latest
+docker run --name aapije --network selfhost -p 127.0.0.1:8080:80 -e CONFIG_FILENAME=aapije.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/aapije:latest
 ```
 
 
-# 4) Deploy the Self-host Program Manager (selfpmgr)
+# 4) Deploy the Self-host Program Manager (juvuln)
 
 *Estimated time required: 1-3 minutes*
 
-We are using the same configuration location as for step 3. Save the following file as `selfpmgr.conf.yaml`.
+We are using the same configuration location as for step 3. Save the following file as `juvuln.conf.yaml`.
 
 ```yaml
 listen:
@@ -95,15 +95,15 @@ It is OK in this test scenario to share the same `domains.yaml` file.
 Then deploy the container instance.
 
 ```text
-docker run --name selfpmgr --network selfhost -e CONFIG_FILENAME=selfpmgr.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfpmgr:latest
+docker run --name juvuln --network selfhost -e CONFIG_FILENAME=juvuln.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/juvuln:latest
 ```
 
 
-# 5) Deploy the Self-host Program Worker (selfpwrk)
+# 5) Deploy the Self-host Program Worker (malgomaj)
 
 *Estimated time required: 1-3 minutes*
 
-We are using the same configuration location as for step 3 and 4. Save the following file as `selfpwrk.conf.yaml`.
+We are using the same configuration location as for step 3 and 4. Save the following file as `malgomaj.conf.yaml`.
 
 ```yaml
 listen:
@@ -116,17 +116,17 @@ cache:
 
 program_manager:
   scheme: http
-  authority: selfpmgr.selfhost:80
+  authority: juvuln.selfhost:80
 
 module_library:
   scheme: http
-  authority: selfpmgr.selfhost:80
+  authority: juvuln.selfhost:80
 ```
 
 Then deploy the container instance.
 
 ```text
-docker run --name selfpwrk --network selfhost -e CONFIG_FILENAME=selfpwrk.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/selfpwrk:latest
+docker run --name malgomaj --network selfhost -e CONFIG_FILENAME=malgomaj.conf.yaml -v {{ config_dir }}:/etc/selfhost -d selfhoster/malgomaj:latest
 ```
 
 

@@ -69,7 +69,7 @@ Policy ID       Group ID        Priority Effect  Action  Resource
 
 Rules are computed such that all `allow` rules are combined, then all `deny` rules are applied to retract access privileges.
 
-For details on which resource paths are relevant, see the [openapiv3.yaml](https://github.com/self-host/self-host/blob/main/api/selfserv/rest/openapiv3.yaml) specification. Look at the `BasicAuth` declaration for each endpoint where the required access privilege is declared on the form; `action:resource_path`.
+For details on which resource paths are relevant, see the [openapiv3.yaml](https://github.com/self-host/self-host/blob/main/api/aapije/rest/openapiv3.yaml) specification. Look at the `BasicAuth` declaration for each endpoint where the required access privilege is declared on the form; `action:resource_path`.
 
 
 ## Questions and Answers

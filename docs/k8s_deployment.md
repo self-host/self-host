@@ -2,18 +2,18 @@
 
 When deploying to Kubernetes, there are a few things we recommend you to do;
 
-- Use [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) when deploying selfserv, selfpmgr and selfpwrk.
+- Use [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) when deploying aapije, juvuln and malgomaj.
 - Store all configuration in [ConfigMaps](https://kubernetes.io/docs/concepts/configuration/configmap/)
 - Use an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) for HTTP traffic from the internet.
 - Use [PgBouncer](https://www.pgbouncer.org/) as a Connection Proxy to the DBMS(s). A pre-built container image can be found at [ganehag/pgbouncer:latest](https://hub.docker.com/r/ganehag/pgbouncer)
-- Only scale up `selfserv` and `selfpwrk` to more replicas if the load requires it.
+- Only scale up `aapije` and `malgomaj` to more replicas if the load requires it.
 
 
 ## Examples
 
 ### Selfserv
 
-Below we give an example of the YAML files required to deploy the `selfserv` program. We leave it as an exercise to the reader to add/modify/extend these as suited for their environment, along with the files required to deploy `selfpmgr` and `selfpwrk`.
+Below we give an example of the YAML files required to deploy the `aapije` program. We leave it as an exercise to the reader to add/modify/extend these as suited for their environment, along with the files required to deploy `juvuln` and `malgomaj`.
 
 #### ConfigMaps
 
@@ -25,16 +25,16 @@ metadata:
 data:
   domains.yaml: |-
     domains:
-      test: postgresql://postgres:secret@pg13.selfserv:5432/selfhost-test
+      test: postgresql://postgres:secret@pg13.aapije:5432/selfhost-test
 ```
 
 ```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: selfserv-conf
+  name: aapije-conf
 data:
-  selfserv.conf.yaml: |-
+  aapije.conf.yaml: |-
     listen:
       host: 0.0.0.0
       port: 80
@@ -48,14 +48,14 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: selfserv-deployment
+  name: aapije-deployment
   labels:
-    app: selfserv
+    app: aapije
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: selfserv
+      app: aapije
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -64,27 +64,27 @@ spec:
   template:
     metadata:
       labels:
-        app: selfserv
+        app: aapije
     spec:
       containers:
-        - name: selfserv
-          image: selfhoster/selfserv:latest
+        - name: aapije
+          image: selfhoster/aapije:latest
           env:
           - name: CONFIG_FILENAME
-            value: selfserv.conf.yaml
+            value: aapije.conf.yaml
           ports:
           - containerPort: 80
           volumeMounts:
-            - name: selfserv-conf
+            - name: aapije-conf
               mountPath: /etc/selfhost
               readOnly: true
             - name: domains
               mountPath: /etc/selfhost/domains
               readOnly: true
       volumes:
-        - name: selfserv-conf
+        - name: aapije-conf
           configMap:
-            name: selfserv-conf
+            name: aapije-conf
         - name: domains
           configMap:
             name: selfhost-domains-conf

@@ -23,7 +23,7 @@ import (
 	"database/sql"
 
 	"github.com/google/uuid"
-	"github.com/self-host/self-host/api/selfserv/rest"
+	"github.com/self-host/self-host/api/aapije/rest"
 	"github.com/self-host/self-host/postgres"
 )
 

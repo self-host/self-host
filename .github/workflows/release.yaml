@@ -30,8 +30,8 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         overwrite: true
-        project_path: ./cmd/selfserv
-        binary_name: selfserv
+        project_path: ./cmd/aapije
+        binary_name: aapije
 
     - name: Go Release Binaries
       uses: wangyoucao577/go-release-action@v1.18
@@ -52,8 +52,8 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         overwrite: true
-        project_path: ./cmd/selfpmgr
-        binary_name: selfpmgr
+        project_path: ./cmd/juvuln
+        binary_name: juvuln
 
     - name: Go Release Binaries
       uses: wangyoucao577/go-release-action@v1.18
@@ -63,5 +63,5 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         overwrite: true
-        project_path: ./cmd/selfpwrk
-        binary_name: selfpwrk
+        project_path: ./cmd/malgomaj
+        binary_name: malgomaj
