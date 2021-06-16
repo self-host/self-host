@@ -15,6 +15,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Self-host.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 package selfpmgr
 
 import (
@@ -26,9 +27,9 @@ import (
 	"time"
 
 	"go.uber.org/zap"
-
 	"github.com/google/uuid"
-	"github.com/self-host/self-host/api/selfpmgr/worker"
+	"github.com/self-host/self-host/pkg/workforce"
+	"github.com/self-host/self-host/pkg/util"
 )
 
 type ProgramRevision struct {
@@ -123,12 +124,17 @@ func (p *ProgramRevision) Execute() error {
 		return err
 	}
 
-	host, err := worker.GetAvailable()
+	w, err := workforce.GetAvailable()
 	if err != nil {
 		return nil
 	}
 
-	resp, err := http.Post(host+"/v1/tasks", "application/json", bytes.NewBuffer(requestBody))
+	worker, ok := w.(*Worker)
+	if ok == false {
+		return fmt.Errorf("incorrect format for worker")
+	}
+
+	resp, err := http.Post(worker.URI+"/v1/tasks", "application/json", bytes.NewBuffer(requestBody))
 	if err != nil {
 		return err
 	}

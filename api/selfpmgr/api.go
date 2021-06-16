@@ -30,7 +30,7 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/self-host/self-host/api/selfpmgr/worker"
+	"github.com/self-host/self-host/pkg/workforce"
 	ie "github.com/self-host/self-host/internal/errors"
 	pg "github.com/self-host/self-host/postgres"
 )
@@ -70,7 +70,7 @@ func (ra *RestApi) WorkerSubscribe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	worker.Add(sub.Uuid, worker.NewWorker(
+	workforce.Add(sub.Uuid, NewWorker(
 		fmt.Sprintf("%v://%v", sub.Scheme, sub.Authority),
 		sub.Languages))
 
@@ -78,7 +78,7 @@ func (ra *RestApi) WorkerSubscribe(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ra *RestApi) WorkerUnsubscribe(w http.ResponseWriter, r *http.Request, id UuidParam) {
-	worker.Delete(string(id))
+	workforce.Delete(string(id))
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNoContent)
@@ -89,7 +89,7 @@ func (ra *RestApi) ForwardWebhook(w http.ResponseWriter, r *http.Request, dom Do
 }
 
 func (ra *RestApi) CheckWorker(w http.ResponseWriter, r *http.Request, id UuidParam) {
-	if worker.Exists(string(id)) == false {
+	if workforce.Exists(string(id)) == false {
 		ie.SendHTTPError(w, ie.ErrorNotFound)
 		return
 	}
@@ -98,7 +98,7 @@ func (ra *RestApi) CheckWorker(w http.ResponseWriter, r *http.Request, id UuidPa
 }
 
 func (ra *RestApi) WorkerLoadUpdate(w http.ResponseWriter, r *http.Request, id UuidParam) {
-	if worker.Exists(string(id)) == false {
+	if workforce.Exists(string(id)) == false {
 		ie.SendHTTPError(w, ie.ErrorNotFound)
 		return
 	}
@@ -110,7 +110,7 @@ func (ra *RestApi) WorkerLoadUpdate(w http.ResponseWriter, r *http.Request, id U
 		return
 	}
 
-	worker.SetLoad(string(id), obj.Load)
+	workforce.SetLoad(string(id), uint64(obj.Load))
 
 	w.WriteHeader(http.StatusNoContent)
 }

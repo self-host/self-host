@@ -15,97 +15,82 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Self-host.  If not, see <http://www.gnu.org/licenses/>.
 */
-package worker
+
+package workforce
 
 import (
-	"errors"
+	"fmt"
 	"sort"
 	"sync"
 )
 
-type ByLoad []*Worker
+type Worker interface {
+	SetLoad(uint64)
+	GetLoad() uint64
+}
+
+type ByLoad []Worker
 
 func (l ByLoad) Len() int {
 	return len(l)
 }
 func (l ByLoad) Less(i, j int) bool {
-	return l[i].Load() < l[j].Load()
+	return l[i].GetLoad() < l[j].GetLoad()
 }
 func (l ByLoad) Swap(i, j int) {
 	l[i], l[j] = l[j], l[i]
 }
 
-type WorkerCache struct {
+type Workforce struct {
 	sync.RWMutex
-	workers map[string]*Worker
+	workers map[string]Worker
 }
 
-type Worker struct {
-	URI       string
-	Languages []string
-	load      int64
-}
-
-func (w *Worker) SetLoad(l int64) {
-	w.load = l
-}
-
-func (w *Worker) Load() int64 {
-	return w.load
-}
-
-var wcache *WorkerCache
+var wforce *Workforce
 
 func init() {
-	wcache = NewWorkerCache()
+	wforce = NewWorkforce()
 }
 
-func NewWorkerCache() *WorkerCache {
-	return &WorkerCache{
-		workers: make(map[string]*Worker),
+func NewWorkforce() *Workforce {
+	return &Workforce{
+		workers: make(map[string]Worker),
 	}
 }
 
-func NewWorker(uri string, langs []string) *Worker {
-	return &Worker{
-		URI:       uri,
-		Languages: langs,
-	}
-}
-
-func (c *WorkerCache) Add(k string, w *Worker) {
+func (c *Workforce) Add(k string, w Worker) {
 	c.Lock()
 	defer c.Unlock()
 
 	c.workers[k] = w
 }
 
-func (c *WorkerCache) Delete(k string) {
+func (c *Workforce) Delete(k string) {
 	c.Lock()
 	defer c.Unlock()
 
 	delete(c.workers, k)
 }
 
-func (c *WorkerCache) Clear() {
+func (c *Workforce) Clear() {
 	c.Lock()
 	defer c.Unlock()
 
-	c.workers = make(map[string]*Worker)
+	c.workers = make(map[string]Worker)
 }
 
-func (c *WorkerCache) Exists(id string) bool {
+func (c *Workforce) Exists(id string) bool {
 	c.RLock()
 	defer c.RUnlock()
 	_, ok := c.workers[id]
 	return ok
 }
 
-func (c *WorkerCache) GetAvailable() (string, error) {
+func (c *Workforce) GetAvailable() (Worker, error) {
 	c.RLock()
 	defer c.RUnlock()
 
-	workers := make([]*Worker, 0)
+	workers := make([]Worker, 0)
 
 	for _, worker := range c.workers {
 		w := worker
@@ -114,13 +99,13 @@ func (c *WorkerCache) GetAvailable() (string, error) {
 
 	if len(workers) > 0 {
 		sort.Sort(ByLoad(workers))
-		return workers[0].URI, nil
+		return workers[0], nil
 	}
 
-	return "", errors.New("no available worker")
+	return nil, fmt.Errorf("no available worker")
 }
 
-func (c *WorkerCache) SetLoad(id string, l int64) {
+func (c *Workforce) SetLoad(id string, l uint64) {
 	c.Lock()
 	defer c.Unlock()
 
@@ -134,26 +119,26 @@ func (c *WorkerCache) SetLoad(id string, l int64) {
 /*
  * Global functions
  */
-func Add(k string, w *Worker) {
-	wcache.Add(k, w)
+func Add(k string, w Worker) {
+	wforce.Add(k, w)
 }
 
 func Delete(k string) {
-	wcache.Delete(k)
+	wforce.Delete(k)
 }
 
 func Clear() {
-	wcache.Clear()
+	wforce.Clear()
 }
 
-func GetAvailable() (string, error) {
-	return wcache.GetAvailable()
+func GetAvailable() (Worker, error) {
+	return wforce.GetAvailable()
 }
 
 func Exists(id string) bool {
-	return wcache.Exists(id)
+	return wforce.Exists(id)
 }
 
-func SetLoad(id string, l int64) {
-	wcache.SetLoad(id, l)
+func SetLoad(id string, l uint64) {
+	wforce.SetLoad(id, l)
 }
