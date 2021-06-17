@@ -48,7 +48,7 @@ func initConfig() {
 	viper.SetDefault("cors.allowed_headers", []string{"Accept", "Authorization", "Content-Type", "If-None-Match"})
 	viper.SetDefault("cors.exposed_headers", []string{"Link"})
 	viper.SetDefault("cors.allow_credentials", true)
-	viper.SetDefault("cors.max_age", 300)  // Maximum value not ignored by any of major browsers
+	viper.SetDefault("cors.max_age", 300) // Maximum value not ignored by any of major browsers
 
 	err = viper.ReadInConfig()
 	if err != nil {

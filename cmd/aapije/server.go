@@ -143,12 +143,12 @@ func Server(address string) (<-chan error, error) {
 	r.Use(chiware.Timeout(60 * time.Second))
 
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins: viper.GetStringSlice("cors.allowed_origins"),
-		AllowedMethods: viper.GetStringSlice("cors.allowed_methods"),
-		AllowedHeaders: viper.GetStringSlice("cors.allowed_headers"),
-		ExposedHeaders: viper.GetStringSlice("cors.exposed_headers"),
+		AllowedOrigins:   viper.GetStringSlice("cors.allowed_origins"),
+		AllowedMethods:   viper.GetStringSlice("cors.allowed_methods"),
+		AllowedHeaders:   viper.GetStringSlice("cors.allowed_headers"),
+		ExposedHeaders:   viper.GetStringSlice("cors.exposed_headers"),
 		AllowCredentials: viper.GetBool("cors.allow_credentials"),
-		MaxAge: viper.GetInt("cors.max_age"),
+		MaxAge:           viper.GetInt("cors.max_age"),
 	}))
 
 	fsys, err := fs.Sub(content, "static")
