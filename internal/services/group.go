@@ -75,15 +75,15 @@ func (u *GroupService) AddGroup(ctx context.Context, name string) (*rest.Group, 
 	}, nil
 }
 
-func (u *GroupService) FindGroupByUuid(ctx context.Context, group_uuid uuid.UUID) (*rest.Group, error) {
-	found, err := u.Exists(ctx, group_uuid)
+func (u *GroupService) FindGroupByUuid(ctx context.Context, groupUUID uuid.UUID) (*rest.Group, error) {
+	found, err := u.Exists(ctx, groupUUID)
 	if err != nil {
 		return nil, err
 	} else if found == false {
 		return nil, ie.ErrorNotFound
 	}
 
-	group, err := u.q.FindGroupByUuid(ctx, group_uuid)
+	group, err := u.q.FindGroupByUuid(ctx, groupUUID)
 	if err != nil {
 		return nil, err
 	}
@@ -110,12 +110,12 @@ func (u *GroupService) FindAll(ctx context.Context, token []byte, limit *int64, 
 		params.ArgOffset = *offset
 	}
 
-	group_list, err := u.q.FindGroups(ctx, params)
+	groupList, err := u.q.FindGroups(ctx, params)
 
 	if err != nil {
 		return nil, err
 	} else {
-		for _, g := range group_list {
+		for _, g := range groupList {
 			groups = append(groups, &rest.Group{
 				Uuid: g.Uuid.String(),
 				Name: g.Name,
@@ -138,8 +138,8 @@ func (u *GroupService) UpdateGroupNameByUuid(ctx context.Context, id uuid.UUID, 
 	return count, nil
 }
 
-func (u *GroupService) DeleteGroup(ctx context.Context, group_uuid uuid.UUID) (int64, error) {
-	count, err := u.q.DeleteGroup(ctx, group_uuid)
+func (u *GroupService) DeleteGroup(ctx context.Context, groupUUID uuid.UUID) (int64, error) {
+	count, err := u.q.DeleteGroup(ctx, groupUUID)
 	if err != nil {
 		return 0, err
 	}

@@ -53,14 +53,14 @@ func (ra *RestApi) AddTimeSeries(w http.ResponseWriter, r *http.Request) {
 
 	u := services.NewUserService(db)
 
-	created_by_uuid, err := u.GetUserUuidFromToken(r.Context(), []byte(domaintoken.Token))
+	createdByUUID, err := u.GetUserUuidFromToken(r.Context(), []byte(domaintoken.Token))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorUndefined)
 		return
 	}
 
 	params := &services.NewTimeseriesParams{
-		CreatedBy: created_by_uuid,
+		CreatedBy: createdByUUID,
 		Name:      n.Name,
 		SiUnit:    n.SiUnit,
 	}
@@ -69,13 +69,13 @@ func (ra *RestApi) AddTimeSeries(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if n.ThingUuid != nil {
-		thing_uuid, err := uuid.Parse(*n.ThingUuid)
+		thingUUID, err := uuid.Parse(*n.ThingUuid)
 		if err != nil {
 			ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 			return
 		}
 
-		params.ThingUuid = thing_uuid
+		params.ThingUuid = thingUUID
 	}
 
 	if n.LowerBound != nil {
@@ -100,7 +100,7 @@ func (ra *RestApi) AddTimeSeries(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ra *RestApi) AddDataToTimeseries(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.AddDataToTimeseriesParams) {
-	ts_uuid, err := uuid.Parse(string(id))
+	tsUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -119,7 +119,7 @@ func (ra *RestApi) AddDataToTimeseries(w http.ResponseWriter, r *http.Request, i
 	}
 
 	u := services.NewUserService(db)
-	created_by, err := u.GetUserUuidFromToken(r.Context(), []byte(domaintoken.Token))
+	createdBy, err := u.GetUserUuidFromToken(r.Context(), []byte(domaintoken.Token))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorUndefined)
 		return
@@ -151,9 +151,9 @@ func (ra *RestApi) AddDataToTimeseries(w http.ResponseWriter, r *http.Request, i
 	}
 
 	count, err := svc.AddDataToTimeseries(r.Context(), services.AddDataToTimeseriesParams{
-		Uuid:      ts_uuid,
+		Uuid:      tsUUID,
 		Points:    points,
-		CreatedBy: created_by,
+		CreatedBy: createdBy,
 		Unit:      (*string)(p.Unit),
 	})
 	if err != nil {
@@ -169,7 +169,7 @@ func (ra *RestApi) AddDataToTimeseries(w http.ResponseWriter, r *http.Request, i
 }
 
 func (ra *RestApi) QueryTimeseriesForData(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.QueryTimeseriesForDataParams) {
-	ts_uuid, err := uuid.Parse(string(id))
+	tsUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -184,7 +184,7 @@ func (ra *RestApi) QueryTimeseriesForData(w http.ResponseWriter, r *http.Request
 	svc := services.NewTimeseriesService(db)
 
 	// Ensure the timeseries exists
-	ok, err := svc.Exists(r.Context(), ts_uuid)
+	ok, err := svc.Exists(r.Context(), tsUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -199,7 +199,7 @@ func (ra *RestApi) QueryTimeseriesForData(w http.ResponseWriter, r *http.Request
 	}
 
 	params := services.QueryDataParams{
-		Uuid:        ts_uuid,
+		Uuid:        tsUUID,
 		Start:       time.Time(p.Start),
 		End:         time.Time(p.End),
 		GreaterOrEq: (*float32)(p.Ge),
@@ -273,7 +273,7 @@ func (ra *RestApi) FindTimeSeries(w http.ResponseWriter, r *http.Request, p rest
 }
 
 func (ra *RestApi) FindTimeSeriesByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	ts_uuid, err := uuid.Parse(string(id))
+	tsUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -286,7 +286,7 @@ func (ra *RestApi) FindTimeSeriesByUuid(w http.ResponseWriter, r *http.Request, 
 	}
 
 	svc := services.NewTimeseriesService(db)
-	timeseries, err := svc.FindByUuid(r.Context(), ts_uuid)
+	timeseries, err := svc.FindByUuid(r.Context(), tsUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -297,7 +297,7 @@ func (ra *RestApi) FindTimeSeriesByUuid(w http.ResponseWriter, r *http.Request, 
 }
 
 func (ra *RestApi) UpdateTimeseriesByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	ts_uuid, err := uuid.Parse(string(id))
+	tsUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -319,19 +319,19 @@ func (ra *RestApi) UpdateTimeseriesByUuid(w http.ResponseWriter, r *http.Request
 	}
 
 	params := services.UpdateTimeseriesParams{
-		Uuid:   ts_uuid,
+		Uuid:   tsUUID,
 		Name:   obj.Name,
 		SiUnit: obj.SiUnit,
 		Tags:   obj.Tags,
 	}
 
 	if obj.ThingUuid != nil {
-		thing_uuid, err := uuid.Parse(*obj.ThingUuid)
+		thingUUID, err := uuid.Parse(*obj.ThingUuid)
 		if err != nil {
 			ie.SendHTTPError(w, ie.ErrorMalformedRequest)
 			return
 		}
-		params.ThingUuid = &thing_uuid
+		params.ThingUuid = &thingUUID
 	}
 
 	if obj.LowerBound != nil {
@@ -367,7 +367,7 @@ func (ra *RestApi) UpdateTimeseriesByUuid(w http.ResponseWriter, r *http.Request
 }
 
 func (ra *RestApi) DeleteTimeSeriesByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	ts_uuid, err := uuid.Parse(string(id))
+	tsUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -381,7 +381,7 @@ func (ra *RestApi) DeleteTimeSeriesByUuid(w http.ResponseWriter, r *http.Request
 
 	svc := services.NewTimeseriesService(db)
 
-	count, err := svc.DeleteTimeseries(r.Context(), ts_uuid)
+	count, err := svc.DeleteTimeseries(r.Context(), tsUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorUndefined)
 		return
@@ -394,7 +394,7 @@ func (ra *RestApi) DeleteTimeSeriesByUuid(w http.ResponseWriter, r *http.Request
 }
 
 func (ra *RestApi) DeleteDataFromTimeSeries(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.DeleteDataFromTimeSeriesParams) {
-	ts_uuid, err := uuid.Parse(string(id))
+	tsUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -409,7 +409,7 @@ func (ra *RestApi) DeleteDataFromTimeSeries(w http.ResponseWriter, r *http.Reque
 	svc := services.NewTimeseriesService(db)
 
 	// Ensure the timeseries exists
-	ok, err := svc.Exists(r.Context(), ts_uuid)
+	ok, err := svc.Exists(r.Context(), tsUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -424,7 +424,7 @@ func (ra *RestApi) DeleteDataFromTimeSeries(w http.ResponseWriter, r *http.Reque
 	}
 
 	params := services.DeleteTsDataParams{
-		Uuid:        ts_uuid,
+		Uuid:        tsUUID,
 		Start:       time.Time(p.Start),
 		End:         time.Time(p.End),
 		GreaterOrEq: (*float32)(p.Ge),

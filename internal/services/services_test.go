@@ -34,9 +34,9 @@ import (
 )
 
 const (
-	PG_VERSION = "12"
-	DBNAME     = "selfhost_services_test"
-	ROOT_TOKEN = "root"
+	pgVersion = "12"
+	dbname     = "selfhost_services_test"
+	rootToken = "root"
 )
 
 var db *sql.DB
@@ -49,7 +49,7 @@ func TestMain(m *testing.M) {
 	}
 
 	// pulls an image, creates a container based on it and runs it
-	resource, err := pool.Run("postgres", PG_VERSION, []string{"POSTGRES_PASSWORD=secret"})
+	resource, err := pool.Run("postgres", pgVersion, []string{"POSTGRES_PASSWORD=secret"})
 	if err != nil {
 		log.Fatalf("Could not start resource: %s", err)
 	} else {
@@ -68,14 +68,14 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Could not connect to docker: %s", err)
 	}
 
-	_, err = db.Exec(fmt.Sprintf("CREATE DATABASE \"%v\" WITH ENCODING 'UTF-8'", DBNAME))
+	_, err = db.Exec(fmt.Sprintf("CREATE DATABASE \"%v\" WITH ENCODING 'UTF-8'", dbname))
 	if err != nil {
 		log.Fatalf("Could not create database: %s", err)
 	}
 
 	db.Close()
 
-	pgUrl := fmt.Sprintf("postgres://postgres:secret@localhost:%s/%s?sslmode=disable", resource.GetPort("5432/tcp"), DBNAME)
+	pgUrl := fmt.Sprintf("postgres://postgres:secret@localhost:%s/%s?sslmode=disable", resource.GetPort("5432/tcp"), dbname)
 
 	db, err = sql.Open("postgres", pgUrl)
 	if err != nil {

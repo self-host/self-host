@@ -81,7 +81,7 @@ func (ra *RestApi) FindGroups(w http.ResponseWriter, r *http.Request, p rest.Fin
 }
 
 func (ra *RestApi) FindGroupByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	group_uuid, err := uuid.Parse(string(id))
+	groupUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -94,7 +94,7 @@ func (ra *RestApi) FindGroupByUuid(w http.ResponseWriter, r *http.Request, id re
 	}
 
 	gsrv := services.NewGroupService(db)
-	group, err := gsrv.FindGroupByUuid(r.Context(), group_uuid)
+	group, err := gsrv.FindGroupByUuid(r.Context(), groupUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -105,7 +105,7 @@ func (ra *RestApi) FindGroupByUuid(w http.ResponseWriter, r *http.Request, id re
 }
 
 func (ra *RestApi) FindPoliciesForGroup(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	group_uuid, err := uuid.Parse(string(id))
+	groupUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -119,7 +119,7 @@ func (ra *RestApi) FindPoliciesForGroup(w http.ResponseWriter, r *http.Request, 
 
 	srv := services.NewPolicyService(db)
 
-	policies, err := srv.FindByGroup(r.Context(), group_uuid)
+	policies, err := srv.FindByGroup(r.Context(), groupUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -130,7 +130,7 @@ func (ra *RestApi) FindPoliciesForGroup(w http.ResponseWriter, r *http.Request, 
 }
 
 func (ra *RestApi) UpdateGroupByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	group_uuid, err := uuid.Parse(string(id))
+	groupUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -151,7 +151,7 @@ func (ra *RestApi) UpdateGroupByUuid(w http.ResponseWriter, r *http.Request, id 
 
 	svc := services.NewGroupService(db)
 
-	count, err := svc.UpdateGroupNameByUuid(r.Context(), group_uuid, obj.Name)
+	count, err := svc.UpdateGroupNameByUuid(r.Context(), groupUUID, obj.Name)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		// FIXME: log
@@ -165,7 +165,7 @@ func (ra *RestApi) UpdateGroupByUuid(w http.ResponseWriter, r *http.Request, id 
 }
 
 func (ra *RestApi) DeleteGroupByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	group_uuid, err := uuid.Parse(string(id))
+	groupUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -179,7 +179,7 @@ func (ra *RestApi) DeleteGroupByUuid(w http.ResponseWriter, r *http.Request, id 
 
 	svc := services.NewGroupService(db)
 
-	count, err := svc.DeleteGroup(r.Context(), group_uuid)
+	count, err := svc.DeleteGroup(r.Context(), groupUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return

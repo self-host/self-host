@@ -57,7 +57,7 @@ func (ra *RestApi) AddUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ra *RestApi) AddNewTokenToUser(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	user_uuid, err := uuid.Parse(string(id))
+	userUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -79,7 +79,7 @@ func (ra *RestApi) AddNewTokenToUser(w http.ResponseWriter, r *http.Request, id 
 	s := services.NewUserService(db)
 
 	// Add token to User
-	user, err := s.AddTokenToUser(r.Context(), user_uuid, newToken.Name)
+	user, err := s.AddTokenToUser(r.Context(), userUUID, newToken.Name)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -144,7 +144,7 @@ func (ra *RestApi) FindUsers(w http.ResponseWriter, r *http.Request, p rest.Find
 }
 
 func (ra *RestApi) FindUserByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	user_uuid, err := uuid.Parse(string(id))
+	userUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -157,7 +157,7 @@ func (ra *RestApi) FindUserByUuid(w http.ResponseWriter, r *http.Request, id res
 	}
 
 	s := services.NewUserService(db)
-	user, err := s.FindUserByUuid(r.Context(), user_uuid)
+	user, err := s.FindUserByUuid(r.Context(), userUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -168,7 +168,7 @@ func (ra *RestApi) FindUserByUuid(w http.ResponseWriter, r *http.Request, id res
 }
 
 func (ra *RestApi) FindTokensForUser(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	user_uuid, err := uuid.Parse(string(id))
+	userUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -182,7 +182,7 @@ func (ra *RestApi) FindTokensForUser(w http.ResponseWriter, r *http.Request, id 
 
 	s := services.NewUserService(db)
 
-	tokens, err := s.FindTokensForUser(r.Context(), user_uuid)
+	tokens, err := s.FindTokensForUser(r.Context(), userUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -193,7 +193,7 @@ func (ra *RestApi) FindTokensForUser(w http.ResponseWriter, r *http.Request, id 
 }
 
 func (ra *RestApi) FindPoliciesForUser(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	user_uuid, err := uuid.Parse(string(id))
+	userUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -207,7 +207,7 @@ func (ra *RestApi) FindPoliciesForUser(w http.ResponseWriter, r *http.Request, i
 
 	srv := services.NewPolicyService(db)
 
-	policies, err := srv.FindByUser(r.Context(), user_uuid)
+	policies, err := srv.FindByUser(r.Context(), userUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -218,7 +218,7 @@ func (ra *RestApi) FindPoliciesForUser(w http.ResponseWriter, r *http.Request, i
 }
 
 func (ra *RestApi) UpdateUserByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	user_uuid, err := uuid.Parse(string(id))
+	userUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -232,7 +232,7 @@ func (ra *RestApi) UpdateUserByUuid(w http.ResponseWriter, r *http.Request, id r
 
 	// Check if user exits
 	svc := services.NewUserService(db)
-	_, err = svc.FindUserByUuid(r.Context(), user_uuid)
+	_, err = svc.FindUserByUuid(r.Context(), userUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -252,7 +252,7 @@ func (ra *RestApi) UpdateUserByUuid(w http.ResponseWriter, r *http.Request, id r
 	}
 
 	if updUser.Name != nil && len(*updUser.Name) > 3 {
-		_, err := svc.SetUserName(r.Context(), user_uuid, *updUser.Name)
+		_, err := svc.SetUserName(r.Context(), userUUID, *updUser.Name)
 		if err != nil {
 			ie.SendHTTPError(w, ie.ParseDBError(err))
 			return
@@ -262,26 +262,26 @@ func (ra *RestApi) UpdateUserByUuid(w http.ResponseWriter, r *http.Request, id r
 	// Use multiple DB requests to set each parameter
 	// Use a Transaction!
 	if updUser.Groups != nil {
-		group_uuids := make([]uuid.UUID, 0)
+		groupUUIDs := make([]uuid.UUID, 0)
 		for _, item := range *updUser.Groups {
 			uid, err := uuid.Parse(item)
 			if err != nil {
 				ie.SendHTTPError(w, ie.ErrorMalformedRequest)
 				return
 			}
-			group_uuids = append(group_uuids, uid)
+			groupUUIDs = append(groupUUIDs, uid)
 		}
 
 		// FIXME: handle count value
-		_, err := svc.SetUserGroups(r.Context(), user_uuid, group_uuids)
+		_, err := svc.SetUserGroups(r.Context(), userUUID, groupUUIDs)
 		if err != nil {
 			ie.SendHTTPError(w, ie.ParseDBError(err))
 			return
 		}
 
 	} else if updUser.GroupsAdd != nil || updUser.GroupsRemove != nil {
-		add_group_uuids := make([]uuid.UUID, 0)
-		remove_group_uuids := make([]uuid.UUID, 0)
+		addGroupUUIDs := make([]uuid.UUID, 0)
+		removeGroupUUIDs := make([]uuid.UUID, 0)
 
 		if updUser.GroupsAdd != nil {
 			for _, item := range *updUser.GroupsAdd {
@@ -290,7 +290,7 @@ func (ra *RestApi) UpdateUserByUuid(w http.ResponseWriter, r *http.Request, id r
 					ie.SendHTTPError(w, ie.ErrorMalformedRequest)
 					return
 				}
-				add_group_uuids = append(add_group_uuids, uid)
+				addGroupUUIDs = append(addGroupUUIDs, uid)
 			}
 		}
 
@@ -301,13 +301,13 @@ func (ra *RestApi) UpdateUserByUuid(w http.ResponseWriter, r *http.Request, id r
 					ie.SendHTTPError(w, ie.ErrorMalformedRequest)
 					return
 				}
-				remove_group_uuids = append(remove_group_uuids, uid)
+				removeGroupUUIDs = append(removeGroupUUIDs, uid)
 			}
 		}
 
 		// FIXME: Should we validate the group uuids?
 		// FIXME: handle count value
-		_, err := svc.AddRemoveUserToGroups(r.Context(), user_uuid, add_group_uuids, remove_group_uuids)
+		_, err := svc.AddRemoveUserToGroups(r.Context(), userUUID, addGroupUUIDs, removeGroupUUIDs)
 		if err != nil {
 			ie.SendHTTPError(w, ie.ParseDBError(err))
 			return
@@ -322,7 +322,7 @@ func (ra *RestApi) SetRequestRateForUser(w http.ResponseWriter, r *http.Request,
 }
 
 func (ra *RestApi) DeleteUserByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	user_uuid, err := uuid.Parse(string(id))
+	userUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -336,7 +336,7 @@ func (ra *RestApi) DeleteUserByUuid(w http.ResponseWriter, r *http.Request, id r
 
 	s := services.NewUserService(db)
 
-	_, err = s.DeleteUser(r.Context(), user_uuid)
+	_, err = s.DeleteUser(r.Context(), userUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -345,14 +345,14 @@ func (ra *RestApi) DeleteUserByUuid(w http.ResponseWriter, r *http.Request, id r
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (ra *RestApi) DeleteTokenForUser(w http.ResponseWriter, r *http.Request, id rest.UuidParam, token_id string) {
-	user_uuid, err := uuid.Parse(string(id))
+func (ra *RestApi) DeleteTokenForUser(w http.ResponseWriter, r *http.Request, id rest.UuidParam, tokenId string) {
+	userUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
 	}
 
-	token_uuid, err := uuid.Parse(token_id)
+	tokenUUID, err := uuid.Parse(tokenId)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -366,7 +366,7 @@ func (ra *RestApi) DeleteTokenForUser(w http.ResponseWriter, r *http.Request, id
 
 	s := services.NewUserService(db)
 
-	_, err = s.DeleteTokenFromUser(r.Context(), user_uuid, token_uuid)
+	_, err = s.DeleteTokenFromUser(r.Context(), userUUID, tokenUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return

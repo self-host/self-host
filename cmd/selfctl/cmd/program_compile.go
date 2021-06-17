@@ -51,7 +51,7 @@ var compileCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		source_code, err := ioutil.ReadFile(programFilename)
+		sourceCode, err := ioutil.ReadFile(programFilename)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
@@ -59,7 +59,7 @@ var compileCmd = &cobra.Command{
 
 		deadline := 5 * time.Second
 
-		program, err := malgomaj.NewProgram("selfctl", programFilename, programLanguage, deadline, source_code)
+		program, err := malgomaj.NewProgram("selfctl", programFilename, programLanguage, deadline, sourceCode)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)

@@ -73,13 +73,13 @@ func main() {
 	defer logger.Sync()
 
 	// API server
-	s_errC, err := Server(quit, fmt.Sprintf("%v:%v", viper.GetString("listen.host"), viper.GetInt("listen.port")))
+	sErrC, err := Server(quit, fmt.Sprintf("%v:%v", viper.GetString("listen.host"), viper.GetInt("listen.port")))
 	if err != nil {
 		logger.Fatal("Fatal error couldn't run", zap.Error(err))
 	}
 
 	// Program Manager
-	pm_errC, err := ProgramManager(quit)
+	pmErrC, err := ProgramManager(quit)
 	if err != nil {
 		logger.Fatal("Fatal error couldn't create", zap.Error(err))
 	}
@@ -89,7 +89,7 @@ func main() {
 	// Wait for API server to terminate
 	for waitfor > 0 {
 		select {
-		case err := <-s_errC:
+		case err := <-sErrC:
 			waitfor -= 1
 			if err != nil {
 				logger.Fatal("Fatal error while running", zap.Error(err))
@@ -97,7 +97,7 @@ func main() {
 			}
 
 			// Wait for Program Manager to terminate
-		case err := <-pm_errC:
+		case err := <-pmErrC:
 			waitfor -= 1
 			if err != nil {
 				logger.Fatal("Fatal error while running", zap.Error(err))

@@ -74,18 +74,18 @@ type TengoProgram struct {
 	domain      string
 	id          string
 	deadline    time.Duration
-	source_code []byte
-	byte_code   *tengo.Compiled // Compiled code
+	sourceCode []byte
+	byteCode   *tengo.Compiled // Compiled code
 
 	cgi *cgiModule
 }
 
-func NewTengoProgram(domain string, id string, deadline time.Duration, source_code []byte) *TengoProgram {
+func NewTengoProgram(domain string, id string, deadline time.Duration, sourceCode []byte) *TengoProgram {
 	return &TengoProgram{
 		domain:      domain,
 		id:          id,
 		deadline:    deadline,
-		source_code: source_code,
+		sourceCode: sourceCode,
 	}
 }
 
@@ -102,7 +102,7 @@ func (p *TengoProgram) Deadline() time.Duration {
 }
 
 func (p *TengoProgram) Checksum() [16]byte {
-	return md5.Sum(p.source_code)
+	return md5.Sum(p.sourceCode)
 }
 
 func (p *TengoProgram) Equals(b Program) bool {
@@ -120,7 +120,7 @@ func (p *TengoProgram) AllImports() []string {
 	// Use a map to avoid duplicates
 	m := make(map[string]struct{})
 
-	for _, match := range tengoImportRegex.FindAllStringSubmatch(string(p.source_code), -1) {
+	for _, match := range tengoImportRegex.FindAllStringSubmatch(string(p.sourceCode), -1) {
 		if len(match) == 2 {
 			k := match[1]
 			m[k] = struct{}{}
@@ -191,15 +191,15 @@ func (p *TengoProgram) Compile(ctx context.Context) (err error) {
 		modules.AddSourceModule(modname, mod.Code)
 	}
 
-	script := tengo.NewScript(p.source_code)
+	script := tengo.NewScript(p.sourceCode)
 	script.SetImports(modules)
 
-	p.byte_code, err = script.Compile()
+	p.byteCode, err = script.Compile()
 	return err
 }
 
 func (p *TengoProgram) Run(ctx context.Context) error {
-	if p.byte_code == nil {
+	if p.byteCode == nil {
 		if err := p.Compile(ctx); err != nil {
 			return err
 		}
@@ -208,11 +208,11 @@ func (p *TengoProgram) Run(ctx context.Context) error {
 	lctx, cancel := context.WithTimeout(ctx, p.deadline)
 	defer cancel() // Release context if execution finishes before deadline
 
-	return p.byte_code.RunContext(lctx)
+	return p.byteCode.RunContext(lctx)
 }
 
 func (p *TengoProgram) RunWithHTTP(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
-	if p.byte_code == nil {
+	if p.byteCode == nil {
 		if err := p.Compile(ctx); err != nil {
 			return err
 		}
@@ -233,7 +233,7 @@ func (p *TengoProgram) RunWithHTTP(ctx context.Context, w http.ResponseWriter, r
 	lctx, cancel := context.WithTimeout(ctx, p.deadline)
 	defer cancel() // Release context if execution finishes before deadline
 
-	err := p.byte_code.RunContext(lctx)
+	err := p.byteCode.RunContext(lctx)
 	if err != nil {
 		return err
 	}

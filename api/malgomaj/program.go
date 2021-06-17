@@ -126,10 +126,10 @@ func ProgramCacheGetLoad() int64 {
 	return load
 }
 
-func NewProgram(domain string, id string, language string, deadline time.Duration, source_code []byte) (Program, error) {
+func NewProgram(domain string, id string, language string, deadline time.Duration, sourceCode []byte) (Program, error) {
 	switch language {
 	case "tengo":
-		return NewTengoProgram(domain, id, deadline, source_code), nil
+		return NewTengoProgram(domain, id, deadline, sourceCode), nil
 	}
 
 	return nil, errors.New(fmt.Sprintf("language %v is not supported", language))

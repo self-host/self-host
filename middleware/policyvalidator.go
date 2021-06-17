@@ -38,7 +38,7 @@ func PolicyValidator() func(http.HandlerFunc) http.HandlerFunc {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 
-			domain, api_key, ok := r.BasicAuth()
+			domain, apiKey, ok := r.BasicAuth()
 			if ok == false {
 				realm := "Selfhost API"
 				w.Header().Add("WWW-Authenticate", fmt.Sprintf(`Basic realm="%s"`, realm))
@@ -66,13 +66,13 @@ func PolicyValidator() func(http.HandlerFunc) http.HandlerFunc {
 
 			for _, scope := range scopes {
 				// Check permission
-				split_scope := strings.Split(scope, ":")
-				if len(split_scope) != 2 {
+				splitScope := strings.Split(scope, ":")
+				if len(splitScope) != 2 {
 					ie.SendHTTPError(w, ie.ErrorUnprocessable)
 				}
 
-				action := split_scope[0]
-				resource := split_scope[1]
+				action := splitScope[0]
+				resource := splitScope[1]
 
 				// Extract {<name>} parameters from the scope rule and
 				// build a new resource string using the scope "template" and URL parameters
@@ -86,7 +86,7 @@ func PolicyValidator() func(http.HandlerFunc) http.HandlerFunc {
 					}
 				}
 
-				access, err := check.UserHasAccessViaToken(ctx, []byte(api_key), action, resource)
+				access, err := check.UserHasAccessViaToken(ctx, []byte(apiKey), action, resource)
 				if err != nil {
 					ie.SendHTTPError(w, ie.ParseDBError(err))
 					return
@@ -98,10 +98,10 @@ func PolicyValidator() func(http.HandlerFunc) http.HandlerFunc {
 			}
 
 			var newctx context.Context
-			if domain != "" && api_key != "" {
+			if domain != "" && apiKey != "" {
 				newctx = context.WithValue(ctx, "domaintoken", &services.DomainToken{
 					Domain: domain,
-					Token:  api_key,
+					Token:  apiKey,
 				})
 			} else {
 				newctx = ctx

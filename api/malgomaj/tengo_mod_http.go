@@ -33,7 +33,7 @@ type Response struct {
 }
 
 const (
-	TENGO_HTTP_CLIENT = "Selfhost-tengo-client/1.0"
+	tengoHTTPClient = "Selfhost-tengo-client/1.0"
 )
 
 var httpModule = map[string]tengo.Object{
@@ -66,12 +66,12 @@ func httpRespToTengo(resp *http.Response) (tengo.Object, error) {
 			continue
 		}
 
-		t_vals := tengo.Array{}
+		tVals := tengo.Array{}
 		for _, val := range vals {
-			t_vals.Value = append(t_vals.Value, &tengo.String{Value: val})
+			tVals.Value = append(tVals.Value, &tengo.String{Value: val})
 		}
 
-		hdr.Value[key] = &t_vals
+		hdr.Value[key] = &tVals
 	}
 
 	return tengo.FromInterface(robj)
@@ -98,11 +98,11 @@ func httpGet(args ...tengo.Object) (ret tengo.Object, err error) {
 		}, nil
 	}
 
-	req.Header.Set("User-Agent", TENGO_HTTP_CLIENT)
+	req.Header.Set("User-Agent", tengoHTTPClient)
 
 	if len(args) >= 2 && args[1] != tengo.UndefinedValue {
 		tobj := tengo.ToInterface(args[1])
-		query_args, ok := tobj.([]interface{})
+		queryArgs, ok := tobj.([]interface{})
 		if !ok {
 			return nil, tengo.ErrInvalidArgumentType{
 				Name:     "query_args",
@@ -112,7 +112,7 @@ func httpGet(args ...tengo.Object) (ret tengo.Object, err error) {
 		}
 
 		q := req.URL.Query()
-		for index, val := range query_args {
+		for index, val := range queryArgs {
 			sval, ok := val.(string)
 			if !ok {
 				return nil, tengo.ErrInvalidArgumentType{
@@ -198,9 +198,9 @@ func httpDoWithBody(method string, args ...tengo.Object) (ret tengo.Object, err 
 		}
 	}
 
-	var submit_body string
+	var submitBody string
 	if len(args) == 4 && args[3] != tengo.UndefinedValue {
-		submit_body, ok = tengo.ToString(args[3])
+		submitBody, ok = tengo.ToString(args[3])
 		if ok == false {
 			return nil, tengo.ErrInvalidArgumentType{
 				Name:     "body",
@@ -210,7 +210,7 @@ func httpDoWithBody(method string, args ...tengo.Object) (ret tengo.Object, err 
 		}
 	}
 
-	req, err := http.NewRequest(method, url, strings.NewReader(submit_body))
+	req, err := http.NewRequest(method, url, strings.NewReader(submitBody))
 	if err != nil {
 		// Return error to Tengo and do not cause Runtime Error
 		return &tengo.Error{
@@ -218,11 +218,11 @@ func httpDoWithBody(method string, args ...tengo.Object) (ret tengo.Object, err 
 		}, nil
 	}
 
-	req.Header.Set("User-Agent", TENGO_HTTP_CLIENT)
+	req.Header.Set("User-Agent", tengoHTTPClient)
 
 	if len(args) >= 2 && args[1] != tengo.UndefinedValue {
 		tobj := tengo.ToInterface(args[1])
-		query_args, ok := tobj.([]interface{})
+		queryArgs, ok := tobj.([]interface{})
 		if !ok {
 			return nil, tengo.ErrInvalidArgumentType{
 				Name:     "query_args",
@@ -232,7 +232,7 @@ func httpDoWithBody(method string, args ...tengo.Object) (ret tengo.Object, err 
 		}
 
 		q := req.URL.Query()
-		for index, val := range query_args {
+		for index, val := range queryArgs {
 			sval, ok := val.(string)
 			if !ok {
 				return nil, tengo.ErrInvalidArgumentType{
@@ -320,7 +320,7 @@ func httpToFormData(args ...tengo.Object) (ret tengo.Object, err error) {
 	}
 
 	tobj := tengo.ToInterface(args[0])
-	query_args, ok := tobj.([]interface{})
+	queryArgs, ok := tobj.([]interface{})
 	if !ok {
 		return nil, tengo.ErrInvalidArgumentType{
 			Name:     "query_args",
@@ -330,7 +330,7 @@ func httpToFormData(args ...tengo.Object) (ret tengo.Object, err error) {
 	}
 
 	values := url.Values{}
-	for index, val := range query_args {
+	for index, val := range queryArgs {
 		sval, ok := val.(string)
 		if !ok {
 			return nil, tengo.ErrInvalidArgumentType{
@@ -376,7 +376,7 @@ func httpPostForm(args ...tengo.Object) (ret tengo.Object, err error) {
 
 	if len(args) >= 2 && args[1] != tengo.UndefinedValue {
 		tobj := tengo.ToInterface(args[1])
-		query_args, ok := tobj.([]interface{})
+		queryArgs, ok := tobj.([]interface{})
 		if !ok {
 			return nil, tengo.ErrInvalidArgumentType{
 				Name:     "query_args",
@@ -385,7 +385,7 @@ func httpPostForm(args ...tengo.Object) (ret tengo.Object, err error) {
 			}
 		}
 
-		for index, val := range query_args {
+		for index, val := range queryArgs {
 			sval, ok := val.(string)
 			if !ok {
 				return nil, tengo.ErrInvalidArgumentType{
@@ -416,7 +416,7 @@ func httpPostForm(args ...tengo.Object) (ret tengo.Object, err error) {
 		}, nil
 	}
 
-	req.Header.Set("User-Agent", TENGO_HTTP_CLIENT)
+	req.Header.Set("User-Agent", tengoHTTPClient)
 
 	if len(args) >= 3 {
 		tobj := tengo.ToInterface(args[2])

@@ -142,11 +142,11 @@ func (s *ProgramService) FindAll(ctx context.Context, p FindAllParams) ([]*rest.
 		params.ArgOffset = p.Offset.Value
 	}
 
-	programs_list, err := s.q.FindPrograms(ctx, params)
+	programsList, err := s.q.FindPrograms(ctx, params)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, t := range programs_list {
+		for _, t := range programsList {
 			program := &rest.Program{
 				Uuid:     t.Uuid.String(),
 				Name:     t.Name,
@@ -179,11 +179,11 @@ func (svc *ProgramService) FindByTags(ctx context.Context, p FindByTagsParams) (
 		params.ArgOffset = p.Offset.Value
 	}
 
-	prog_list, err := svc.q.FindProgramsByTags(ctx, params)
+	progList, err := svc.q.FindProgramsByTags(ctx, params)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, t := range prog_list {
+		for _, t := range progList {
 			program := &rest.Program{
 				Uuid:     t.Uuid.String(),
 				Name:     t.Name,
@@ -225,11 +225,11 @@ func (s *ProgramService) FindProgramByUuid(ctx context.Context, id uuid.UUID) (*
 func (s *ProgramService) FindAllCodeRevisions(ctx context.Context, id uuid.UUID) ([]*rest.CodeRevision, error) {
 	revisions := make([]*rest.CodeRevision, 0)
 
-	rev_list, err := s.q.FindProgramCodeRevisions(ctx, id)
+	revList, err := s.q.FindProgramCodeRevisions(ctx, id)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, t := range rev_list {
+		for _, t := range revList {
 			rev := &rest.CodeRevision{
 				Revision:  int(t.Revision),
 				Created:   t.Created,

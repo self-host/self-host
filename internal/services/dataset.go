@@ -105,8 +105,8 @@ func (svc *DatasetService) AddDataset(ctx context.Context, p *AddDatasetParams) 
 	}
 
 	if dataset.BelongsTo != NilUUID {
-		belongs_to := dataset.BelongsTo.String()
-		v.BelongsTo = &belongs_to
+		belongsTo := dataset.BelongsTo.String()
+		v.BelongsTo = &belongsTo
 	}
 
 	return v, nil
@@ -132,8 +132,8 @@ func (svc *DatasetService) FindDatasetByUuid(ctx context.Context, id uuid.UUID) 
 	}
 
 	if dataset.BelongsTo != NilUUID {
-		belongs_to := dataset.BelongsTo.String()
-		v.BelongsTo = &belongs_to
+		belongsTo := dataset.BelongsTo.String()
+		v.BelongsTo = &belongsTo
 	}
 
 	return v, nil
@@ -142,11 +142,11 @@ func (svc *DatasetService) FindDatasetByUuid(ctx context.Context, id uuid.UUID) 
 func (svc *DatasetService) FindByThing(ctx context.Context, id uuid.UUID) ([]*rest.Dataset, error) {
 	datasets := make([]*rest.Dataset, 0)
 
-	datasets_list, err := svc.q.FindDatasetByThing(ctx, id)
+	datasetsList, err := svc.q.FindDatasetByThing(ctx, id)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, t := range datasets_list {
+		for _, t := range datasetsList {
 			dataset := &rest.Dataset{
 				Uuid:      t.Uuid.String(),
 				Name:      t.Name,
@@ -186,11 +186,11 @@ func (svc *DatasetService) FindAll(ctx context.Context, p FindAllParams) ([]*res
 		params.ArgOffset = p.Offset.Value
 	}
 
-	datasets_list, err := svc.q.FindDatasets(ctx, params)
+	datasetsList, err := svc.q.FindDatasets(ctx, params)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, t := range datasets_list {
+		for _, t := range datasetsList {
 			dataset := &rest.Dataset{
 				Uuid:      t.Uuid.String(),
 				Name:      t.Name,
@@ -230,11 +230,11 @@ func (svc *DatasetService) FindByTags(ctx context.Context, p FindByTagsParams) (
 		params.ArgOffset = p.Offset.Value
 	}
 
-	ds_list, err := svc.q.FindDatasetsByTags(ctx, params)
+	dsList, err := svc.q.FindDatasetsByTags(ctx, params)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, t := range ds_list {
+		for _, t := range dsList {
 			dataset := &rest.Dataset{
 				Uuid:      t.Uuid.String(),
 				Name:      t.Name,

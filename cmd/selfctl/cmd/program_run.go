@@ -52,13 +52,13 @@ var runCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		source_code, err := ioutil.ReadFile(programFilename)
+		sourceCode, err := ioutil.ReadFile(programFilename)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)
 		}
 
-		program, err := malgomaj.NewProgram("selfctl", programFilename, programLanguage, programDeadline, source_code)
+		program, err := malgomaj.NewProgram("selfctl", programFilename, programLanguage, programDeadline, sourceCode)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			os.Exit(1)

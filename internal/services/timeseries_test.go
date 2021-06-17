@@ -44,7 +44,7 @@ func TestTimeseriesAll(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	ts_uuid, err := uuid.Parse(timeseries.Uuid)
+	tsUUID, err := uuid.Parse(timeseries.Uuid)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -53,11 +53,11 @@ func TestTimeseriesAll(t *testing.T) {
 		log.Fatal("Name does not match expected")
 	}
 
-	if ts_uuid == uuid.MustParse("00000000-0000-0000-0000-000000000000") {
+	if tsUUID == uuid.MustParse("00000000-0000-0000-0000-000000000000") {
 		log.Fatal("UUID of new time series is nil")
 	}
 
-	count, err := svc.DeleteTimeseries(context.Background(), ts_uuid)
+	count, err := svc.DeleteTimeseries(context.Background(), tsUUID)
 	if err != nil {
 		log.Fatal(err)
 	} else if count == 0 {

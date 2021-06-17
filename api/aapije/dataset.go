@@ -49,14 +49,14 @@ func (ra *RestApi) AddDatasets(w http.ResponseWriter, r *http.Request) {
 	}
 
 	u := services.NewUserService(db)
-	created_by, err := u.GetUserUuidFromToken(r.Context(), []byte(domaintoken.Token))
+	createdBy, err := u.GetUserUuidFromToken(r.Context(), []byte(domaintoken.Token))
 
 	s := services.NewDatasetService(db)
 
 	params := &services.AddDatasetParams{
 		Name:      n.Name,
 		Format:    string(n.Format),
-		CreatedBy: created_by,
+		CreatedBy: createdBy,
 	}
 	if n.Tags != nil {
 		params.Tags = *n.Tags
@@ -142,7 +142,7 @@ func (ra *RestApi) FindDatasets(w http.ResponseWriter, r *http.Request, p rest.F
 }
 
 func (ra *RestApi) FindDatasetByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	dataset_uuid, err := uuid.Parse(string(id))
+	datasetUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -155,7 +155,7 @@ func (ra *RestApi) FindDatasetByUuid(w http.ResponseWriter, r *http.Request, id 
 	}
 
 	svc := services.NewDatasetService(db)
-	datasets, err := svc.FindDatasetByUuid(r.Context(), dataset_uuid)
+	datasets, err := svc.FindDatasetByUuid(r.Context(), datasetUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -166,7 +166,7 @@ func (ra *RestApi) FindDatasetByUuid(w http.ResponseWriter, r *http.Request, id 
 }
 
 func (ra *RestApi) UpdateDatasetByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	dataset_uuid, err := uuid.Parse(string(id))
+	datasetUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -200,7 +200,7 @@ func (ra *RestApi) UpdateDatasetByUuid(w http.ResponseWriter, r *http.Request, i
 		params.Format = &s
 	}
 
-	count, err := svc.UpdateDatasetByUuid(r.Context(), dataset_uuid, params)
+	count, err := svc.UpdateDatasetByUuid(r.Context(), datasetUUID, params)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -213,7 +213,7 @@ func (ra *RestApi) UpdateDatasetByUuid(w http.ResponseWriter, r *http.Request, i
 }
 
 func (ra *RestApi) GetRawDatasetByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.GetRawDatasetByUuidParams) {
-	dataset_uuid, err := uuid.Parse(string(id))
+	datasetUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -226,7 +226,7 @@ func (ra *RestApi) GetRawDatasetByUuid(w http.ResponseWriter, r *http.Request, i
 	}
 
 	svc := services.NewDatasetService(db)
-	f, err := svc.GetDatasetContentByUuid(r.Context(), dataset_uuid)
+	f, err := svc.GetDatasetContentByUuid(r.Context(), datasetUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -292,7 +292,7 @@ func (ra *RestApi) UploadDatasetContentByKey(w http.ResponseWriter, r *http.Requ
 }
 
 func (ra *RestApi) DeleteDatasetByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	dataset_uuid, err := uuid.Parse(string(id))
+	datasetUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -306,7 +306,7 @@ func (ra *RestApi) DeleteDatasetByUuid(w http.ResponseWriter, r *http.Request, i
 
 	svc := services.NewDatasetService(db)
 
-	count, err := svc.DeleteDataset(r.Context(), dataset_uuid)
+	count, err := svc.DeleteDataset(r.Context(), datasetUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return

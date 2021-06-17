@@ -87,22 +87,21 @@ func (s *PolicyService) Add(ctx context.Context, p NewPolicyParams) (*rest.Polic
 	}, nil
 }
 
-func (s *PolicyService) FindByGroup(ctx context.Context, group_uuid uuid.UUID) ([]*rest.Policy, error) {
+func (s *PolicyService) FindByGroup(ctx context.Context, groupUUID uuid.UUID) ([]*rest.Policy, error) {
 	policies := make([]*rest.Policy, 0)
 
-	count, err := s.q.ExistsGroup(ctx, group_uuid)
+	count, err := s.q.ExistsGroup(ctx, groupUUID)
 	if err != nil {
 		return nil, err
 	} else if count == 0 {
 		return nil, ie.ErrorNotFound
 	}
 
-	policy_list, err := s.q.FindPoliciesByGroup(ctx, group_uuid)
-
+	policyList, err := s.q.FindPoliciesByGroup(ctx, groupUUID)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, item := range policy_list {
+		for _, item := range policyList {
 			policies = append(policies, &rest.Policy{
 				Uuid:      item.Uuid.String(),
 				GroupUuid: item.GroupUuid.String(),
@@ -117,21 +116,21 @@ func (s *PolicyService) FindByGroup(ctx context.Context, group_uuid uuid.UUID) (
 	return policies, nil
 }
 
-func (s *PolicyService) FindByUser(ctx context.Context, user_uuid uuid.UUID) ([]*rest.Policy, error) {
+func (s *PolicyService) FindByUser(ctx context.Context, userUUID uuid.UUID) ([]*rest.Policy, error) {
 	policies := make([]*rest.Policy, 0)
 
-	count, err := s.q.ExistsUser(ctx, user_uuid)
+	count, err := s.q.ExistsUser(ctx, userUUID)
 	if err != nil {
 		return nil, err
 	} else if count == 0 {
 		return nil, ie.ErrorNotFound
 	}
 
-	policy_list, err := s.q.FindPoliciesByUser(ctx, user_uuid)
+	policyList, err := s.q.FindPoliciesByUser(ctx, userUUID)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, item := range policy_list {
+		for _, item := range policyList {
 			policies = append(policies, &rest.Policy{
 				Uuid:      item.Uuid.String(),
 				GroupUuid: item.GroupUuid.String(),
@@ -146,8 +145,8 @@ func (s *PolicyService) FindByUser(ctx context.Context, user_uuid uuid.UUID) ([]
 	return policies, nil
 }
 
-func (s *PolicyService) FindByUuid(ctx context.Context, policy_uuid uuid.UUID) (*rest.Policy, error) {
-	item, err := s.q.FindPolicyByUUID(ctx, policy_uuid)
+func (s *PolicyService) FindByUuid(ctx context.Context, policyUUID uuid.UUID) (*rest.Policy, error) {
+	item, err := s.q.FindPolicyByUUID(ctx, policyUUID)
 	if err != nil {
 		return nil, err
 	}
@@ -180,11 +179,11 @@ func (s *PolicyService) FindAll(ctx context.Context, p FindAllPoliciesParams) ([
 		params.GroupUuids = *p.GroupUuids
 	}
 
-	pol_list, err := s.q.FindPolicies(ctx, params)
+	pList, err := s.q.FindPolicies(ctx, params)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, v := range pol_list {
+		for _, v := range pList {
 			policies = append(policies, &rest.Policy{
 				Uuid:      v.Uuid.String(),
 				GroupUuid: v.GroupUuid.String(),

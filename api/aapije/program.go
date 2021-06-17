@@ -52,7 +52,7 @@ func (ra *RestApi) AddProgram(w http.ResponseWriter, r *http.Request) {
 	}
 
 	u := services.NewUserService(db)
-	created_by, err := u.GetUserUuidFromToken(r.Context(), []byte(domaintoken.Token))
+	createdBy, err := u.GetUserUuidFromToken(r.Context(), []byte(domaintoken.Token))
 
 	s := services.NewProgramService(db)
 
@@ -63,7 +63,7 @@ func (ra *RestApi) AddProgram(w http.ResponseWriter, r *http.Request) {
 		Schedule:  string(newProgram.Schedule),
 		Deadline:  newProgram.Deadline,
 		Language:  string(newProgram.Language),
-		CreatedBy: created_by,
+		CreatedBy: createdBy,
 	}
 
 	if newProgram.Tags != nil {
@@ -137,7 +137,7 @@ func (ra *RestApi) FindPrograms(w http.ResponseWriter, r *http.Request, p rest.F
 }
 
 func (ra *RestApi) FindProgramByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	program_uuid, err := uuid.Parse(string(id))
+	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -150,7 +150,7 @@ func (ra *RestApi) FindProgramByUuid(w http.ResponseWriter, r *http.Request, id 
 	}
 
 	s := services.NewProgramService(db)
-	program, err := s.FindProgramByUuid(r.Context(), program_uuid)
+	program, err := s.FindProgramByUuid(r.Context(), programUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -161,7 +161,7 @@ func (ra *RestApi) FindProgramByUuid(w http.ResponseWriter, r *http.Request, id 
 }
 
 func (ra *RestApi) UpdateProgramByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	program_uuid, err := uuid.Parse(string(id))
+	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -191,7 +191,7 @@ func (ra *RestApi) UpdateProgramByUuid(w http.ResponseWriter, r *http.Request, i
 		Tags:     updProgram.Tags,
 	}
 
-	count, err := svc.UpdateProgramByUuid(r.Context(), program_uuid, params)
+	count, err := svc.UpdateProgramByUuid(r.Context(), programUUID, params)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -204,7 +204,7 @@ func (ra *RestApi) UpdateProgramByUuid(w http.ResponseWriter, r *http.Request, i
 }
 
 func (ra *RestApi) DeleteProgramByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	program_uuid, err := uuid.Parse(string(id))
+	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -217,7 +217,7 @@ func (ra *RestApi) DeleteProgramByUuid(w http.ResponseWriter, r *http.Request, i
 	}
 
 	s := services.NewProgramService(db)
-	count, err := s.DeleteProgram(r.Context(), program_uuid)
+	count, err := s.DeleteProgram(r.Context(), programUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -230,7 +230,7 @@ func (ra *RestApi) DeleteProgramByUuid(w http.ResponseWriter, r *http.Request, i
 }
 
 func (ra *RestApi) AddProgramCodeRevision(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	program_uuid, err := uuid.Parse(string(id))
+	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -249,20 +249,20 @@ func (ra *RestApi) AddProgramCodeRevision(w http.ResponseWriter, r *http.Request
 	}
 
 	u := services.NewUserService(db)
-	created_by, err := u.GetUserUuidFromToken(r.Context(), []byte(domaintoken.Token))
+	createdBy, err := u.GetUserUuidFromToken(r.Context(), []byte(domaintoken.Token))
 
-	max_upload_size := 1048576
-	content_length, err := strconv.Atoi(r.Header.Get("Content-Length"))
+	maxUploadSize := 1048576
+	contentLength, err := strconv.Atoi(r.Header.Get("Content-Length"))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorLengthRequired)
 		return
-	} else if content_length > max_upload_size {
+	} else if contentLength > maxUploadSize {
 		ie.SendHTTPError(w, ie.ErrorRequestEntityTooLarge)
 		return
 	}
 
 	// Read at most X MB of data from request body
-	r.Body = http.MaxBytesReader(w, r.Body, int64(max_upload_size))
+	r.Body = http.MaxBytesReader(w, r.Body, int64(maxUploadSize))
 
 	b, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -271,8 +271,8 @@ func (ra *RestApi) AddProgramCodeRevision(w http.ResponseWriter, r *http.Request
 
 	s := services.NewProgramService(db)
 	revision, err := s.AddCodeRevision(r.Context(), services.AddCodeRevisionParams{
-		ProgramUuid: program_uuid,
-		CreatedBy:   created_by,
+		ProgramUuid: programUUID,
+		CreatedBy:   createdBy,
 		Code:        b,
 	})
 	if err != nil {
@@ -285,7 +285,7 @@ func (ra *RestApi) AddProgramCodeRevision(w http.ResponseWriter, r *http.Request
 }
 
 func (ra *RestApi) GetProgramCodeRevisionsDiff(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.GetProgramCodeRevisionsDiffParams) {
-	program_uuid, err := uuid.Parse(string(id))
+	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -298,7 +298,7 @@ func (ra *RestApi) GetProgramCodeRevisionsDiff(w http.ResponseWriter, r *http.Re
 	}
 
 	s := services.NewProgramService(db)
-	diff, err := s.DiffProgramCodeAtRevisions(r.Context(), program_uuid, p.RevA, p.RevB)
+	diff, err := s.DiffProgramCodeAtRevisions(r.Context(), programUUID, p.RevA, p.RevB)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -310,7 +310,7 @@ func (ra *RestApi) GetProgramCodeRevisionsDiff(w http.ResponseWriter, r *http.Re
 }
 
 func (ra *RestApi) GetCodeFromProgram(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	program_uuid, err := uuid.Parse(string(id))
+	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -323,7 +323,7 @@ func (ra *RestApi) GetCodeFromProgram(w http.ResponseWriter, r *http.Request, id
 	}
 
 	s := services.NewProgramService(db)
-	code, err := s.GetSignedProgramCodeAtHead(r.Context(), program_uuid)
+	code, err := s.GetSignedProgramCodeAtHead(r.Context(), programUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -335,7 +335,7 @@ func (ra *RestApi) GetCodeFromProgram(w http.ResponseWriter, r *http.Request, id
 }
 
 func (ra *RestApi) GetProgramCodeRevisions(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	program_uuid, err := uuid.Parse(string(id))
+	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -348,7 +348,7 @@ func (ra *RestApi) GetProgramCodeRevisions(w http.ResponseWriter, r *http.Reques
 	}
 
 	s := services.NewProgramService(db)
-	revisions, err := s.FindAllCodeRevisions(r.Context(), program_uuid)
+	revisions, err := s.FindAllCodeRevisions(r.Context(), programUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -363,7 +363,7 @@ func (ra *RestApi) ExecuteProgramWebhook(w http.ResponseWriter, r *http.Request,
 }
 
 func (ra *RestApi) SignProgramCodeRevisions(w http.ResponseWriter, r *http.Request, id rest.UuidParam, revision int) {
-	program_uuid, err := uuid.Parse(string(id))
+	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -382,13 +382,13 @@ func (ra *RestApi) SignProgramCodeRevisions(w http.ResponseWriter, r *http.Reque
 	}
 
 	u := services.NewUserService(db)
-	signed_by, err := u.GetUserUuidFromToken(r.Context(), []byte(domaintoken.Token))
+	signedBy, err := u.GetUserUuidFromToken(r.Context(), []byte(domaintoken.Token))
 
 	s := services.NewProgramService(db)
 	count, err := s.SignCodeRevision(r.Context(), services.SignCodeRevisionParams{
-		ProgramUuid: program_uuid,
+		ProgramUuid: programUUID,
 		Revision:    revision,
-		SignedBy:    signed_by,
+		SignedBy:    signedBy,
 	})
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
@@ -402,7 +402,7 @@ func (ra *RestApi) SignProgramCodeRevisions(w http.ResponseWriter, r *http.Reque
 }
 
 func (ra *RestApi) DeleteProgramCodeRevisions(w http.ResponseWriter, r *http.Request, id rest.UuidParam, revision int) {
-	program_uuid, err := uuid.Parse(string(id))
+	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -415,7 +415,7 @@ func (ra *RestApi) DeleteProgramCodeRevisions(w http.ResponseWriter, r *http.Req
 	}
 
 	s := services.NewProgramService(db)
-	count, err := s.DeleteProgramCodeRevision(r.Context(), program_uuid, revision)
+	count, err := s.DeleteProgramCodeRevision(r.Context(), programUUID, revision)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return

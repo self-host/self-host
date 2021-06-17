@@ -160,25 +160,25 @@ func (svc *TimeseriesService) AddDataToTimeseries(ctx context.Context, p AddData
 
 	filteredPoints := make([]*DataPoint, 0)
 
-	var from_unit units.Unit
-	var to_unit units.Unit
+	var fromUnit units.Unit
+	var toUnit units.Unit
 
 	if p.Unit != nil {
-		ts_unit, err := svc.q.GetUnitFromTimeseries(ctx, p.Uuid)
+		tsUnit, err := svc.q.GetUnitFromTimeseries(ctx, p.Uuid)
 		if err != nil {
 			return 0, err
 		}
 
-		if ts_unit == *p.Unit {
+		if tsUnit == *p.Unit {
 			p.Unit = nil
 		} else {
 
-			from_unit, err = units.Find(*p.Unit)
+			fromUnit, err = units.Find(*p.Unit)
 			if err != nil {
 				return 0, ie.ErrorInvalidUnit
 			}
 
-			to_unit, err = units.Find(ts_unit)
+			toUnit, err = units.Find(tsUnit)
 			if err != nil {
 				// This should never error out, as there should be no incompatible units in the DB
 				return 0, ie.ErrorInvalidUnit
@@ -188,31 +188,31 @@ func (svc *TimeseriesService) AddDataToTimeseries(ctx context.Context, p AddData
 
 	for _, item := range p.Points {
 		// Do not use a pointer to the item variable as this is a known gotcha.
-		p_item := item
+		pItem := item
 
 		if p.Unit != nil {
-			v := units.NewValue(p_item.Value, from_unit)
-			conv, err := v.Convert(to_unit)
+			v := units.NewValue(pItem.Value, fromUnit)
+			conv, err := v.Convert(toUnit)
 			if err != nil {
 				return 0, ie.ErrorInvalidUnitConversion
 			}
-			p_item.Value = float64(conv.Float())
+			pItem.Value = float64(conv.Float())
 		}
 
 		if series.LowerBound.Valid {
 			// Should we skip this value
-			if p_item.Value < series.LowerBound.Float64 {
+			if pItem.Value < series.LowerBound.Float64 {
 				continue
 			}
 		}
 		if series.UpperBound.Valid {
 			// Should we skip this value
-			if p_item.Value > series.UpperBound.Float64 {
+			if pItem.Value > series.UpperBound.Float64 {
 				continue
 			}
 		}
 
-		filteredPoints = append(filteredPoints, &p_item)
+		filteredPoints = append(filteredPoints, &pItem)
 	}
 
 	data, err := json.Marshal(filteredPoints)
@@ -247,11 +247,11 @@ func (svc *TimeseriesService) FindByTags(ctx context.Context, p FindByTagsParams
 		params.ArgOffset = p.Offset.Value
 	}
 
-	ts_list, err := svc.q.FindTimeseriesByTags(ctx, params)
+	tsList, err := svc.q.FindTimeseriesByTags(ctx, params)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, item := range ts_list {
+		for _, item := range tsList {
 			var lBound *float64
 			var uBound *float64
 
@@ -294,11 +294,11 @@ func (svc *TimeseriesService) FindByThing(ctx context.Context, thing uuid.UUID) 
 		return nil, ie.ErrorNotFound
 	}
 
-	ts_list, err := svc.q.FindTimeseriesByThing(ctx, thing)
+	tsList, err := svc.q.FindTimeseriesByThing(ctx, thing)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, item := range ts_list {
+		for _, item := range tsList {
 			var lBound *float64
 			var uBound *float64
 
@@ -378,11 +378,11 @@ func (svc *TimeseriesService) FindAll(ctx context.Context, p FindAllParams) ([]*
 		params.ArgOffset = p.Offset.Value
 	}
 
-	ts_list, err := svc.q.FindTimeseries(ctx, params)
+	tsList, err := svc.q.FindTimeseries(ctx, params)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, item := range ts_list {
+		for _, item := range tsList {
 			var lBound *float64
 			var uBound *float64
 
@@ -432,25 +432,25 @@ func (svc *TimeseriesService) QueryData(ctx context.Context, p QueryDataParams) 
 		p.Uuid,
 	}
 
-	var from_unit units.Unit
-	var to_unit units.Unit
+	var fromUnit units.Unit
+	var toUnit units.Unit
 
 	if p.Unit != nil {
-		ts_unit, err := svc.q.GetUnitFromTimeseries(ctx, p.Uuid)
+		tsUnit, err := svc.q.GetUnitFromTimeseries(ctx, p.Uuid)
 		if err != nil {
 			return nil, err
 		}
 
-		if ts_unit == *p.Unit {
+		if tsUnit == *p.Unit {
 			p.Unit = nil
 		} else {
 
-			to_unit, err = units.Find(*p.Unit)
+			toUnit, err = units.Find(*p.Unit)
 			if err != nil {
 				return nil, ie.ErrorInvalidUnit
 			}
 
-			from_unit, err = units.Find(ts_unit)
+			fromUnit, err = units.Find(tsUnit)
 			if err != nil {
 				// This should never error out, as there should be no incompatible units in the DB
 				return nil, ie.ErrorInvalidUnit
@@ -464,24 +464,15 @@ func (svc *TimeseriesService) QueryData(ctx context.Context, p QueryDataParams) 
 		Stop:    p.End,
 	}
 
-	data_list, err := svc.q.GetTsDataRange(ctx, params)
+	dataList, err := svc.q.GetTsDataRange(ctx, params)
 	if err != nil {
 		return nil, err
 	} else {
-		/*
-			if p.GreaterOrEq != nil {
-				params.Ge = float64(*p.GreaterOrEq)
-			}
-			if p.LessOrEq != nil {
-				params.Le = float64(*p.LessOrEq)
-			}
-		*/
-
-		for _, item := range data_list {
+		for _, item := range dataList {
 			var f float32
 			if p.Unit != nil {
-				v := units.NewValue(item.Value, from_unit)
-				conv, err := v.Convert(to_unit)
+				v := units.NewValue(item.Value, fromUnit)
+				conv, err := v.Convert(toUnit)
 				if err != nil {
 					return nil, ie.ErrorInvalidUnitConversion
 				}
@@ -617,8 +608,8 @@ func (svc *TimeseriesService) UpdateTimeseries(ctx context.Context, p UpdateTime
 	return count, nil
 }
 
-func (svc *TimeseriesService) DeleteTimeseries(ctx context.Context, ts_uuid uuid.UUID) (int64, error) {
-	count, err := svc.q.DeleteTimeseries(ctx, ts_uuid)
+func (svc *TimeseriesService) DeleteTimeseries(ctx context.Context, tsUUID uuid.UUID) (int64, error) {
+	count, err := svc.q.DeleteTimeseries(ctx, tsUUID)
 	if err != nil {
 		return 0, err
 	}

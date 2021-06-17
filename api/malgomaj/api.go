@@ -52,8 +52,8 @@ func (ra *RestApi) CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	ctx := context.Background()
 
-	cache_item := ProgramCacheGet(t.GetId())
-	if cache_item == nil {
+	cacheItem := ProgramCacheGet(t.GetId())
+	if cacheItem == nil {
 		// Not found; create program
 		var err error
 		prog, err := NewProgram(
@@ -83,17 +83,17 @@ func (ra *RestApi) CreateTask(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		cache_item = ProgramCacheAdd(prog)
+		cacheItem = ProgramCacheAdd(prog)
 	}
 
-	if cache_item == nil {
+	if cacheItem == nil {
 		ie.SendHTTPError(w, ie.ErrorUndefined)
 		return
 	}
 
 	// This header can be used by an external caller to re-use this particular worker as to avoid re-compilation
 	// on every call. That is, given that the cache item does not expire before the next call.
-	w.Header().Set("X-Expires", cache_item.expires.In(time.FixedZone("GMT", 0)).Format(time.RFC1123))
+	w.Header().Set("X-Expires", cacheItem.expires.In(time.FixedZone("GMT", 0)).Format(time.RFC1123))
 
 	if t.Http != nil {
 		h := (NewTaskHttp)(*t.Http)
@@ -103,14 +103,14 @@ func (ra *RestApi) CreateTask(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 
 		// The "CGI" program manages headers and output via w, r
-		err := cache_item.program.RunWithHTTP(ctx, w, r)
+		err := cacheItem.program.RunWithHTTP(ctx, w, r)
 		if err != nil {
 			ie.SendHTTPError(w, ie.NewInternalServerError(err))
 			return
 		}
 	} else {
 		// Run program
-		err := cache_item.program.Run(ctx)
+		err := cacheItem.program.Run(ctx)
 		if err != nil {
 			ie.SendHTTPError(w, ie.NewInternalServerError(err))
 			return

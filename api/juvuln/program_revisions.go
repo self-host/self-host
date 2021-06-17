@@ -55,12 +55,12 @@ type WorkerTask struct {
 	SourceCode  string    `json:"source_code"`
 }
 
-func NewProgramRevision(domain string, name string, program_uuid uuid.UUID, ptype string, schedule string,
+func NewProgramRevision(domain string, name string, programUUID uuid.UUID, ptype string, schedule string,
 	deadline int32, language string, revision int32, code []byte, checksum string) (*ProgramRevision, error) {
 	p := &ProgramRevision{
 		Domain:      domain,
 		Name:        name,
-		ProgramUuid: program_uuid,
+		ProgramUuid: programUUID,
 		Type:        ptype,
 		Deadline:    deadline,
 		Language:    language,

@@ -107,8 +107,8 @@ func (svc *ThingService) AddThing(ctx context.Context, p *AddThingParams) (*rest
 	return v, nil
 }
 
-func (svc *ThingService) FindThingByUuid(ctx context.Context, thing_uuid uuid.UUID) (*rest.Thing, error) {
-	t, err := svc.q.FindThingByUUID(ctx, thing_uuid)
+func (svc *ThingService) FindThingByUuid(ctx context.Context, thingUUID uuid.UUID) (*rest.Thing, error) {
+	t, err := svc.q.FindThingByUUID(ctx, thingUUID)
 	if err != nil {
 		return nil, err
 	}
@@ -142,11 +142,11 @@ func (svc *ThingService) FindAll(ctx context.Context, p FindAllParams) ([]*rest.
 		params.ArgOffset = p.Offset.Value
 	}
 
-	thing_list, err := svc.q.FindThings(ctx, params)
+	thingList, err := svc.q.FindThings(ctx, params)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, t := range thing_list {
+		for _, t := range thingList {
 			thing := &rest.Thing{
 				Uuid:      t.Uuid.String(),
 				Name:      t.Name,
@@ -179,11 +179,11 @@ func (svc *ThingService) FindByTags(ctx context.Context, p FindByTagsParams) ([]
 		params.ArgOffset = p.Offset.Value
 	}
 
-	things_list, err := svc.q.FindThingsByTags(ctx, params)
+	thingList, err := svc.q.FindThingsByTags(ctx, params)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, t := range things_list {
+		for _, t := range thingList {
 			thing := &rest.Thing{
 				Uuid:      t.Uuid.String(),
 				Name:      t.Name,
@@ -281,8 +281,8 @@ func (svc *ThingService) UpdateByUuid(ctx context.Context, p UpdateThingParams) 
 	return count, nil
 }
 
-func (svc *ThingService) DeleteThing(ctx context.Context, thing_uuid uuid.UUID) (int64, error) {
-	count, err := svc.q.DeleteThing(ctx, thing_uuid)
+func (svc *ThingService) DeleteThing(ctx context.Context, thingUUID uuid.UUID) (int64, error) {
+	count, err := svc.q.DeleteThing(ctx, thingUUID)
 	if err != nil {
 		return 0, err
 	}

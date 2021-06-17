@@ -30,7 +30,7 @@ import (
 )
 
 const (
-	SECRET_TOKEN_LENGTH = 40
+	secretTokenLength = 40
 )
 
 // User represents the repository used for interacting with User records.
@@ -79,9 +79,9 @@ func (u *UserService) AddUser(ctx context.Context, name string) (*rest.User, err
 		return nil, err
 	}
 
-	user_groups := make([]rest.Group, 0)
+	userGroups := make([]rest.Group, 0)
 	for _, item := range ugs {
-		user_groups = append(user_groups, rest.Group{
+		userGroups = append(userGroups, rest.Group{
 			Uuid: item.Uuid.String(),
 			Name: item.Name,
 		})
@@ -90,20 +90,20 @@ func (u *UserService) AddUser(ctx context.Context, name string) (*rest.User, err
 	return &rest.User{
 		Uuid:   user.Uuid.String(),
 		Name:   user.Name,
-		Groups: user_groups,
+		Groups: userGroups,
 	}, nil
 }
 
-func (u *UserService) AddTokenToUser(ctx context.Context, user_uuid uuid.UUID, label string) (*rest.TokenWithSecret, error) {
-	exists, err := u.Exists(ctx, user_uuid)
+func (u *UserService) AddTokenToUser(ctx context.Context, userUUID uuid.UUID, label string) (*rest.TokenWithSecret, error) {
+	exists, err := u.Exists(ctx, userUUID)
 	if exists == false {
 		return nil, ie.ErrorNotFound
 	}
 
-	secret := "secret-token." + RandomString(SECRET_TOKEN_LENGTH)
+	secret := "secret-token." + RandomString(secretTokenLength)
 
 	params := postgres.AddTokenToUserParams{
-		UserUuid: user_uuid,
+		UserUuid: userUUID,
 		Name:     label,
 		Secret:   []byte(secret),
 	}
@@ -120,7 +120,7 @@ func (u *UserService) AddTokenToUser(ctx context.Context, user_uuid uuid.UUID, l
 	}, nil
 }
 
-func (u *UserService) AddRemoveUserToGroups(ctx context.Context, user_uuid uuid.UUID, adds []uuid.UUID, removes []uuid.UUID) (int64, error) {
+func (u *UserService) AddRemoveUserToGroups(ctx context.Context, userUUID uuid.UUID, adds []uuid.UUID, removes []uuid.UUID) (int64, error) {
 	tx, err := u.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
 		return 0, err
@@ -129,7 +129,7 @@ func (u *UserService) AddRemoveUserToGroups(ctx context.Context, user_uuid uuid.
 	q := u.q.WithTx(tx)
 
 	params := postgres.RemoveUserFromGroupsParams{
-		UserUuid:   user_uuid,
+		UserUuid:   userUUID,
 		GroupUuids: removes,
 	}
 
@@ -139,10 +139,10 @@ func (u *UserService) AddRemoveUserToGroups(ctx context.Context, user_uuid uuid.
 		return 0, err
 	}
 
-	for _, group_uuid := range adds {
+	for _, groupUUID := range adds {
 		params := postgres.AddUserToGroupParams{
-			UserUuid:  user_uuid,
-			GroupUuid: group_uuid,
+			UserUuid:  userUUID,
+			GroupUuid: groupUUID,
 		}
 
 		err = q.AddUserToGroup(ctx, params)
@@ -157,7 +157,7 @@ func (u *UserService) AddRemoveUserToGroups(ctx context.Context, user_uuid uuid.
 	return count, nil
 }
 
-func (u *UserService) AddUserToGroups(ctx context.Context, user_uuid uuid.UUID, group_uuids []uuid.UUID) error {
+func (u *UserService) AddUserToGroups(ctx context.Context, userUUID uuid.UUID, groupUUIDs []uuid.UUID) error {
 	// Use a transaction for this action
 	tx, err := u.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
@@ -166,10 +166,10 @@ func (u *UserService) AddUserToGroups(ctx context.Context, user_uuid uuid.UUID, 
 
 	q := u.q.WithTx(tx)
 
-	for _, group_uuid := range group_uuids {
+	for _, groupUUID := range groupUUIDs {
 		params := postgres.AddUserToGroupParams{
-			UserUuid:  user_uuid,
-			GroupUuid: group_uuid,
+			UserUuid:  userUUID,
+			GroupUuid: groupUUID,
 		}
 
 		err = q.AddUserToGroup(ctx, params)
@@ -184,8 +184,8 @@ func (u *UserService) AddUserToGroups(ctx context.Context, user_uuid uuid.UUID, 
 	return nil
 }
 
-func (u *UserService) FindUserByUuid(ctx context.Context, user_uuid uuid.UUID) (*rest.User, error) {
-	user, err := u.q.FindUserByUUID(ctx, user_uuid)
+func (u *UserService) FindUserByUuid(ctx context.Context, userUUID uuid.UUID) (*rest.User, error) {
+	user, err := u.q.FindUserByUUID(ctx, userUUID)
 	if err != nil {
 		return nil, err
 	}
@@ -195,9 +195,9 @@ func (u *UserService) FindUserByUuid(ctx context.Context, user_uuid uuid.UUID) (
 		return nil, err
 	}
 
-	user_groups := make([]rest.Group, 0)
+	userGroups := make([]rest.Group, 0)
 	for _, item := range ugs {
-		user_groups = append(user_groups, rest.Group{
+		userGroups = append(userGroups, rest.Group{
 			Uuid: item.Uuid.String(),
 			Name: item.Name,
 		})
@@ -206,7 +206,7 @@ func (u *UserService) FindUserByUuid(ctx context.Context, user_uuid uuid.UUID) (
 	return &rest.User{
 		Uuid:   user.Uuid.String(),
 		Name:   user.Name,
-		Groups: user_groups,
+		Groups: userGroups,
 	}, nil
 }
 
@@ -233,11 +233,11 @@ func (u *UserService) FindAll(ctx context.Context, token []byte, limit *int64, o
 		params.ArgOffset = *offset
 	}
 
-	user_list, err := u.q.FindUsers(ctx, params)
+	userList, err := u.q.FindUsers(ctx, params)
 	if err != nil {
 		return nil, err
 	} else {
-		for _, u := range user_list {
+		for _, u := range userList {
 			var groups []rest.Group
 			if err = json.Unmarshal([]byte(u.Groups), &groups); err != nil {
 				// LOG error
@@ -254,22 +254,22 @@ func (u *UserService) FindAll(ctx context.Context, token []byte, limit *int64, o
 	return users, nil
 }
 
-func (u *UserService) FindTokensForUser(ctx context.Context, user_uuid uuid.UUID) ([]*rest.Token, error) {
+func (u *UserService) FindTokensForUser(ctx context.Context, userUUID uuid.UUID) ([]*rest.Token, error) {
 	tokens := make([]*rest.Token, 0)
 
-	count, err := u.q.ExistsUser(ctx, user_uuid)
+	count, err := u.q.ExistsUser(ctx, userUUID)
 	if err != nil {
 		return nil, err
 	} else if count == 0 {
 		return nil, ie.ErrorNotFound
 	}
 
-	token_list, err := u.q.FindTokensByUser(ctx, user_uuid)
+	tokenList, err := u.q.FindTokensByUser(ctx, userUUID)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, v := range token_list {
+	for _, v := range tokenList {
 		tokens = append(tokens, &rest.Token{
 			Uuid:    v.Uuid.String(),
 			Name:    v.Name,
@@ -280,10 +280,10 @@ func (u *UserService) FindTokensForUser(ctx context.Context, user_uuid uuid.UUID
 	return tokens, nil
 }
 
-func (u *UserService) RemoveUserFromGroups(ctx context.Context, user_uuid uuid.UUID, group_uuids []uuid.UUID) (int64, error) {
+func (u *UserService) RemoveUserFromGroups(ctx context.Context, userUUID uuid.UUID, groupUUIDs []uuid.UUID) (int64, error) {
 	params := postgres.RemoveUserFromGroupsParams{
-		UserUuid:   user_uuid,
-		GroupUuids: group_uuids,
+		UserUuid:   userUUID,
+		GroupUuids: groupUUIDs,
 	}
 
 	count, err := u.q.RemoveUserFromGroups(ctx, params)
@@ -294,7 +294,7 @@ func (u *UserService) RemoveUserFromGroups(ctx context.Context, user_uuid uuid.U
 	return count, nil
 }
 
-func (u *UserService) SetUserGroups(ctx context.Context, user_uuid uuid.UUID, group_uuids []uuid.UUID) (int64, error) {
+func (u *UserService) SetUserGroups(ctx context.Context, userUUID uuid.UUID, groupUUIDs []uuid.UUID) (int64, error) {
 	tx, err := u.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
 		return 0, err
@@ -302,16 +302,16 @@ func (u *UserService) SetUserGroups(ctx context.Context, user_uuid uuid.UUID, gr
 
 	q := u.q.WithTx(tx)
 
-	count, err := q.RemoveUserFromAllGroups(ctx, user_uuid)
+	count, err := q.RemoveUserFromAllGroups(ctx, userUUID)
 	if err != nil {
 		tx.Rollback()
 		return 0, err
 	}
 
-	for _, group_uuid := range group_uuids {
+	for _, groupUUID := range groupUUIDs {
 		params := postgres.AddUserToGroupParams{
-			UserUuid:  user_uuid,
-			GroupUuid: group_uuid,
+			UserUuid:  userUUID,
+			GroupUuid: groupUUID,
 		}
 
 		err = q.AddUserToGroup(ctx, params)
@@ -326,9 +326,9 @@ func (u *UserService) SetUserGroups(ctx context.Context, user_uuid uuid.UUID, gr
 	return count, nil
 }
 
-func (u *UserService) SetUserName(ctx context.Context, user_uuid uuid.UUID, name string) (int64, error) {
+func (u *UserService) SetUserName(ctx context.Context, userUUID uuid.UUID, name string) (int64, error) {
 	count, err := u.q.SetUserName(ctx, postgres.SetUserNameParams{
-		Uuid: user_uuid,
+		Uuid: userUUID,
 		Name: name,
 	})
 	if err != nil {
@@ -340,8 +340,8 @@ func (u *UserService) SetUserName(ctx context.Context, user_uuid uuid.UUID, name
 	return count, nil
 }
 
-func (u *UserService) DeleteUser(ctx context.Context, user_uuid uuid.UUID) (int64, error) {
-	count, err := u.q.DeleteUser(ctx, user_uuid)
+func (u *UserService) DeleteUser(ctx context.Context, userUUID uuid.UUID) (int64, error) {
+	count, err := u.q.DeleteUser(ctx, userUUID)
 	if err != nil {
 		return 0, err
 	} else if count == 0 {
@@ -351,10 +351,10 @@ func (u *UserService) DeleteUser(ctx context.Context, user_uuid uuid.UUID) (int6
 	return count, nil
 }
 
-func (u *UserService) DeleteTokenFromUser(ctx context.Context, user_uuid, token_uuid uuid.UUID) (int64, error) {
+func (u *UserService) DeleteTokenFromUser(ctx context.Context, userUUID, tokenUUID uuid.UUID) (int64, error) {
 	count, err := u.q.DeleteTokenFromUser(ctx, postgres.DeleteTokenFromUserParams{
-		UserUuid:  user_uuid,
-		TokenUuid: token_uuid,
+		UserUuid:  userUUID,
+		TokenUuid: tokenUUID,
 	})
 	if err != nil {
 		return 0, err

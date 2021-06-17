@@ -59,26 +59,26 @@ func TestAddUser(t *testing.T) {
 
 	// Ensure the alice user belongs to the alice group
 	if func(gr []rest.Group) bool {
-		var has_alice bool
+		var hasAlice bool
 		for _, item := range gr {
 			if item.Name == "alice" {
-				has_alice = true
+				hasAlice = true
 			}
 		}
-		return has_alice
+		return hasAlice
 	}(alice.Groups) == false {
 		log.Fatal("User alice is missing alice group")
 	}
 
 	// Ensure the bob user belongs to the bob group
 	if func(gr []rest.Group) bool {
-		var has_bob bool
+		var hasBob bool
 		for _, item := range gr {
 			if item.Name == "bob" {
-				has_bob = true
+				hasBob = true
 			}
 		}
-		return has_bob
+		return hasBob
 	}(bob.Groups) == false {
 		log.Fatal("User bob is missing bob group")
 	}
@@ -87,24 +87,24 @@ func TestAddUser(t *testing.T) {
 	var offset = int64(0)
 
 	// Check and ensure the user specific groups has been added to the groups table
-	groups, err := g.FindAll(context.Background(), []byte(ROOT_TOKEN), &limit, &offset)
+	groups, err := g.FindAll(context.Background(), []byte(rootToken), &limit, &offset)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	if func(gr []*rest.Group) bool {
-		var has_alice bool
-		var has_bob bool
+		var hasAlice bool
+		var hasBob bool
 
 		for _, item := range gr {
 			if item.Name == "alice" {
-				has_alice = true
+				hasAlice = true
 			} else if item.Name == "bob" {
-				has_bob = true
+				hasBob = true
 			}
 		}
 
-		return has_alice && has_bob
+		return hasAlice && hasBob
 	}(groups) == false {
 		log.Fatal("Either alice or bob group is missing")
 	}

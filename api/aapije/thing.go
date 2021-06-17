@@ -135,7 +135,7 @@ func (ra *RestApi) FindThings(w http.ResponseWriter, r *http.Request, p rest.Fin
 }
 
 func (ra *RestApi) FindThingByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	thing_uuid, err := uuid.Parse(string(id))
+	thingUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -148,7 +148,7 @@ func (ra *RestApi) FindThingByUuid(w http.ResponseWriter, r *http.Request, id re
 	}
 
 	svc := services.NewThingService(db)
-	things, err := svc.FindThingByUuid(r.Context(), thing_uuid)
+	things, err := svc.FindThingByUuid(r.Context(), thingUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -159,7 +159,7 @@ func (ra *RestApi) FindThingByUuid(w http.ResponseWriter, r *http.Request, id re
 }
 
 func (ra *RestApi) FindTimeSeriesForThing(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	thing_uuid, err := uuid.Parse(string(id))
+	thingUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -173,7 +173,7 @@ func (ra *RestApi) FindTimeSeriesForThing(w http.ResponseWriter, r *http.Request
 
 	srv := services.NewTimeseriesService(db)
 
-	timeseries, err := srv.FindByThing(r.Context(), thing_uuid)
+	timeseries, err := srv.FindByThing(r.Context(), thingUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -184,7 +184,7 @@ func (ra *RestApi) FindTimeSeriesForThing(w http.ResponseWriter, r *http.Request
 }
 
 func (ra *RestApi) FindDatasetsForThing(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	thing_uuid, err := uuid.Parse(string(id))
+	thingUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -197,7 +197,7 @@ func (ra *RestApi) FindDatasetsForThing(w http.ResponseWriter, r *http.Request, 
 	}
 
 	s := services.NewThingService(db)
-	if ok, err := s.Exists(r.Context(), thing_uuid); err != nil {
+	if ok, err := s.Exists(r.Context(), thingUUID); err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
 	} else if ok == false {
@@ -206,7 +206,7 @@ func (ra *RestApi) FindDatasetsForThing(w http.ResponseWriter, r *http.Request, 
 	}
 
 	srv := services.NewDatasetService(db)
-	datasets, err := srv.FindByThing(r.Context(), thing_uuid)
+	datasets, err := srv.FindByThing(r.Context(), thingUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -217,7 +217,7 @@ func (ra *RestApi) FindDatasetsForThing(w http.ResponseWriter, r *http.Request, 
 }
 
 func (ra *RestApi) UpdateThingByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	thing_uuid, err := uuid.Parse(string(id))
+	thingUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -239,7 +239,7 @@ func (ra *RestApi) UpdateThingByUuid(w http.ResponseWriter, r *http.Request, id 
 	}
 
 	params := services.UpdateThingParams{
-		Uuid:  thing_uuid,
+		Uuid:  thingUUID,
 		Name:  obj.Name,
 		Type:  obj.Type,
 		State: (*string)(obj.State),
@@ -259,7 +259,7 @@ func (ra *RestApi) UpdateThingByUuid(w http.ResponseWriter, r *http.Request, id 
 }
 
 func (ra *RestApi) DeleteThingByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	thing_uuid, err := uuid.Parse(string(id))
+	thingUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -273,7 +273,7 @@ func (ra *RestApi) DeleteThingByUuid(w http.ResponseWriter, r *http.Request, id 
 
 	svc := services.NewThingService(db)
 
-	count, err := svc.DeleteThing(r.Context(), thing_uuid)
+	count, err := svc.DeleteThing(r.Context(), thingUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return

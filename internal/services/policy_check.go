@@ -43,10 +43,10 @@ func (pc *PolicyCheckService) UserHasAccessViaToken(ctx context.Context, token [
 		Token:    token,
 	}
 
-	has_access, err := pc.q.CheckUserTokenHasAccess(ctx, params)
+	hasAccess, err := pc.q.CheckUserTokenHasAccess(ctx, params)
 	if err != nil {
 		return false, err
 	}
 
-	return has_access, nil
+	return hasAccess, nil
 }

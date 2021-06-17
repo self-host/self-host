@@ -38,7 +38,7 @@ func (ra *RestApi) AddPolicy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	group_uuid, err := uuid.Parse(newPolicy.GroupUuid)
+	groupUUID, err := uuid.Parse(newPolicy.GroupUuid)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorMalformedRequest)
 		return
@@ -58,11 +58,11 @@ func (ra *RestApi) AddPolicy(w http.ResponseWriter, r *http.Request) {
 
 	// Ensure that the User has the right to create a policy with these access rules
 	pc := services.NewPolicyCheckService(db)
-	can_grant, err := pc.UserHasAccessViaToken(r.Context(), []byte(domaintoken.Token), string(newPolicy.Action), newPolicy.Resource)
+	canGrant, err := pc.UserHasAccessViaToken(r.Context(), []byte(domaintoken.Token), string(newPolicy.Action), newPolicy.Resource)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
-	} else if can_grant == false {
+	} else if canGrant == false {
 		ie.SendHTTPError(w, ie.ErrorForbidden)
 		return
 	}
@@ -70,7 +70,7 @@ func (ra *RestApi) AddPolicy(w http.ResponseWriter, r *http.Request) {
 	srv := services.NewPolicyService(db)
 
 	params := services.NewPolicyParams{
-		GroupUuid: group_uuid,
+		GroupUuid: groupUUID,
 		Priority:  int32(newPolicy.Priority),
 		Effect:    string(newPolicy.Effect),
 		Action:    string(newPolicy.Action),
@@ -115,13 +115,13 @@ func (ra *RestApi) FindPolicies(w http.ResponseWriter, r *http.Request, p rest.F
 	}
 
 	if p.GroupUuids != nil {
-		group_uuids, err := util.StringSliceToUuidSlice(*p.GroupUuids)
+		groupUUIDs, err := util.StringSliceToUuidSlice(*p.GroupUuids)
 		if err != nil {
 			ie.SendHTTPError(w, ie.ErrorMalformedRequest)
 			return
 		}
 
-		params.GroupUuids = &group_uuids
+		params.GroupUuids = &groupUUIDs
 	}
 
 	policies, err := srv.FindAll(r.Context(), params)
@@ -136,7 +136,7 @@ func (ra *RestApi) FindPolicies(w http.ResponseWriter, r *http.Request, p rest.F
 }
 
 func (ra *RestApi) FindPolicyByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	policy_uuid, err := uuid.Parse(string(id))
+	policyUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -149,7 +149,7 @@ func (ra *RestApi) FindPolicyByUuid(w http.ResponseWriter, r *http.Request, id r
 	}
 
 	s := services.NewPolicyService(db)
-	policy, err := s.FindByUuid(r.Context(), policy_uuid)
+	policy, err := s.FindByUuid(r.Context(), policyUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -167,7 +167,7 @@ func (ra *RestApi) UpdatePolicyByUuid(w http.ResponseWriter, r *http.Request, id
 		return
 	}
 
-	policy_uuid, err := uuid.Parse(string(id))
+	policyUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -188,15 +188,15 @@ func (ra *RestApi) UpdatePolicyByUuid(w http.ResponseWriter, r *http.Request, id
 	}
 
 	if updatePolicy.GroupUuid != nil {
-		group_uuid, err := uuid.Parse(*updatePolicy.GroupUuid)
+		groupUUID, err := uuid.Parse(*updatePolicy.GroupUuid)
 		if err != nil {
 			ie.SendHTTPError(w, ie.ErrorMalformedRequest)
 			return
 		}
-		params.GroupUuid = &group_uuid
+		params.GroupUuid = &groupUUID
 	}
 
-	_, err = srv.Update(r.Context(), policy_uuid, params)
+	_, err = srv.Update(r.Context(), policyUUID, params)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
@@ -206,7 +206,7 @@ func (ra *RestApi) UpdatePolicyByUuid(w http.ResponseWriter, r *http.Request, id
 }
 
 func (ra *RestApi) DeletePolicyByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
-	policy_uuid, err := uuid.Parse(string(id))
+	policyUUID, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
 		return
@@ -219,7 +219,7 @@ func (ra *RestApi) DeletePolicyByUuid(w http.ResponseWriter, r *http.Request, id
 	}
 
 	s := services.NewPolicyService(db)
-	_, err = s.Delete(r.Context(), policy_uuid)
+	_, err = s.Delete(r.Context(), policyUUID)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return

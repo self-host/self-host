@@ -132,18 +132,18 @@ func RateControl(reqPerHour int, maxburst int, cleanup time.Duration) func(http.
 
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			domain, api_key, ok := r.BasicAuth()
+			domain, apiKey, ok := r.BasicAuth()
 			if ok == false {
 				ie.SendHTTPError(w, ie.ErrorUnauthorized)
 				return
 			}
 
-			if domain == "" || api_key == "" {
+			if domain == "" || apiKey == "" {
 				ie.SendHTTPError(w, ie.ErrorUnauthorized)
 				return
 			}
 
-			lutkey := domain + "." + api_key
+			lutkey := domain + "." + apiKey
 			limiter, _ := vc.GetVisitor(lutkey)
 
 			if limiter.Allow() == false {
