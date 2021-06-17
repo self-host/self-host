@@ -47,4 +47,3 @@ func initConfig() {
 		logger.Fatal("Fatal error unable to load config file", zap.Error(err))
 	}
 }
-

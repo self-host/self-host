@@ -107,6 +107,9 @@ type Dataset struct {
 	// UUID reference to a Thing as a way to track data-sets to things.
 	BelongsTo *string `json:"belongs_to"`
 
+	// The sha256 checksum of the content
+	Checksum string `json:"checksum"`
+
 	// Date-time when created, as defined by RFC 3339, section 5.6.
 	Created time.Time `json:"created"`
 
@@ -263,6 +266,9 @@ type User struct {
 
 // GreaterOrEqParam defines model for greaterOrEqParam.
 type GreaterOrEqParam float32
+
+// IfNoneMatchParam defines model for ifNoneMatchParam.
+type IfNoneMatchParam string
 
 // LessOrEqParam defines model for lessOrEqParam.
 type LessOrEqParam float32
@@ -532,6 +538,17 @@ type UploadDatasetContentByKeyParams struct {
 	PartNumber int    `json:"partNumber"`
 	UploadId   string `json:"uploadId"`
 	ContentMD5 string `json:"Content-MD5"`
+}
+
+// GetRawDatasetByUuidParams defines parameters for GetRawDatasetByUuid.
+type GetRawDatasetByUuidParams struct {
+
+	// The server compares the client's ETag (sent with If-None-Match) with
+	// the ETag for its current version of the resource, and if both values
+	// match (that is, the resource has not changed), the server sends back
+	// a 304 Not Modified status, without a body, which tells the client
+	// that the cached version of the response is still good to use (fresh).
+	IfNoneMatch *IfNoneMatchParam `json:"If-None-Match,omitempty"`
 }
 
 // DeleteDatasetUploadByKeyParams defines parameters for DeleteDatasetUploadByKey.

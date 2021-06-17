@@ -5,11 +5,12 @@ WHERE datasets.uuid = sqlc.arg(uuid);
 
 -- name: CreateDataset :one
 WITH ds AS (
-	INSERT INTO datasets (name, format, content, size, belongs_to, created_by, updated_by, tags)
+	INSERT INTO datasets (name, format, content, checksum, size, belongs_to, created_by, updated_by, tags)
 	VALUES(
 		sqlc.arg(name)::text,
 		sqlc.arg(format)::text,
 		sqlc.arg(content)::bytea,
+		sha256(sqlc.arg(content)::bytea),
 		length(sqlc.arg(content))::integer,
 		NULLIF(sqlc.arg(belongs_to)::uuid, '00000000-0000-0000-0000-000000000000'::uuid),
 		sqlc.arg(created_by)::uuid,
@@ -20,6 +21,7 @@ WITH ds AS (
 		uuid,
 		name,
 		format,
+		encode(checksum, 'hex') AS checksum,
 		size,
 		belongs_to,
 		created,
@@ -71,6 +73,7 @@ SELECT
 	uuid,
 	name,
 	format,
+	encode(checksum, 'hex') AS checksum,
 	size,
 	belongs_to,
 	created,
@@ -87,6 +90,7 @@ SELECT
 	uuid,
 	name,
 	format,
+	encode(checksum, 'hex') AS checksum,
 	size,
 	belongs_to,
 	created,
@@ -121,6 +125,7 @@ SELECT
 	uuid,
 	name,
 	format,
+	encode(checksum, 'hex') AS checksum,
 	size,
 	belongs_to,
 	created,
@@ -138,6 +143,7 @@ SELECT
 	uuid,
 	name,
 	format,
+	encode(checksum, 'hex') AS checksum,
 	size,
 	belongs_to,
 	created,
@@ -160,6 +166,7 @@ SELECT
 	uuid,
 	name,
 	format,
+	encode(checksum, 'hex') AS checksum,
 	size,
 	belongs_to,
 	created,
@@ -176,6 +183,7 @@ SELECT
 	uuid,
 	name,
 	format,
+	encode(checksum, 'hex') AS checksum,
 	size,
 	belongs_to,
 	created,
@@ -189,7 +197,7 @@ ORDER BY name
 ;
 
 -- name: GetDatasetContentByUUID :one
-SELECT format, content
+SELECT format, content, encode(checksum, 'hex') AS checksum
 FROM datasets
 WHERE datasets.uuid = sqlc.arg(uuid)
 LIMIT 1;
@@ -206,7 +214,8 @@ WHERE datasets.uuid = sqlc.arg(uuid);
 
 -- name: SetDatasetContentByUUID :execrows
 UPDATE datasets
-SET content = sqlc.arg(content)
+SET content = sqlc.arg(content)::bytea,
+    checksum = sha256(sqlc.arg(content)::bytea)
 WHERE datasets.uuid = sqlc.arg(uuid);
 
 -- name: SetDatasetTags :execrows

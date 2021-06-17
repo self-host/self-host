@@ -19,13 +19,10 @@ along with Self-host.  If not, see <http://www.gnu.org/licenses/>.
 package aapije
 
 import (
-	"crypto/md5"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/google/uuid"
-
 	"github.com/self-host/self-host/api/aapije/rest"
 	ie "github.com/self-host/self-host/internal/errors"
 	"github.com/self-host/self-host/internal/services"
@@ -215,7 +212,7 @@ func (ra *RestApi) UpdateDatasetByUuid(w http.ResponseWriter, r *http.Request, i
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (ra *RestApi) GetRawDatasetByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
+func (ra *RestApi) GetRawDatasetByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.GetRawDatasetByUuidParams) {
 	dataset_uuid, err := uuid.Parse(string(id))
 	if err != nil {
 		ie.SendHTTPError(w, ie.ErrorInvalidUUID)
@@ -236,6 +233,11 @@ func (ra *RestApi) GetRawDatasetByUuid(w http.ResponseWriter, r *http.Request, i
 	}
 	if f == nil {
 		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	if p.IfNoneMatch != nil && (string)(*p.IfNoneMatch) == f.Checksum {
+		w.WriteHeader(http.StatusNotModified)
 		return
 	}
 
@@ -262,7 +264,7 @@ func (ra *RestApi) GetRawDatasetByUuid(w http.ResponseWriter, r *http.Request, i
 		return
 	}
 
-	w.Header().Set("ETag", fmt.Sprintf("%x", md5.Sum(f.Content)))
+	w.Header().Set("ETag", f.Checksum)
 	w.WriteHeader(http.StatusOK)
 	w.Write(f.Content)
 }

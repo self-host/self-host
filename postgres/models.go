@@ -96,6 +96,7 @@ type Dataset struct {
 	Name      string
 	Format    string
 	Content   []byte
+	Checksum  []byte
 	Size      int32
 	BelongsTo uuid.UUID
 	Created   time.Time

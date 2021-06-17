@@ -13,11 +13,12 @@ import (
 
 const createDataset = `-- name: CreateDataset :one
 WITH ds AS (
-	INSERT INTO datasets (name, format, content, size, belongs_to, created_by, updated_by, tags)
+	INSERT INTO datasets (name, format, content, checksum, size, belongs_to, created_by, updated_by, tags)
 	VALUES(
 		$1::text,
 		$2::text,
 		$3::bytea,
+		sha256($3::bytea),
 		length($3)::integer,
 		NULLIF($4::uuid, '00000000-0000-0000-0000-000000000000'::uuid),
 		$5::uuid,
@@ -28,6 +29,7 @@ WITH ds AS (
 		uuid,
 		name,
 		format,
+		encode(checksum, 'hex') AS checksum,
 		size,
 		belongs_to,
 		created,
@@ -58,7 +60,7 @@ WITH ds AS (
 		(SELECT uuid FROM grp), 0, 'allow', 'delete','datasets/'||(SELECT uuid FROM ds)||'/%'
 	)
 )
-SELECT uuid, name, format, size, belongs_to, created, updated, created_by, updated_by, tags
+SELECT uuid, name, format, checksum, size, belongs_to, created, updated, created_by, updated_by, tags
 FROM ds LIMIT 1
 `
 
@@ -75,6 +77,7 @@ type CreateDatasetRow struct {
 	Uuid      uuid.UUID
 	Name      string
 	Format    string
+	Checksum  string
 	Size      int32
 	BelongsTo uuid.UUID
 	Created   time.Time
@@ -98,6 +101,7 @@ func (q *Queries) CreateDataset(ctx context.Context, arg CreateDatasetParams) (C
 		&i.Uuid,
 		&i.Name,
 		&i.Format,
+		&i.Checksum,
 		&i.Size,
 		&i.BelongsTo,
 		&i.Created,
@@ -140,6 +144,7 @@ SELECT
 	uuid,
 	name,
 	format,
+	encode(checksum, 'hex') AS checksum,
 	size,
 	belongs_to,
 	created,
@@ -156,6 +161,7 @@ type FindDatasetByThingRow struct {
 	Uuid      uuid.UUID
 	Name      string
 	Format    string
+	Checksum  string
 	Size      int32
 	BelongsTo uuid.UUID
 	Created   time.Time
@@ -178,6 +184,7 @@ func (q *Queries) FindDatasetByThing(ctx context.Context, thingUuid uuid.UUID) (
 			&i.Uuid,
 			&i.Name,
 			&i.Format,
+			&i.Checksum,
 			&i.Size,
 			&i.BelongsTo,
 			&i.Created,
@@ -204,6 +211,7 @@ SELECT
 	uuid,
 	name,
 	format,
+	encode(checksum, 'hex') AS checksum,
 	size,
 	belongs_to,
 	created,
@@ -220,6 +228,7 @@ type FindDatasetByUUIDRow struct {
 	Uuid      uuid.UUID
 	Name      string
 	Format    string
+	Checksum  string
 	Size      int32
 	BelongsTo uuid.UUID
 	Created   time.Time
@@ -236,6 +245,7 @@ func (q *Queries) FindDatasetByUUID(ctx context.Context, uuid uuid.UUID) (FindDa
 		&i.Uuid,
 		&i.Name,
 		&i.Format,
+		&i.Checksum,
 		&i.Size,
 		&i.BelongsTo,
 		&i.Created,
@@ -265,6 +275,7 @@ SELECT
 	uuid,
 	name,
 	format,
+	encode(checksum, 'hex') AS checksum,
 	size,
 	belongs_to,
 	created,
@@ -281,6 +292,7 @@ SELECT
 	uuid,
 	name,
 	format,
+	encode(checksum, 'hex') AS checksum,
 	size,
 	belongs_to,
 	created,
@@ -307,6 +319,7 @@ type FindDatasetsRow struct {
 	Uuid      uuid.UUID
 	Name      string
 	Format    string
+	Checksum  string
 	Size      int32
 	BelongsTo uuid.UUID
 	Created   time.Time
@@ -329,6 +342,7 @@ func (q *Queries) FindDatasets(ctx context.Context, arg FindDatasetsParams) ([]F
 			&i.Uuid,
 			&i.Name,
 			&i.Format,
+			&i.Checksum,
 			&i.Size,
 			&i.BelongsTo,
 			&i.Created,
@@ -368,6 +382,7 @@ SELECT
 	uuid,
 	name,
 	format,
+	encode(checksum, 'hex') AS checksum,
 	size,
 	belongs_to,
 	created,
@@ -385,6 +400,7 @@ SELECT
 	uuid,
 	name,
 	format,
+	encode(checksum, 'hex') AS checksum,
 	size,
 	belongs_to,
 	created,
@@ -413,6 +429,7 @@ type FindDatasetsByTagsRow struct {
 	Uuid      uuid.UUID
 	Name      string
 	Format    string
+	Checksum  string
 	Size      int32
 	BelongsTo uuid.UUID
 	Created   time.Time
@@ -440,6 +457,7 @@ func (q *Queries) FindDatasetsByTags(ctx context.Context, arg FindDatasetsByTags
 			&i.Uuid,
 			&i.Name,
 			&i.Format,
+			&i.Checksum,
 			&i.Size,
 			&i.BelongsTo,
 			&i.Created,
@@ -462,27 +480,29 @@ func (q *Queries) FindDatasetsByTags(ctx context.Context, arg FindDatasetsByTags
 }
 
 const getDatasetContentByUUID = `-- name: GetDatasetContentByUUID :one
-SELECT format, content
+SELECT format, content, encode(checksum, 'hex') AS checksum
 FROM datasets
 WHERE datasets.uuid = $1
 LIMIT 1
 `
 
 type GetDatasetContentByUUIDRow struct {
-	Format  string
-	Content []byte
+	Format   string
+	Content  []byte
+	Checksum string
 }
 
 func (q *Queries) GetDatasetContentByUUID(ctx context.Context, uuid uuid.UUID) (GetDatasetContentByUUIDRow, error) {
 	row := q.queryRow(ctx, q.getDatasetContentByUUIDStmt, getDatasetContentByUUID, uuid)
 	var i GetDatasetContentByUUIDRow
-	err := row.Scan(&i.Format, &i.Content)
+	err := row.Scan(&i.Format, &i.Content, &i.Checksum)
 	return i, err
 }
 
 const setDatasetContentByUUID = `-- name: SetDatasetContentByUUID :execrows
 UPDATE datasets
-SET content = $1
+SET content = $1::bytea,
+    checksum = sha256($1::bytea)
 WHERE datasets.uuid = $2
 `
 

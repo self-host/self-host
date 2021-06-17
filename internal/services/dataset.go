@@ -28,8 +28,9 @@ import (
 )
 
 type DatasetFile struct {
-	Format  string
-	Content []byte
+	Format   string
+	Content  []byte
+	Checksum string
 }
 
 // DatasetService represents the repository used for interacting with Dataset records.
@@ -94,6 +95,7 @@ func (svc *DatasetService) AddDataset(ctx context.Context, p *AddDatasetParams) 
 		Uuid:      dataset.Uuid.String(),
 		Name:      dataset.Name,
 		Format:    rest.DatasetFormat(dataset.Format),
+		Checksum:  dataset.Checksum,
 		Size:      int64(dataset.Size),
 		Created:   dataset.Created,
 		Updated:   dataset.Updated,
@@ -120,6 +122,7 @@ func (svc *DatasetService) FindDatasetByUuid(ctx context.Context, id uuid.UUID) 
 		Uuid:      dataset.Uuid.String(),
 		Name:      dataset.Name,
 		Format:    rest.DatasetFormat(dataset.Format),
+		Checksum:  dataset.Checksum,
 		Size:      int64(dataset.Size),
 		Created:   dataset.Created,
 		Updated:   dataset.Updated,
@@ -147,8 +150,9 @@ func (svc *DatasetService) FindByThing(ctx context.Context, id uuid.UUID) ([]*re
 			dataset := &rest.Dataset{
 				Uuid:      t.Uuid.String(),
 				Name:      t.Name,
-				Size:      int64(t.Size),
 				Format:    rest.DatasetFormat(t.Format),
+				Checksum:  t.Checksum,
+				Size:      int64(t.Size),
 				Created:   t.Created,
 				Updated:   t.Updated,
 				CreatedBy: t.CreatedBy.String(),
@@ -190,8 +194,9 @@ func (svc *DatasetService) FindAll(ctx context.Context, p FindAllParams) ([]*res
 			dataset := &rest.Dataset{
 				Uuid:      t.Uuid.String(),
 				Name:      t.Name,
-				Size:      int64(t.Size),
 				Format:    rest.DatasetFormat(t.Format),
+				Checksum:  t.Checksum,
+				Size:      int64(t.Size),
 				Created:   t.Created,
 				Updated:   t.Updated,
 				CreatedBy: t.CreatedBy.String(),
@@ -233,8 +238,9 @@ func (svc *DatasetService) FindByTags(ctx context.Context, p FindByTagsParams) (
 			dataset := &rest.Dataset{
 				Uuid:      t.Uuid.String(),
 				Name:      t.Name,
-				Size:      int64(t.Size),
 				Format:    rest.DatasetFormat(t.Format),
+				Checksum:  t.Checksum,
+				Size:      int64(t.Size),
 				Created:   t.Created,
 				Updated:   t.Updated,
 				CreatedBy: t.CreatedBy.String(),
@@ -261,8 +267,9 @@ func (svc *DatasetService) GetDatasetContentByUuid(ctx context.Context, id uuid.
 	}
 
 	return &DatasetFile{
-		Format:  content.Format,
-		Content: content.Content,
+		Format:   content.Format,
+		Content:  content.Content,
+		Checksum: content.Checksum,
 	}, nil
 }
 

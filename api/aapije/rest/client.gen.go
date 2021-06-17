@@ -125,7 +125,7 @@ type ClientInterface interface {
 	UploadDatasetContentByKey(ctx context.Context, uuid UuidParam, params *UploadDatasetContentByKeyParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetRawDatasetByUuid request
-	GetRawDatasetByUuid(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetRawDatasetByUuid(ctx context.Context, uuid UuidParam, params *GetRawDatasetByUuidParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteDatasetUploadByKey request
 	DeleteDatasetUploadByKey(ctx context.Context, uuid UuidParam, params *DeleteDatasetUploadByKeyParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -446,8 +446,8 @@ func (c *Client) UploadDatasetContentByKey(ctx context.Context, uuid UuidParam, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetRawDatasetByUuid(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetRawDatasetByUuidRequest(c.Server, uuid)
+func (c *Client) GetRawDatasetByUuid(ctx context.Context, uuid UuidParam, params *GetRawDatasetByUuidParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetRawDatasetByUuidRequest(c.Server, uuid, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1752,7 +1752,7 @@ func NewUploadDatasetContentByKeyRequest(server string, uuid UuidParam, params *
 }
 
 // NewGetRawDatasetByUuidRequest generates requests for GetRawDatasetByUuid
-func NewGetRawDatasetByUuidRequest(server string, uuid UuidParam) (*http.Request, error) {
+func NewGetRawDatasetByUuidRequest(server string, uuid UuidParam, params *GetRawDatasetByUuidParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1780,6 +1780,17 @@ func NewGetRawDatasetByUuidRequest(server string, uuid UuidParam) (*http.Request
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
+	}
+
+	if params.IfNoneMatch != nil {
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithLocation("simple", false, "If-None-Match", runtime.ParamLocationHeader, *params.IfNoneMatch)
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("If-None-Match", headerParam0)
 	}
 
 	return req, nil
@@ -4228,7 +4239,7 @@ type ClientWithResponsesInterface interface {
 	UploadDatasetContentByKeyWithResponse(ctx context.Context, uuid UuidParam, params *UploadDatasetContentByKeyParams, reqEditors ...RequestEditorFn) (*UploadDatasetContentByKeyResponse, error)
 
 	// GetRawDatasetByUuid request
-	GetRawDatasetByUuidWithResponse(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*GetRawDatasetByUuidResponse, error)
+	GetRawDatasetByUuidWithResponse(ctx context.Context, uuid UuidParam, params *GetRawDatasetByUuidParams, reqEditors ...RequestEditorFn) (*GetRawDatasetByUuidResponse, error)
 
 	// DeleteDatasetUploadByKey request
 	DeleteDatasetUploadByKeyWithResponse(ctx context.Context, uuid UuidParam, params *DeleteDatasetUploadByKeyParams, reqEditors ...RequestEditorFn) (*DeleteDatasetUploadByKeyResponse, error)
@@ -5863,8 +5874,8 @@ func (c *ClientWithResponses) UploadDatasetContentByKeyWithResponse(ctx context.
 }
 
 // GetRawDatasetByUuidWithResponse request returning *GetRawDatasetByUuidResponse
-func (c *ClientWithResponses) GetRawDatasetByUuidWithResponse(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*GetRawDatasetByUuidResponse, error) {
-	rsp, err := c.GetRawDatasetByUuid(ctx, uuid, reqEditors...)
+func (c *ClientWithResponses) GetRawDatasetByUuidWithResponse(ctx context.Context, uuid UuidParam, params *GetRawDatasetByUuidParams, reqEditors ...RequestEditorFn) (*GetRawDatasetByUuidResponse, error) {
+	rsp, err := c.GetRawDatasetByUuid(ctx, uuid, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}

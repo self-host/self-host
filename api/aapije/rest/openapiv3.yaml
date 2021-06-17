@@ -144,6 +144,8 @@ components:
         text/plain; charset=utf-8:
           schema:
             $ref: '#/components/schemas/Error'
+    NotModified:
+      description: The resource has not been modified
     NotFound:
       description: The specified resource was not found.
       content:
@@ -185,6 +187,19 @@ components:
           $ref: '#/components/headers/X-RateLimit-Limit'
 
   parameters:
+    ifNoneMatchParam:
+      in: header
+      name: If-None-Match
+      description: |
+        The server compares the client's ETag (sent with If-None-Match) with 
+        the ETag for its current version of the resource, and if both values
+        match (that is, the resource has not changed), the server sends back
+        a 304 Not Modified status, without a body, which tells the client 
+        that the cached version of the response is still good to use (fresh).
+      example: "853ff93762a06ddbf722c4ebe9ddd66d8f63ddaea97f521c3ecc20da7c976020"
+      required: false
+      schema:
+        type: string
     offsetParam:
       in: query
       name: offset
@@ -780,7 +795,7 @@ components:
         - uuid
         - name
         - format
-        - content
+        - checksum
         - size
         - created
         - updated
@@ -802,6 +817,10 @@ components:
           description: File format of the data set.
           enum: [csv, ini, json, misc, toml, xml, yaml]
           example: json
+        checksum:
+          type: string
+          description: The sha256 checksum of the content
+          example: '853ff93762a06ddbf722c4ebe9ddd66d8f63ddaea97f521c3ecc20da7c976020'
         size:
           type: integer
           format: int64
@@ -1266,6 +1285,7 @@ paths:
   /v2/datasets/{uuid}/raw:
     parameters:
       - $ref: '#/components/parameters/uuidParam'
+      - $ref: '#/components/parameters/ifNoneMatchParam'
     get:
       tags:
         - datasets
@@ -1310,6 +1330,8 @@ paths:
               schema:
                 type: string
                 format: binary
+        '304':
+          $ref: '#/components/responses/NotModified'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
