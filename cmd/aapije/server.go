@@ -142,19 +142,14 @@ func Server(address string) (<-chan error, error) {
 	r.Use(chiware.Heartbeat("/status"))
 	r.Use(chiware.Timeout(60 * time.Second))
 
-	// How do we handle this better.
-	// We are going to need something in a config file...
 	r.Use(cors.Handler(cors.Options{
-		// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
-		AllowedOrigins: []string{"https://*", "http://*"},
-		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
-		ExposedHeaders:   []string{"Link"},
-		AllowCredentials: true,
-		MaxAge:           300, // Maximum value not ignored by any of major browsers
+		AllowedOrigins: viper.GetStringSlice("cors.allowed_origins"),
+		AllowedMethods: viper.GetStringSlice("cors.allowed_methods"),
+		AllowedHeaders: viper.GetStringSlice("cors.allowed_headers"),
+		ExposedHeaders: viper.GetStringSlice("cors.exposed_headers"),
+		AllowCredentials: viper.GetBool("cors.allow_credentials"),
+		MaxAge: viper.GetInt("cors.max_age"),
 	}))
-	/**/
 
 	fsys, err := fs.Sub(content, "static")
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.FS(fsys)))) /**/

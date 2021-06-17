@@ -42,6 +42,14 @@ func initConfig() {
 	viper.SetDefault("rate_control.maxburst", 10)
 	viper.SetDefault("rate_control.cleanup", 3*time.Minute)
 
+	// CORS default settings
+	viper.SetDefault("cors.allowed_origins", []string{"https://*", "http://*"})
+	viper.SetDefault("cors.allowed_methods", []string{"POST", "GET", "PUT", "DELETE", "OPTIONS"})
+	viper.SetDefault("cors.allowed_headers", []string{"Accept", "Authorization", "Content-Type", "If-None-Match"})
+	viper.SetDefault("cors.exposed_headers", []string{"Link"})
+	viper.SetDefault("cors.allow_credentials", true)
+	viper.SetDefault("cors.max_age", 300)  // Maximum value not ignored by any of major browsers
+
 	err = viper.ReadInConfig()
 	if err != nil {
 		logger.Fatal("Fatal error unable to load config file", zap.Error(err))
