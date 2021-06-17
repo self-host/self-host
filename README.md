@@ -62,14 +62,14 @@ An `HTTP Proxy` may be used in front of the `API server` depending on the deploy
 # Project structure
 
 - `api`:
-    + `aapije`: REST API interface for the Self-host central API server.
-    + `juvuln`: REST API interface for the Program Manager.
-    + `malgomaj`: REST API interface for the Program Worker.
+    + `aapije`: REST API interface for the Self-host public facing API server.
+    + `juvuln`: REST API interface for the internal API of the Program Manager.
+    + `malgomaj`: REST API interface for the internal API of the Program Worker.
 - `cmd`:
     + `selfctl`: Self Control; self-host CLI program.
-    + `aapije`: Self Server; self-host main API server.
-    + `juvuln`: Self Program Manager; self-host Program Manager.
-    + `malgomaj`: Self Program Worker; self-host Program Worker.
+    + `aapije`: Aapije is the Self-host public facing API server.
+    + `juvuln`: Juvuln is the Self-host Program Manager.
+    + `malgomaj`: Malgomaj is the Self-host Program Worker.
 - `docs`: Documentation
 - `internal`:
     + `services`: Handlers for interfaces to the PostgreSQL backend.
