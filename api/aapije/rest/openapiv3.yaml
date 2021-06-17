@@ -42,6 +42,7 @@ info:
     - 200 Success.
     - 201 Success - resource created.
     - 204 Success - resource updated, deleted or no reply due to filtering.
+    - 304 Not Modified - resource was/has not been modified.
 
   license:
     name: GPL-3.0-only
