@@ -25,7 +25,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-
 const indentation = `  `
 
 type normalizer struct {

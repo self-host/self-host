@@ -35,7 +35,7 @@ import (
 
 const (
 	pgVersion = "12"
-	dbname     = "selfhost_services_test"
+	dbname    = "selfhost_services_test"
 	rootToken = "root"
 )
 

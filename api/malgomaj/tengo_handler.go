@@ -71,9 +71,9 @@ func moduleMapKeys(m map[string]map[string]tengo.Object) []string {
 type TengoProgram struct {
 	sync.RWMutex
 
-	domain      string
-	id          string
-	deadline    time.Duration
+	domain     string
+	id         string
+	deadline   time.Duration
 	sourceCode []byte
 	byteCode   *tengo.Compiled // Compiled code
 
@@ -82,9 +82,9 @@ type TengoProgram struct {
 
 func NewTengoProgram(domain string, id string, deadline time.Duration, sourceCode []byte) *TengoProgram {
 	return &TengoProgram{
-		domain:      domain,
-		id:          id,
-		deadline:    deadline,
+		domain:     domain,
+		id:         id,
+		deadline:   deadline,
 		sourceCode: sourceCode,
 	}
 }
