@@ -19,15 +19,32 @@ along with Self-host.  If not, see <http://www.gnu.org/licenses/>.
 package main
 
 import (
+	"os"
+	"time"
+
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
-var logger *zap.Logger
-
-func initLogger() {
+func initConfig() {
 	var err error
-	logger, err = zap.NewProduction()
+
+	viper.SetConfigName(os.Getenv("CONFIG_FILENAME"))
+	viper.SetConfigType("yaml")
+
+	// How do we handle multiple OS?
+	viper.AddConfigPath("/etc/selfhost/")
+	viper.AddConfigPath("$HOME/.config/selfhost")
+	viper.AddConfigPath(".")
+
+	// Default settings
+	viper.SetDefault("rate_control.req_per_hour", 600)
+	viper.SetDefault("rate_control.maxburst", 10)
+	viper.SetDefault("rate_control.cleanup", 3*time.Minute)
+
+	err = viper.ReadInConfig()
 	if err != nil {
-		panic("zap.NewProduction " + err.Error())
+		logger.Fatal("Fatal error unable to load config file", zap.Error(err))
 	}
 }
+

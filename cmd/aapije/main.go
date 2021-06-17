@@ -20,34 +20,14 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"time"
 
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
 func init() {
-	var err error
-
-	viper.SetConfigName(os.Getenv("CONFIG_FILENAME"))
-	viper.SetConfigType("yaml")
-
-	// How do we handle multiple OS?
-	viper.AddConfigPath("/etc/selfhost/")
-	viper.AddConfigPath("$HOME/.config/selfhost")
-	viper.AddConfigPath(".")
-
-	// Default settings
-	viper.SetDefault("rate_control.req_per_hour", 600)
-	viper.SetDefault("rate_control.maxburst", 10)
-	viper.SetDefault("rate_control.cleanup", 3*time.Minute)
-
-	err = viper.ReadInConfig()
-	if err != nil {
-		logger.Fatal("Fatal error config file", zap.Error(err))
-	}
-
+	initLogger()
+	initConfig()
 }
 
 func main() {
