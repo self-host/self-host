@@ -18,39 +18,28 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
-	"time"
-
 	"github.com/self-host/self-host/pkg/util/templates"
 	"github.com/spf13/cobra"
 )
 
 var (
-	programCmdLong = templates.LongDesc(`
-		Develop Self-host programs locally
+	dbCmdLong = templates.LongDesc(`
+		Manage Self-host databases
 	`)
 
-	programCmdExample = templates.Examples(`
-		# Compile a program to check for errors.
-		selfctl program compile -l tengo -f myprog.tengo
-
-		# Run a program
-		selfctl program run -l tengo -f myprog.tengo
+	dbCmdExample = templates.Examples(`
+		# Initialize an empty database to the latest schema
+		selfctl db migrate up
 	`)
 )
 
-var programCmd = &cobra.Command{
-	Use:     "program",
-	Short:   "Develop Self-host programs locally",
-	Long:    programCmdLong,
-	Example: programCmdExample,
+var dbCmd = &cobra.Command{
+	Use:     "db",
+	Short:   "Manage Self-host databases",
+	Long:    dbCmdLong,
+	Example: dbCmdExample,
 }
 
-var (
-	programLanguage string
-	programFilename string
-	programDeadline time.Duration
-)
-
 func init() {
-	rootCmd.AddCommand(programCmd)
+	rootCmd.AddCommand(dbCmd)
 }

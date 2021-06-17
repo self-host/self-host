@@ -30,7 +30,7 @@ import (
 )
 
 var (
-	compileCmdLong = templates.Examples(`
+	compileCmdLong = templates.LongDesc(`
 		Compile a program
 	`)
 

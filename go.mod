@@ -11,7 +11,7 @@ require (
 	github.com/getkin/kin-openapi v0.59.0
 	github.com/go-chi/chi/v5 v5.0.0
 	github.com/go-chi/cors v1.2.0
-	github.com/golang-migrate/migrate/v4 v4.14.1
+	github.com/golang-migrate/migrate/v4 v4.14.2-0.20201125065321-a53e6fc42574
 	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/google/uuid v1.2.0
 	github.com/hexops/gotextdiff v1.0.3

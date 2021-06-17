@@ -30,7 +30,7 @@ import (
 )
 
 var (
-	runCmdLong = templates.Examples(`
+	runCmdLong = templates.LongDesc(`
 		Run a program
 	`)
 

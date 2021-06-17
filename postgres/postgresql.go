@@ -22,6 +22,7 @@ package postgres
 
 import (
 	"database/sql"
+	"embed"
 	"fmt"
 	"sync"
 	"time"
@@ -34,6 +35,9 @@ var (
 	logger     *zap.Logger
 	dbCache    map[string]*DBConnection
 	dbCacheMux sync.RWMutex
+
+	//go:embed migrations
+	migdata embed.FS
 )
 
 type DBConnection struct {
@@ -257,4 +261,8 @@ func GetDomains() []string {
 	dbCacheMux.RUnlock()
 
 	return domains
+}
+
+func GetMigrations() embed.FS {
+	return migdata
 }
