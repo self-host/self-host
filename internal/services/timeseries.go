@@ -481,14 +481,14 @@ func (svc *TimeseriesService) QueryData(ctx context.Context, p QueryDataParams) 
 	}
 
 	params := postgres.GetTsDataRangeAggParams{
-	        Aggregate: p.Aggregate,
-	        Truncate:  p.Precision,
-        	Timezone:  p.Timezone,
+		Aggregate: p.Aggregate,
+		Truncate:  p.Precision,
+		Timezone:  p.Timezone,
 		TsUuids: []uuid.UUID{
-          	      p.Uuid,  // Expects a list of time series
-	        },
-		Start:   p.Start,
-		Stop:    p.End,
+			p.Uuid, // Expects a list of time series
+		},
+		Start: p.Start,
+		Stop:  p.End,
 	}
 
 	dataList, err := svc.q.GetTsDataRangeAgg(ctx, params)
