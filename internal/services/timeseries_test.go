@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with Self-host.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package services_test
+package services
 
 import (
 	"context"
@@ -24,16 +24,14 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-
-	"github.com/self-host/self-host/internal/services"
 )
 
 // Tests can run in any order, so we need to run everything (Timeseries related) in one function
 // as we are required to do things in a certain order since we are not mocking the PostgreSQL data-store.
 func TestTimeseriesAll(t *testing.T) {
-	svc := services.NewTimeseriesService(db)
+	svc := NewTimeseriesService(db)
 
-	params := &services.NewTimeseriesParams{
+	params := &NewTimeseriesParams{
 		Name:      "MyTimeseries",
 		CreatedBy: uuid.MustParse("00000000-0000-1000-8000-000000000000"), // UUID for Root user
 		Tags:      []string{},
@@ -62,5 +60,78 @@ func TestTimeseriesAll(t *testing.T) {
 		log.Fatal(err)
 	} else if count == 0 {
 		log.Fatal("Timeseries was not deleted")
+	}
+}
+
+type RangeRowT struct {
+	V   float32
+	Le  *float32
+	Ge  *float32
+	Res bool
+}
+
+func Float32P(v float32) *float32 {
+	return &v
+}
+
+func TestInValidRange(t *testing.T) {
+	// value, le, ge
+	checks := []RangeRowT{
+		{
+			V:   10,
+			Le:  Float32P(10),
+			Ge:  Float32P(10),
+			Res: true,
+		},
+		{
+			V:   10,
+			Le:  Float32P(100),
+			Ge:  Float32P(-100),
+			Res: true,
+		},
+		{
+			V:   10,
+			Le:  Float32P(-100),
+			Ge:  Float32P(100),
+			Res: false,
+		},
+		{
+			V:   -150,
+			Le:  Float32P(-100),
+			Ge:  Float32P(100),
+			Res: true,
+		},
+		{
+			V:   150,
+			Le:  Float32P(-100),
+			Ge:  Float32P(100),
+			Res: true,
+		},
+		{
+			V:   -100,
+			Le:  Float32P(-100),
+			Res: true,
+		},
+		{
+			V:   100,
+			Ge:  Float32P(100),
+			Res: true,
+		},
+		{
+			V:   101,
+			Le:  Float32P(100),
+			Res: false,
+		},
+		{
+			V:   99,
+			Ge:  Float32P(100),
+			Res: false,
+		},
+	}
+
+	for _, row := range checks {
+		if inValidRange(row.V, row.Le, row.Ge) != row.Res {
+			log.Fatal("Check failed")
+		}
 	}
 }

@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with Self-host.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package services_test
+package services
 
 import (
 	"context"
@@ -26,12 +26,11 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/self-host/self-host/api/aapije/rest"
-	"github.com/self-host/self-host/internal/services"
 )
 
 func TestAddUser(t *testing.T) {
-	u := services.NewUserService(db)
-	g := services.NewGroupService(db)
+	u := NewUserService(db)
+	g := NewGroupService(db)
 
 	alice, err := u.AddUser(context.Background(), "alice")
 	if err != nil {

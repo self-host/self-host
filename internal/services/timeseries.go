@@ -55,6 +55,37 @@ type NewTimeseriesParams struct {
 	UpperBound sql.NullFloat64
 }
 
+func inValidRange(v float32, leLimit, geLimit *float32) bool {
+	// leLimit: less or equal to (<=) this value
+	// geLimit: greater or equal to (>=) this value
+	//
+	// When geLimit is more than leLimit, we have a range outside of the window
+	// ge > le: ge <= x OR x <= le
+	//
+	// When leLimit is more than geLimit, we have a range inside of the window
+	// le >= ge: ge <= x <= le
+
+	if leLimit != nil && geLimit != nil {
+		if *leLimit >= *geLimit {
+			// Inside of the window
+			if v >= *geLimit && v <= *leLimit {
+				return true
+			}
+		} else {
+			// Outside of the window
+			if v >= *geLimit || v <= *leLimit {
+				return true
+			}
+		}
+	} else if leLimit != nil && v <= *leLimit {
+		return true
+	} else if geLimit != nil && v >= *geLimit {
+		return true
+	}
+
+	return false
+}
+
 // User represents the repository used for interacting with User records.
 type TimeseriesService struct {
 	q  *postgres.Queries
@@ -481,13 +512,7 @@ func (svc *TimeseriesService) QueryData(ctx context.Context, p QueryDataParams) 
 				f = float32(item.Value)
 			}
 
-			// Value is less than ge limit
-			if p.GreaterOrEq != nil && f < *p.GreaterOrEq {
-				continue
-			}
-
-			// Value is more than le limit
-			if p.LessOrEq != nil && f < *p.LessOrEq {
+			if inValidRange(f, p.LessOrEq, p.GreaterOrEq) == false {
 				continue
 			}
 

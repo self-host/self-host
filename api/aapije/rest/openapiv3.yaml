@@ -2644,7 +2644,10 @@ paths:
         - $ref: '#/components/parameters/greaterOrEqParam'
         - $ref: '#/components/parameters/lessOrEqParam'
       summary: Get a range of Timeseries data.
-      description: Query a Timeseries range for data.
+      description: |
+        Query a Timeseries range for data.
+        
+        **Note**: `ge > le: ge <= x OR x <= le` and `le >= ge: ge <= x <= le` are both allowed. Resulting in a range `outside` of the window and a range `inside` of the window respectivly.
       operationId: query timeseries for data
       responses:
         '200':
@@ -2713,7 +2716,10 @@ paths:
         - $ref: '#/components/parameters/greaterOrEqParam'
         - $ref: '#/components/parameters/lessOrEqParam'
       summary: Delete a range of Timeseries data.
-      description: Delete a range of data from a Timeseries.
+      description: |
+        Delete a range of data from a Timeseries.
+        
+        **Note**: In difference to the equivalent GET, only `ge <= x <= le` is allowed. Resulting in a range `inside` of the window.
       operationId: delete data from time series
       responses:
         '204':
