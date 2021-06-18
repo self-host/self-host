@@ -132,3 +132,87 @@ func (q *Queries) GetTsDataRange(ctx context.Context, arg GetTsDataRangeParams) 
 	}
 	return items, nil
 }
+
+const getTsDataRangeAgg = `-- name: GetTsDataRangeAgg :many
+WITH tsdata_trunc AS (
+	SELECT
+       	ts_uuid,
+       	value,
+	CASE
+		WHEN $2::text = 'minute5' THEN
+		  (date_trunc('hour', ts) + date_part('minute', ts)::int / 5 * interval '5 min') AT time zone $3::text
+		WHEN $2::text = 'minute10' THEN
+		  (date_trunc('hour', ts) + date_part('minute', ts)::int / 10 * interval '10 min') AT time zone $3::text
+		WHEN $2::text = 'minute15' THEN
+		  (date_trunc('hour', ts) + date_part('minute', ts)::int / 15 * interval '15 min') AT time zone $3::text
+		WHEN $2::text = 'minute20' THEN
+		  (date_trunc('hour', ts) + date_part('minute', ts)::int / 20 * interval '20 min') AT time zone $3::text
+		WHEN $2::text = 'minute30' THEN
+		  (date_trunc('hour', ts) + date_part('minute', ts)::int / 30 * interval '30 min') AT time zone $3::text
+		ELSE
+		  date_trunc($2::text, ts AT time zone $3::text) AT time zone $3::text
+	END AS ts
+	FROM tsdata
+	WHERE ts_uuid = ANY($4::uuid[])
+	AND ts BETWEEN ($5::timestamptz AT time zone $3::text)
+		AND ($6::timestamptz AT time zone $3::text)
+)
+SELECT
+        ts_uuid::uuid,
+	(CASE
+		WHEN $1::text = 'avg'::text THEN AVG(value)
+		WHEN $1::text = 'min'::text THEN MIN(value)
+		WHEN $1::text = 'max'::text THEN MAX(value)
+		WHEN $1::text = 'count'::text THEN COUNT(value)
+		WHEN $1::text = 'sum'::text THEN SUM(value)
+	END)::DOUBLE PRECISION AS value,
+        ts::timestamptz
+FROM tsdata_trunc
+GROUP BY ts_uuid, ts
+ORDER BY ts ASC
+`
+
+type GetTsDataRangeAggParams struct {
+	Aggregate string
+	Truncate  string
+	Timezone  string
+	TsUuids   []uuid.UUID
+	Start     time.Time
+	Stop      time.Time
+}
+
+type GetTsDataRangeAggRow struct {
+	TsUuid uuid.UUID
+	Value  float64
+	Ts     time.Time
+}
+
+func (q *Queries) GetTsDataRangeAgg(ctx context.Context, arg GetTsDataRangeAggParams) ([]GetTsDataRangeAggRow, error) {
+	rows, err := q.query(ctx, q.getTsDataRangeAggStmt, getTsDataRangeAgg,
+		arg.Aggregate,
+		arg.Truncate,
+		arg.Timezone,
+		pq.Array(arg.TsUuids),
+		arg.Start,
+		arg.Stop,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetTsDataRangeAggRow{}
+	for rows.Next() {
+		var i GetTsDataRangeAggRow
+		if err := rows.Scan(&i.TsUuid, &i.Value, &i.Ts); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

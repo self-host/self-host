@@ -289,6 +289,27 @@ components:
         type: array
         items:
           type: string
+    precisionParam:
+      in: query
+      name: precision
+      description: Truncate all timestamps and perform aggregate operations on the grouping.
+      required: false
+      schema:
+        type: string
+        enum: [microseconds, milliseconds, second, minute, minute5, minute10, minute15, minute20, minute30, hour, day, week, month, year, decade, century, millennia]
+    aggregateParam:
+      in: query
+      name: aggregate
+      description: When using `precision`. Select this aggregate function instead of the default `avg` when computing the result. Does nothing when `precision` is not set.
+      schema:
+        type: string
+        enum: [avg, min, max, sum, count]
+    timezoneParam:
+      in: query
+      name: timezone
+      description: Act as this time zone. Defaults to `UTC`.
+      schema:
+        type: string
 
   requestBodies:
     NewDataset:
@@ -2643,6 +2664,9 @@ paths:
         - $ref: '#/components/parameters/siUnitParam'
         - $ref: '#/components/parameters/greaterOrEqParam'
         - $ref: '#/components/parameters/lessOrEqParam'
+        - $ref: '#/components/parameters/precisionParam'
+        - $ref: '#/components/parameters/aggregateParam'
+        - $ref: '#/components/parameters/timezoneParam'
       summary: Get a range of Timeseries data.
       description: |
         Query a Timeseries range for data.

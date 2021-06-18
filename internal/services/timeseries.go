@@ -67,6 +67,8 @@ func inValidRange(v float32, leLimit, geLimit *float32) bool {
 		return true
 	} else if geLimit != nil && v >= *geLimit {
 		return true
+	} else if leLimit == nil && geLimit == nil {
+		return true
 	}
 
 	return false
@@ -439,15 +441,13 @@ type QueryDataParams struct {
 	GreaterOrEq *float32
 	LessOrEq    *float32
 	Unit        *string
+	Aggregate   string
+	Precision   string
+	Timezone    string
 }
 
 func (svc *TimeseriesService) QueryData(ctx context.Context, p QueryDataParams) ([]*rest.TsRow, error) {
 	tsdata := make([]*rest.TsRow, 0)
-
-	// GetTsDataRange expects a list of time series
-	tsuuids := []uuid.UUID{
-		p.Uuid,
-	}
 
 	var fromUnit units.Unit
 	var toUnit units.Unit
@@ -475,13 +475,23 @@ func (svc *TimeseriesService) QueryData(ctx context.Context, p QueryDataParams) 
 		}
 	}
 
-	params := postgres.GetTsDataRangeParams{
-		TsUuids: tsuuids,
+	tzloc, err := time.LoadLocation(p.Timezone)
+	if err != nil {
+		return nil, err
+	}
+
+	params := postgres.GetTsDataRangeAggParams{
+	        Aggregate: p.Aggregate,
+	        Truncate:  p.Precision,
+        	Timezone:  p.Timezone,
+		TsUuids: []uuid.UUID{
+          	      p.Uuid,  // Expects a list of time series
+	        },
 		Start:   p.Start,
 		Stop:    p.End,
 	}
 
-	dataList, err := svc.q.GetTsDataRange(ctx, params)
+	dataList, err := svc.q.GetTsDataRangeAgg(ctx, params)
 	if err != nil {
 		return nil, err
 	} else {
@@ -504,7 +514,7 @@ func (svc *TimeseriesService) QueryData(ctx context.Context, p QueryDataParams) 
 
 			d := rest.TsRow{
 				V:  f,
-				Ts: item.Ts,
+				Ts: item.Ts.In(tzloc),
 			}
 			tsdata = append(tsdata, &d)
 		}

@@ -193,6 +193,24 @@ func (ra *RestApi) QueryTimeseriesForData(w http.ResponseWriter, r *http.Request
 		Unit:        (*string)(p.Unit),
 	}
 
+	if p.Timezone != nil {
+		params.Timezone = string(*p.Timezone)
+	} else {
+		params.Timezone = "UTC"
+	}
+
+	if p.Aggregate != nil {
+		params.Aggregate = string(*p.Aggregate)
+	} else {
+		params.Aggregate = "avg"
+	}
+
+	if p.Precision != nil {
+		params.Precision = string(*p.Precision)
+	} else {
+		params.Precision = "microseconds"
+	}
+
 	data, err := svc.QueryData(r.Context(), params)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))

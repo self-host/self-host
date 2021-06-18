@@ -80,6 +80,56 @@ const (
 	ThingStatePassive ThingState = "passive"
 )
 
+// Defines values for AggregateParam.
+const (
+	Avg AggregateParam = "avg"
+
+	Count AggregateParam = "count"
+
+	Max AggregateParam = "max"
+
+	Min AggregateParam = "min"
+
+	Sum AggregateParam = "sum"
+)
+
+// Defines values for PrecisionParam.
+const (
+	Century PrecisionParam = "century"
+
+	Day PrecisionParam = "day"
+
+	Decade PrecisionParam = "decade"
+
+	Hour PrecisionParam = "hour"
+
+	Microseconds PrecisionParam = "microseconds"
+
+	Millennia PrecisionParam = "millennia"
+
+	Milliseconds PrecisionParam = "milliseconds"
+
+	Minute PrecisionParam = "minute"
+
+	Minute10 PrecisionParam = "minute10"
+
+	Minute15 PrecisionParam = "minute15"
+
+	Minute20 PrecisionParam = "minute20"
+
+	Minute30 PrecisionParam = "minute30"
+
+	Minute5 PrecisionParam = "minute5"
+
+	Month PrecisionParam = "month"
+
+	Second PrecisionParam = "second"
+
+	Week PrecisionParam = "week"
+
+	Year PrecisionParam = "year"
+)
+
 // Alert defines model for Alert.
 type Alert struct {
 	Uuid *string `json:"uuid,omitempty"`
@@ -264,6 +314,9 @@ type User struct {
 	Uuid   string  `json:"uuid"`
 }
 
+// AggregateParam defines model for aggregateParam.
+type AggregateParam string
+
 // GreaterOrEqParam defines model for greaterOrEqParam.
 type GreaterOrEqParam float32
 
@@ -279,6 +332,9 @@ type LimitParam int64
 // OffsetParam defines model for offsetParam.
 type OffsetParam int64
 
+// PrecisionParam defines model for precisionParam.
+type PrecisionParam string
+
 // RangeEndParam defines model for rangeEndParam.
 type RangeEndParam time.Time
 
@@ -290,6 +346,9 @@ type SiUnitParam string
 
 // TagsFilterParam defines model for tagsFilterParam.
 type TagsFilterParam []string
+
+// TimezoneParam defines model for timezoneParam.
+type TimezoneParam string
 
 // UuidParam defines model for uuidParam.
 type UuidParam string
@@ -694,7 +753,22 @@ type QueryTimeseriesForDataParams struct {
 
 	// Value should be less or equal to (<=) this.
 	Le *LessOrEqParam `json:"le,omitempty"`
+
+	// Truncate all timestamps and perform aggregate operations on the grouping.
+	Precision *QueryTimeseriesForDataParamsPrecision `json:"precision,omitempty"`
+
+	// When using `precision`. Select this aggregate function instead of the default `avg` when computing the result. Does nothing when `precision` is not set.
+	Aggregate *QueryTimeseriesForDataParamsAggregate `json:"aggregate,omitempty"`
+
+	// Act as this time zone. Defaults to `UTC`.
+	Timezone *TimezoneParam `json:"timezone,omitempty"`
 }
+
+// QueryTimeseriesForDataParamsPrecision defines parameters for QueryTimeseriesForData.
+type QueryTimeseriesForDataParamsPrecision string
+
+// QueryTimeseriesForDataParamsAggregate defines parameters for QueryTimeseriesForData.
+type QueryTimeseriesForDataParamsAggregate string
 
 // AddDataToTimeseriesParams defines parameters for AddDataToTimeseries.
 type AddDataToTimeseriesParams struct {
