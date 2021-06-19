@@ -322,6 +322,9 @@ type LessOrEqParam float32
 // LimitParam defines model for limitParam.
 type LimitParam int64
 
+// NamespaceParam defines model for namespaceParam.
+type NamespaceParam string
+
 // OffsetParam defines model for offsetParam.
 type OffsetParam int64
 
@@ -687,6 +690,22 @@ type GetProgramCodeRevisionsDiffParams struct {
 	RevB int `json:"rev_b"`
 }
 
+// SearchForElementsParams defines parameters for SearchForElements.
+type SearchForElementsParams struct {
+
+	// The number of items to skip before starting to collect the result set.
+	Offset *OffsetParam `json:"offset,omitempty"`
+
+	// The numbers of items to return.
+	Limit *LimitParam `json:"limit,omitempty"`
+
+	// Array of tags to search for
+	Tags *TagsFilterParam `json:"tags,omitempty"`
+
+	// Limit to the specific namespace. Allowed options; `datasets`, `things`, `timeseries` and `programs`.
+	Ns *NamespaceParam `json:"ns,omitempty"`
+}
+
 // FindThingsParams defines parameters for FindThings.
 type FindThingsParams struct {
 
@@ -775,9 +794,6 @@ type AddDataToTimeseriesParams struct {
 
 // FindTsdataByQueryParams defines parameters for FindTsdataByQuery.
 type FindTsdataByQueryParams struct {
-
-	// Array of tags to search for
-	Tags *TagsFilterParam `json:"tags,omitempty"`
 
 	// A series of timeseries UUIDs to search for
 	Uuids *UuidsParam `json:"uuids,omitempty"`

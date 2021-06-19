@@ -8,7 +8,7 @@ info:
   description: |
     ## Welcome to the official documentation of the NODA Selfhost API.
 
-    The API consists of 8 categories:
+    The API consists of 9 categories:
     
     - Users
     - Groups
@@ -17,6 +17,7 @@ info:
     - Timeseries
     - Datasets
     - Programs
+    - Search
     - Alerts (TBD)
     
     Every call requires you to be authenticated.
@@ -78,6 +79,8 @@ tags:
     description: Datasets are used to store and retrieve data structures more complex than time series. Configuration files or smaller computed data-sets are good examples.
   - name: programs
     description: Programs are code segments executed either as part of another code segment (module), as a program that runs ever so often (program) or as an externaly triggered call (webhook).
+  - name: search
+    description: Find objects by using a trivial query format.
   
 components:
 
@@ -301,6 +304,14 @@ components:
         items:
           type: string
         maxLength: 5
+    namespaceParam:
+      in: query
+      name: ns
+      description: Limit to the specific namespace. Allowed options; `datasets`, `things`, `timeseries` and `programs`.
+      required: false
+      schema:
+        type: string
+        example: timeseries
     precisionParam:
       in: query
       name: precision
@@ -1134,6 +1145,34 @@ security:
   - BasicAuth: []
 
 paths:
+  /v2/search/tags:
+    get:
+      tags:
+        - search
+      security:
+        - BasicAuth:
+          - "read:search"
+      summary: Search for elements by tags.
+      description: Search for elements matching a basic query format.
+      operationId: search for elements
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/tagsFilterParam'
+        - $ref: '#/components/parameters/namespaceParam'
+
+      responses:
+        '200':
+          description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /v2/alerts:
     get:
       security:
@@ -2775,11 +2814,8 @@ paths:
       summary: Query for data from Time series.
       description: |
         Query one or several Time series for data.
-        
-        **NOTE** This request requires either `tags` or `uuids`. At most `10` different timeseries is supported. Therefore the resulting list of UUIDs matching `tags` and the `uuids` list itself are both limited to `10` elements.
       operationId: find tsdata by query
       parameters:
-        - $ref: '#/components/parameters/tagsFilterParam'
         - $ref: '#/components/parameters/uuidsParam'
         - $ref: '#/components/parameters/rangeStartParam'
         - $ref: '#/components/parameters/rangeEndParam'
