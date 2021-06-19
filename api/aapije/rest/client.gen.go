@@ -270,7 +270,7 @@ type ClientInterface interface {
 	AddDataToTimeseries(ctx context.Context, uuid UuidParam, params *AddDataToTimeseriesParams, body AddDataToTimeseriesJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// FindTsdataByQuery request
-	FindTsdataByQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+	FindTsdataByQuery(ctx context.Context, params *FindTsdataByQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// FindUsers request
 	FindUsers(ctx context.Context, params *FindUsersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1070,8 +1070,8 @@ func (c *Client) AddDataToTimeseries(ctx context.Context, uuid UuidParam, params
 	return c.Client.Do(req)
 }
 
-func (c *Client) FindTsdataByQuery(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewFindTsdataByQueryRequest(c.Server)
+func (c *Client) FindTsdataByQuery(ctx context.Context, params *FindTsdataByQueryParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewFindTsdataByQueryRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -3738,7 +3738,7 @@ func NewAddDataToTimeseriesRequestWithBody(server string, uuid UuidParam, params
 }
 
 // NewFindTsdataByQueryRequest generates requests for FindTsdataByQuery
-func NewFindTsdataByQueryRequest(server string) (*http.Request, error) {
+func NewFindTsdataByQueryRequest(server string, params *FindTsdataByQueryParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -3755,6 +3755,146 @@ func NewFindTsdataByQueryRequest(server string) (*http.Request, error) {
 	}
 
 	queryURL := serverURL.ResolveReference(&operationURL)
+
+	queryValues := queryURL.Query()
+
+	if params.Tags != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "tags", runtime.ParamLocationQuery, *params.Tags); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Uuids != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "uuids", runtime.ParamLocationQuery, *params.Uuids); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "start", runtime.ParamLocationQuery, params.Start); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "end", runtime.ParamLocationQuery, params.End); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
+			}
+		}
+	}
+
+	if params.Ge != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "ge", runtime.ParamLocationQuery, *params.Ge); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Le != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "le", runtime.ParamLocationQuery, *params.Le); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Precision != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "precision", runtime.ParamLocationQuery, *params.Precision); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Aggregate != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "aggregate", runtime.ParamLocationQuery, *params.Aggregate); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Timezone != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "timezone", runtime.ParamLocationQuery, *params.Timezone); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
@@ -4432,7 +4572,7 @@ type ClientWithResponsesInterface interface {
 	AddDataToTimeseriesWithResponse(ctx context.Context, uuid UuidParam, params *AddDataToTimeseriesParams, body AddDataToTimeseriesJSONRequestBody, reqEditors ...RequestEditorFn) (*AddDataToTimeseriesResponse, error)
 
 	// FindTsdataByQuery request
-	FindTsdataByQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*FindTsdataByQueryResponse, error)
+	FindTsdataByQueryWithResponse(ctx context.Context, params *FindTsdataByQueryParams, reqEditors ...RequestEditorFn) (*FindTsdataByQueryResponse, error)
 
 	// FindUsers request
 	FindUsersWithResponse(ctx context.Context, params *FindUsersParams, reqEditors ...RequestEditorFn) (*FindUsersResponse, error)
@@ -5567,7 +5707,7 @@ func (r AddDataToTimeseriesResponse) StatusCode() int {
 type FindTsdataByQueryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]TsQuery
+	JSON200      *[]TsResults
 }
 
 // Status returns HTTPResponse.Status
@@ -6379,8 +6519,8 @@ func (c *ClientWithResponses) AddDataToTimeseriesWithResponse(ctx context.Contex
 }
 
 // FindTsdataByQueryWithResponse request returning *FindTsdataByQueryResponse
-func (c *ClientWithResponses) FindTsdataByQueryWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*FindTsdataByQueryResponse, error) {
-	rsp, err := c.FindTsdataByQuery(ctx, reqEditors...)
+func (c *ClientWithResponses) FindTsdataByQueryWithResponse(ctx context.Context, params *FindTsdataByQueryParams, reqEditors ...RequestEditorFn) (*FindTsdataByQueryResponse, error) {
+	rsp, err := c.FindTsdataByQuery(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -7716,7 +7856,7 @@ func ParseFindTsdataByQueryResponse(rsp *http.Response) (*FindTsdataByQueryRespo
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []TsQuery
+		var dest []TsResults
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

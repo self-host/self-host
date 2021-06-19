@@ -282,19 +282,12 @@ type TokenWithSecret struct {
 	Uuid   string `json:"uuid"`
 }
 
-// TsQuery defines model for TsQuery.
-type TsQuery struct {
-	Data *[]struct {
-
-		// Date-time when created, as defined by RFC 3339, section 5.6.
-		Ts *time.Time `json:"ts,omitempty"`
-
-		// Any number
-		V *float32 `json:"v,omitempty"`
-	} `json:"data,omitempty"`
+// TsResults defines model for TsResults.
+type TsResults struct {
+	Data []TsRow `json:"data"`
 
 	// Reference to a Timeseries
-	TimeseriesUuid *string `json:"timeseries_uuid,omitempty"`
+	Uuid string `json:"uuid"`
 }
 
 // TsRow defines model for TsRow.
@@ -352,6 +345,9 @@ type TimezoneParam string
 
 // UuidParam defines model for uuidParam.
 type UuidParam string
+
+// UuidsParam defines model for uuidsParam.
+type UuidsParam []string
 
 // NewDataset defines model for NewDataset.
 type NewDataset struct {
@@ -570,7 +566,7 @@ type FindDatasetsParams struct {
 	// The numbers of items to return.
 	Limit *LimitParam `json:"limit,omitempty"`
 
-	// Array of tags to filter on
+	// Array of tags to search for
 	Tags *TagsFilterParam `json:"tags,omitempty"`
 }
 
@@ -659,7 +655,7 @@ type FindProgramsParams struct {
 	// The numbers of items to return.
 	Limit *LimitParam `json:"limit,omitempty"`
 
-	// Array of tags to filter on
+	// Array of tags to search for
 	Tags *TagsFilterParam `json:"tags,omitempty"`
 }
 
@@ -700,7 +696,7 @@ type FindThingsParams struct {
 	// The number of items to skip before starting to collect the result set.
 	Offset *OffsetParam `json:"offset,omitempty"`
 
-	// Array of tags to filter on
+	// Array of tags to search for
 	Tags *TagsFilterParam `json:"tags,omitempty"`
 }
 
@@ -716,7 +712,7 @@ type FindTimeSeriesParams struct {
 	// The number of items to skip before starting to collect the result set.
 	Offset *OffsetParam `json:"offset,omitempty"`
 
-	// Array of tags to filter on
+	// Array of tags to search for
 	Tags *TagsFilterParam `json:"tags,omitempty"`
 }
 
@@ -776,6 +772,43 @@ type AddDataToTimeseriesParams struct {
 	// The SI unit of the result. A cast will occur if the base unit differes.
 	Unit *SiUnitParam `json:"unit,omitempty"`
 }
+
+// FindTsdataByQueryParams defines parameters for FindTsdataByQuery.
+type FindTsdataByQueryParams struct {
+
+	// Array of tags to search for
+	Tags *TagsFilterParam `json:"tags,omitempty"`
+
+	// A series of timeseries UUIDs to search for
+	Uuids *UuidsParam `json:"uuids,omitempty"`
+
+	// Start of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
+	Start RangeStartParam `json:"start"`
+
+	// End of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
+	End RangeEndParam `json:"end"`
+
+	// Value should be greater or equal to (>=) this.
+	Ge *GreaterOrEqParam `json:"ge,omitempty"`
+
+	// Value should be less or equal to (<=) this.
+	Le *LessOrEqParam `json:"le,omitempty"`
+
+	// Truncate all timestamps and perform aggregate operations on the grouping.
+	Precision *FindTsdataByQueryParamsPrecision `json:"precision,omitempty"`
+
+	// When using `precision`. Select this aggregate function instead of the default `avg` when computing the result. Does nothing when `precision` is not set.
+	Aggregate *FindTsdataByQueryParamsAggregate `json:"aggregate,omitempty"`
+
+	// Act as this time zone. Defaults to `UTC`.
+	Timezone *TimezoneParam `json:"timezone,omitempty"`
+}
+
+// FindTsdataByQueryParamsPrecision defines parameters for FindTsdataByQuery.
+type FindTsdataByQueryParamsPrecision string
+
+// FindTsdataByQueryParamsAggregate defines parameters for FindTsdataByQuery.
+type FindTsdataByQueryParamsAggregate string
 
 // FindUsersParams defines parameters for FindUsers.
 type FindUsersParams struct {

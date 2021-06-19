@@ -184,7 +184,7 @@ func (ra *RestApi) QueryTimeseriesForData(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	params := services.QueryDataParams{
+	params := services.QuerySingleSourceDataParams{
 		Uuid:        tsUUID,
 		Start:       time.Time(p.Start),
 		End:         time.Time(p.End),
@@ -211,7 +211,7 @@ func (ra *RestApi) QueryTimeseriesForData(w http.ResponseWriter, r *http.Request
 		params.Precision = "microseconds"
 	}
 
-	data, err := svc.QueryData(r.Context(), params)
+	data, err := svc.QuerySingleSourceData(r.Context(), params)
 	if err != nil {
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return

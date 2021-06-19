@@ -5,19 +5,21 @@ package postgres
 
 import (
 	"context"
+
+	"github.com/lib/pq"
 )
 
 const checkUserTokenHasAccess = `-- name: CheckUserTokenHasAccess :one
 WITH usr AS (
-  SELECT users.uuid
-  FROM users, user_tokens
-  WHERE user_tokens.user_uuid = users.uuid
-  AND user_tokens.token_hash = sha256($3)
-  LIMIT 1
+	SELECT users.uuid
+	FROM users, user_tokens
+	WHERE user_tokens.user_uuid = users.uuid
+	AND user_tokens.token_hash = sha256($3)
+	LIMIT 1
 ) SELECT COALESCE((SELECT user_has_access(
-  usr.uuid,
-  $1::policy_action,
-  $2::TEXT
+	usr.uuid,
+	$1::policy_action,
+	$2::TEXT
 ) FROM usr LIMIT 1), false)::boolean AS access
 `
 
@@ -29,6 +31,38 @@ type CheckUserTokenHasAccessParams struct {
 
 func (q *Queries) CheckUserTokenHasAccess(ctx context.Context, arg CheckUserTokenHasAccessParams) (bool, error) {
 	row := q.queryRow(ctx, q.checkUserTokenHasAccessStmt, checkUserTokenHasAccess, arg.Action, arg.Resource, arg.Token)
+	var access bool
+	err := row.Scan(&access)
+	return access, err
+}
+
+const checkUserTokenHasAccessMany = `-- name: CheckUserTokenHasAccessMany :one
+WITH usr AS (
+	SELECT users.uuid
+	FROM users, user_tokens
+	WHERE user_tokens.user_uuid = users.uuid
+	AND user_tokens.token_hash = sha256($1)
+	LIMIT 1
+), usr_r AS (
+	SELECT
+		usr.uuid,
+		$2::policy_action AS action,
+		unnest((SELECT $3::TEXT[]))::TEXT AS resource
+	FROM usr
+)
+SELECT
+	COALESCE(true = ALL (array_agg(user_has_access(usr_r.uuid, usr_r.action, usr_r.resource))), false)::boolean AS access
+FROM usr_r
+`
+
+type CheckUserTokenHasAccessManyParams struct {
+	Token     []byte
+	Action    PolicyAction
+	Resources []string
+}
+
+func (q *Queries) CheckUserTokenHasAccessMany(ctx context.Context, arg CheckUserTokenHasAccessManyParams) (bool, error) {
+	row := q.queryRow(ctx, q.checkUserTokenHasAccessManyStmt, checkUserTokenHasAccessMany, arg.Token, arg.Action, pq.Array(arg.Resources))
 	var access bool
 	err := row.Scan(&access)
 	return access, err

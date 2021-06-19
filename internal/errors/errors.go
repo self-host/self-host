@@ -123,6 +123,13 @@ var (
 	}
 )
 
+func NewBadRequestError(err error) ClientError {
+	return &HTTPError{
+		Code:    http.StatusBadRequest,
+		Message: err.Error(),
+	}
+}
+
 func NewInternalServerError(err error) ClientError {
 	return &HTTPError{
 		Code:    500,

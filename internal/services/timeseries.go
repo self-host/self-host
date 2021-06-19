@@ -434,7 +434,7 @@ func (svc *TimeseriesService) FindAll(ctx context.Context, p FindAllParams) ([]*
 	return timeseries, nil
 }
 
-type QueryDataParams struct {
+type QuerySingleSourceDataParams struct {
 	Uuid        uuid.UUID
 	Start       time.Time
 	End         time.Time
@@ -446,7 +446,7 @@ type QueryDataParams struct {
 	Timezone    string
 }
 
-func (svc *TimeseriesService) QueryData(ctx context.Context, p QueryDataParams) ([]*rest.TsRow, error) {
+func (svc *TimeseriesService) QuerySingleSourceData(ctx context.Context, p QuerySingleSourceDataParams) ([]*rest.TsRow, error) {
 	tsdata := make([]*rest.TsRow, 0)
 
 	var fromUnit units.Unit
@@ -521,6 +521,66 @@ func (svc *TimeseriesService) QueryData(ctx context.Context, p QueryDataParams) 
 	}
 
 	return tsdata, nil
+}
+
+type QueryMultiSourceDataParams struct {
+	Uuids       []uuid.UUID
+	Start       time.Time
+	End         time.Time
+	GreaterOrEq *float32
+	LessOrEq    *float32
+	Aggregate   string
+	Precision   string
+	Timezone    string
+}
+
+func (svc *TimeseriesService) QueryMultiSourceData(ctx context.Context, p QueryMultiSourceDataParams) ([]*rest.TsResults, error) {
+	tzloc, err := time.LoadLocation(p.Timezone)
+	if err != nil {
+		return nil, ie.NewInvalidRequestError(err)
+	}
+
+	params := postgres.GetTsDataRangeAggParams{
+		Aggregate: p.Aggregate,
+		Truncate:  p.Precision,
+		Timezone:  p.Timezone,
+		TsUuids:   p.Uuids,
+		Start:     p.Start,
+		Stop:      p.End,
+	}
+
+	mapping := make(map[uuid.UUID][]rest.TsRow, 0)
+	dataList, err := svc.q.GetTsDataRangeAgg(ctx, params)
+	if err != nil {
+		return nil, err
+	} else {
+		for _, item := range dataList {
+			if _, ok := mapping[item.TsUuid]; ok == false {
+				mapping[item.TsUuid] = make([]rest.TsRow, 0)
+			}
+
+			f := float32(item.Value)
+
+			if inValidRange(f, p.LessOrEq, p.GreaterOrEq) == false {
+				continue
+			}
+
+			mapping[item.TsUuid] = append(mapping[item.TsUuid], rest.TsRow{
+				V:  f,
+				Ts: item.Ts.In(tzloc),
+			})
+		}
+	}
+
+	tsResult := make([]*rest.TsResults, 0)
+	for key, data := range mapping {
+		tsResult = append(tsResult, &rest.TsResults{
+			Uuid: key.String(),
+			Data: data,
+		})
+	}
+
+	return tsResult, nil
 }
 
 type UpdateTimeseriesParams struct {

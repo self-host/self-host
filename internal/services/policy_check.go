@@ -36,3 +36,18 @@ func (pc *PolicyCheckService) UserHasAccessViaToken(ctx context.Context, token [
 
 	return hasAccess, nil
 }
+
+func (pc *PolicyCheckService) UserHasManyAccessViaToken(ctx context.Context, token []byte, action string, resources []string) (bool, error) {
+	params := postgres.CheckUserTokenHasAccessManyParams{
+		Action:    postgres.PolicyAction(action),
+		Resources: resources,
+		Token:     token,
+	}
+
+	hasAccess, err := pc.q.CheckUserTokenHasAccessMany(ctx, params)
+	if err != nil {
+		return false, err
+	}
+
+	return hasAccess, nil
+}

@@ -230,6 +230,17 @@ components:
       example: '1896048c-bdc9-43c4-af41-4a946b9a341e'
       schema:
         type: string
+    uuidsParam:
+      in: query
+      name: uuids
+      description: A series of timeseries UUIDs to search for
+      required: false
+      example: ['1896048c-bdc9-43c4-af41-4a946b9a341e']
+      schema:
+        type: array
+        maxLength: 10
+        items:
+          type: string
     rangeStartParam:
       in: query
       name: start
@@ -282,13 +293,14 @@ components:
     tagsFilterParam:
       in: query
       name: tags
-      description: Array of tags to filter on
+      description: Array of tags to search for
       required: false
       style: form
       schema:
         type: array
         items:
           type: string
+        maxLength: 5
     precisionParam:
       in: query
       name: precision
@@ -1081,26 +1093,20 @@ components:
           type: string
           format: date-time
 
-    TsQuery:
+    TsResults:
+      required:
+        - uuid
+        - data
       properties:
-        timeseries_uuid:
+        uuid:
           description: Reference to a Timeseries
           type: string
           example: '8181623c-aeb8-4ae3-8aa5-720d9408193e'
         data:
           type: array
           items:
-            type: object
-            properties:
-              v:
-                description: Any number
-                type: number
-                example: 3.14
-              ts:
-                description: Date-time when created, as defined by RFC 3339, section 5.6.
-                type: string
-                format: date-time
-  
+            $ref: '#/components/schemas/TsRow'
+
     User:
       required:  
         - uuid
@@ -2766,9 +2772,22 @@ paths:
       security:
         - BasicAuth:
           - "read:tsquery"
-      summary: Query for data from Time series. TBD.
-      description: Query one or several Time series for data.
+      summary: Query for data from Time series.
+      description: |
+        Query one or several Time series for data.
+        
+        **NOTE** This request requires either `tags` or `uuids`. At most `10` different timeseries is supported. Therefore the resulting list of UUIDs matching `tags` and the `uuids` list itself are both limited to `10` elements.
       operationId: find tsdata by query
+      parameters:
+        - $ref: '#/components/parameters/tagsFilterParam'
+        - $ref: '#/components/parameters/uuidsParam'
+        - $ref: '#/components/parameters/rangeStartParam'
+        - $ref: '#/components/parameters/rangeEndParam'
+        - $ref: '#/components/parameters/greaterOrEqParam'
+        - $ref: '#/components/parameters/lessOrEqParam'
+        - $ref: '#/components/parameters/precisionParam'
+        - $ref: '#/components/parameters/aggregateParam'
+        - $ref: '#/components/parameters/timezoneParam'
       responses:
         '200':
           description: Success
@@ -2777,7 +2796,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TsQuery'
+                  $ref: '#/components/schemas/TsResults'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':

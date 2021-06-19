@@ -31,6 +31,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.checkUserTokenHasAccessStmt, err = db.PrepareContext(ctx, checkUserTokenHasAccess); err != nil {
 		return nil, fmt.Errorf("error preparing query CheckUserTokenHasAccess: %w", err)
 	}
+	if q.checkUserTokenHasAccessManyStmt, err = db.PrepareContext(ctx, checkUserTokenHasAccessMany); err != nil {
+		return nil, fmt.Errorf("error preparing query CheckUserTokenHasAccessMany: %w", err)
+	}
 	if q.createCodeRevisionStmt, err = db.PrepareContext(ctx, createCodeRevision); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateCodeRevision: %w", err)
 	}
@@ -340,6 +343,11 @@ func (q *Queries) Close() error {
 	if q.checkUserTokenHasAccessStmt != nil {
 		if cerr := q.checkUserTokenHasAccessStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing checkUserTokenHasAccessStmt: %w", cerr)
+		}
+	}
+	if q.checkUserTokenHasAccessManyStmt != nil {
+		if cerr := q.checkUserTokenHasAccessManyStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing checkUserTokenHasAccessManyStmt: %w", cerr)
 		}
 	}
 	if q.createCodeRevisionStmt != nil {
@@ -869,6 +877,7 @@ type Queries struct {
 	addTokenToUserStmt               *sql.Stmt
 	addUserToGroupStmt               *sql.Stmt
 	checkUserTokenHasAccessStmt      *sql.Stmt
+	checkUserTokenHasAccessManyStmt  *sql.Stmt
 	createCodeRevisionStmt           *sql.Stmt
 	createDatasetStmt                *sql.Stmt
 	createGroupStmt                  *sql.Stmt
@@ -975,6 +984,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		addTokenToUserStmt:               q.addTokenToUserStmt,
 		addUserToGroupStmt:               q.addUserToGroupStmt,
 		checkUserTokenHasAccessStmt:      q.checkUserTokenHasAccessStmt,
+		checkUserTokenHasAccessManyStmt:  q.checkUserTokenHasAccessManyStmt,
 		createCodeRevisionStmt:           q.createCodeRevisionStmt,
 		createDatasetStmt:                q.createDatasetStmt,
 		createGroupStmt:                  q.createGroupStmt,
