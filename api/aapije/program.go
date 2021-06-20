@@ -17,7 +17,7 @@ import (
 	"github.com/self-host/self-host/internal/services"
 )
 
-// Add a new program
+// AddProgram adds a new program
 func (ra *RestApi) AddProgram(w http.ResponseWriter, r *http.Request) {
 	// We expect a NewProgram object in the request body.
 	var newProgram rest.NewProgram
@@ -68,7 +68,7 @@ func (ra *RestApi) AddProgram(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(prog)
 }
 
-// List programs
+// FindPrograms lists all programs
 func (ra *RestApi) FindPrograms(w http.ResponseWriter, r *http.Request, p rest.FindProgramsParams) {
 	var err error
 	var programs []*rest.Program
@@ -124,7 +124,7 @@ func (ra *RestApi) FindPrograms(w http.ResponseWriter, r *http.Request, p rest.F
 	json.NewEncoder(w).Encode(programs)
 }
 
-// Find a specific program by its UUID
+// FindProgramByUuid returns a specific program by its UUID
 func (ra *RestApi) FindProgramByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -149,7 +149,7 @@ func (ra *RestApi) FindProgramByUuid(w http.ResponseWriter, r *http.Request, id 
 	json.NewEncoder(w).Encode(program)
 }
 
-// Update a specific program by its UUID
+// UpdateProgramByUuid updates a specific program by its UUID
 func (ra *RestApi) UpdateProgramByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -193,7 +193,7 @@ func (ra *RestApi) UpdateProgramByUuid(w http.ResponseWriter, r *http.Request, i
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// Delete a specific program by its UUID
+// DeleteProgramByUuid deletes a specific program by its UUID
 func (ra *RestApi) DeleteProgramByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -220,7 +220,7 @@ func (ra *RestApi) DeleteProgramByUuid(w http.ResponseWriter, r *http.Request, i
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// Add a new revision of code to a program
+// AddProgramCodeRevision adds a new revision of code to a program
 func (ra *RestApi) AddProgramCodeRevision(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -276,7 +276,7 @@ func (ra *RestApi) AddProgramCodeRevision(w http.ResponseWriter, r *http.Request
 	json.NewEncoder(w).Encode(revision)
 }
 
-// Get the difference between two code revisions for a program
+// GetProgramCodeRevisionsDiff returns the difference between two code revisions for a program
 func (ra *RestApi) GetProgramCodeRevisionsDiff(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.GetProgramCodeRevisionsDiffParams) {
 	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -302,7 +302,7 @@ func (ra *RestApi) GetProgramCodeRevisionsDiff(w http.ResponseWriter, r *http.Re
 	w.Write([]byte(diff))
 }
 
-// Get the newest, signed code for a program
+// GetCodeFromProgram returns the newest, signed code for a program
 func (ra *RestApi) GetCodeFromProgram(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -328,7 +328,7 @@ func (ra *RestApi) GetCodeFromProgram(w http.ResponseWriter, r *http.Request, id
 	w.Write([]byte(code))
 }
 
-// Get all code revisions for a program
+// GetProgramCodeRevisions returns all code revisions for a program
 func (ra *RestApi) GetProgramCodeRevisions(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -353,12 +353,12 @@ func (ra *RestApi) GetProgramCodeRevisions(w http.ResponseWriter, r *http.Reques
 	json.NewEncoder(w).Encode(revisions)
 }
 
-// Forward the request to a webhook program
+// ExecuteProgramWebhook forwards a request to a webhook program
 func (ra *RestApi) ExecuteProgramWebhook(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Sign a code revision
+// SignProgramCodeRevisions signs a specific code revision
 func (ra *RestApi) SignProgramCodeRevisions(w http.ResponseWriter, r *http.Request, id rest.UuidParam, revision int) {
 	programUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -398,7 +398,7 @@ func (ra *RestApi) SignProgramCodeRevisions(w http.ResponseWriter, r *http.Reque
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// Delete a specific code revision
+// DeleteProgramCodeRevisions deletes a specific code revision
 func (ra *RestApi) DeleteProgramCodeRevisions(w http.ResponseWriter, r *http.Request, id rest.UuidParam, revision int) {
 	programUUID, err := uuid.Parse(string(id))
 	if err != nil {

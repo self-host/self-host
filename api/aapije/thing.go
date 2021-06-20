@@ -15,7 +15,7 @@ import (
 	"github.com/self-host/self-host/internal/services"
 )
 
-// Add a new thing
+// AddThing adds a new thing
 func (ra *RestApi) AddThing(w http.ResponseWriter, r *http.Request) {
 	// We expect a NewThing object in the request body.
 	var n rest.NewThing
@@ -66,7 +66,7 @@ func (ra *RestApi) AddThing(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(thing)
 }
 
-// List things
+// FindThings lists all things
 func (ra *RestApi) FindThings(w http.ResponseWriter, r *http.Request, p rest.FindThingsParams) {
 	var err error
 	var things []*rest.Thing
@@ -122,6 +122,7 @@ func (ra *RestApi) FindThings(w http.ResponseWriter, r *http.Request, p rest.Fin
 	json.NewEncoder(w).Encode(things)
 }
 
+// FindThingByUuid returns a specific thing by its UUID
 func (ra *RestApi) FindThingByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	thingUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -146,7 +147,7 @@ func (ra *RestApi) FindThingByUuid(w http.ResponseWriter, r *http.Request, id re
 	json.NewEncoder(w).Encode(things)
 }
 
-// List all timeseries belonging to a thing
+// FindTimeSeriesForThing lists all time series belonging to a thing
 func (ra *RestApi) FindTimeSeriesForThing(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	thingUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -172,7 +173,7 @@ func (ra *RestApi) FindTimeSeriesForThing(w http.ResponseWriter, r *http.Request
 	json.NewEncoder(w).Encode(timeseries)
 }
 
-// Find all datasets belonging to a thing
+// FindDatasetsForThing Find all datasets belonging to a thing
 func (ra *RestApi) FindDatasetsForThing(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	thingUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -206,7 +207,7 @@ func (ra *RestApi) FindDatasetsForThing(w http.ResponseWriter, r *http.Request, 
 	json.NewEncoder(w).Encode(datasets)
 }
 
-// Update a specific thing by its UUID
+// UpdateThingByUuid updates a specific thing by its UUID
 func (ra *RestApi) UpdateThingByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	thingUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -249,7 +250,7 @@ func (ra *RestApi) UpdateThingByUuid(w http.ResponseWriter, r *http.Request, id 
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// Delete a specific thing by its UUID
+// DeleteThingByUuid deletes a specific thing by its UUID
 func (ra *RestApi) DeleteThingByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	thingUUID, err := uuid.Parse(string(id))
 	if err != nil {

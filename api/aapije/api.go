@@ -20,15 +20,15 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-// The REST API structure
+// RestApi is the main REST API structure
 type RestApi struct{}
 
-// Create a new instance of the REST API
+// NewRestApi creates a new instance of the REST API
 func NewRestApi() *RestApi {
 	return &RestApi{}
 }
 
-// Get the DB handle from the request context
+// GetDB gets the DB handle from the request context
 func (ra *RestApi) GetDB(r *http.Request) (*sql.DB, error) {
 	db, ok := r.Context().Value("db").(*sql.DB)
 	if ok == false {

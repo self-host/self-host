@@ -14,7 +14,7 @@ import (
 	"github.com/self-host/self-host/internal/services"
 )
 
-// Add a new dataset
+// AddDatasets adds a new dataset
 func (ra *RestApi) AddDatasets(w http.ResponseWriter, r *http.Request) {
 	// We expect a NewDataset object in the request body.
 	var n rest.NewDataset
@@ -73,7 +73,7 @@ func (ra *RestApi) AddDatasets(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(dataset)
 }
 
-// List datasets
+// FindDatasets lists all datasets
 func (ra *RestApi) FindDatasets(w http.ResponseWriter, r *http.Request, p rest.FindDatasetsParams) {
 	var err error
 	var datasets []*rest.Dataset
@@ -129,7 +129,7 @@ func (ra *RestApi) FindDatasets(w http.ResponseWriter, r *http.Request, p rest.F
 	json.NewEncoder(w).Encode(datasets)
 }
 
-// Get a specific dataset by its UUID
+// FindDatasetByUuid returns a specific dataset by its UUID
 func (ra *RestApi) FindDatasetByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	datasetUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -154,7 +154,7 @@ func (ra *RestApi) FindDatasetByUuid(w http.ResponseWriter, r *http.Request, id 
 	json.NewEncoder(w).Encode(datasets)
 }
 
-// Update a dataset by its UUID
+// UpdateDatasetByUuid updates a dataset by its UUID
 func (ra *RestApi) UpdateDatasetByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	datasetUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -202,7 +202,7 @@ func (ra *RestApi) UpdateDatasetByUuid(w http.ResponseWriter, r *http.Request, i
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// Get the "file" content from a dataset by its UUID
+// GetRawDatasetByUuid gets the "file" content from a dataset by its UUID
 func (ra *RestApi) GetRawDatasetByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.GetRawDatasetByUuidParams) {
 	datasetUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -260,34 +260,34 @@ func (ra *RestApi) GetRawDatasetByUuid(w http.ResponseWriter, r *http.Request, i
 	w.Write(f.Content)
 }
 
-// Initiate the upload of a larger dataset
+// InitializeDatasetUploadByUuid initiates the upload of a larger dataset
 func (ra *RestApi) InitializeDatasetUploadByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Cancel a partialy completed upload
+// DeleteDatasetUploadByKey cancels a partialy completed upload
 func (ra *RestApi) DeleteDatasetUploadByKey(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.DeleteDatasetUploadByKeyParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// List all uploaded parts of the dataset
+// ListDatasetPartsByKey lists all uploaded parts of the dataset
 func (ra *RestApi) ListDatasetPartsByKey(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.ListDatasetPartsByKeyParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Combine all uploaded parts into a new dataset content
+// AssembleDatasetPartsByKey combines all uploaded parts into a new dataset content
 func (ra *RestApi) AssembleDatasetPartsByKey(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.AssembleDatasetPartsByKeyParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Upload a (max 5MB) part of a new content update to a dataset
+// UploadDatasetContentByKey uploads a (max 5MB) part of a new content update to a dataset
 func (ra *RestApi) UploadDatasetContentByKey(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.UploadDatasetContentByKeyParams) {
 	// Each part may no exceed 5 MB in size
 	r.Body = http.MaxBytesReader(w, r.Body, 5242880) // Max 5MB of data
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// Delete a dataset by its UUID
+// DeleteDatasetByUuid deletes a dataset by its UUID
 func (ra *RestApi) DeleteDatasetByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	datasetUUID, err := uuid.Parse(string(id))
 	if err != nil {

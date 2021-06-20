@@ -17,7 +17,7 @@ import (
 	"github.com/self-host/self-host/internal/services"
 )
 
-// Add a new time series
+// AddTimeSeries adds a new time series
 func (ra *RestApi) AddTimeSeries(w http.ResponseWriter, r *http.Request) {
 	// We expect a NewUser object in the request body.
 	var n rest.NewTimeseries
@@ -86,7 +86,7 @@ func (ra *RestApi) AddTimeSeries(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(thing)
 }
 
-// Add data to a specific time series
+// AddDataToTimeseries adds data to a specific time series
 func (ra *RestApi) AddDataToTimeseries(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.AddDataToTimeseriesParams) {
 	tsUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -156,7 +156,7 @@ func (ra *RestApi) AddDataToTimeseries(w http.ResponseWriter, r *http.Request, i
 	w.WriteHeader(http.StatusCreated)
 }
 
-// Get data from a specific time series
+// QueryTimeseriesForData returns data from a specific time series
 func (ra *RestApi) QueryTimeseriesForData(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.QueryTimeseriesForDataParams) {
 	tsUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -224,7 +224,7 @@ func (ra *RestApi) QueryTimeseriesForData(w http.ResponseWriter, r *http.Request
 	json.NewEncoder(w).Encode(data)
 }
 
-// List time series
+// FindTimeSeries lists all time series
 func (ra *RestApi) FindTimeSeries(w http.ResponseWriter, r *http.Request, p rest.FindTimeSeriesParams) {
 	var err error
 	var timeseries []*rest.Timeseries
@@ -280,7 +280,7 @@ func (ra *RestApi) FindTimeSeries(w http.ResponseWriter, r *http.Request, p rest
 	json.NewEncoder(w).Encode(timeseries)
 }
 
-// Find a specific time series by its UUID
+// FindTimeSeriesByUuid returns a specific time series by its UUID
 func (ra *RestApi) FindTimeSeriesByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	tsUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -305,7 +305,7 @@ func (ra *RestApi) FindTimeSeriesByUuid(w http.ResponseWriter, r *http.Request, 
 	json.NewEncoder(w).Encode(timeseries)
 }
 
-// Update a specific time series by its UUID
+// UpdateTimeseriesByUuid updates a specific time series by its UUID
 func (ra *RestApi) UpdateTimeseriesByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	tsUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -376,7 +376,7 @@ func (ra *RestApi) UpdateTimeseriesByUuid(w http.ResponseWriter, r *http.Request
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// Delete a specific time series by its UUID
+// DeleteTimeSeriesByUuid deletes a specific time series by its UUID
 func (ra *RestApi) DeleteTimeSeriesByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	tsUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -404,7 +404,7 @@ func (ra *RestApi) DeleteTimeSeriesByUuid(w http.ResponseWriter, r *http.Request
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// Delete data from a time series
+// DeleteDataFromTimeSeries deletes data from a time series
 func (ra *RestApi) DeleteDataFromTimeSeries(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.DeleteDataFromTimeSeriesParams) {
 	tsUUID, err := uuid.Parse(string(id))
 	if err != nil {

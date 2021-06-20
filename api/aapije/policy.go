@@ -16,7 +16,7 @@ import (
 	"github.com/self-host/self-host/pkg/util"
 )
 
-// Add a new policy
+// AddPolicy adds a new policy
 func (ra *RestApi) AddPolicy(w http.ResponseWriter, r *http.Request) {
 	// We expect a NewPolicy object in the request body.
 	var newPolicy rest.NewPolicy
@@ -74,7 +74,7 @@ func (ra *RestApi) AddPolicy(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(policy)
 }
 
-// List policies
+// FindPolicies list all policies
 func (ra *RestApi) FindPolicies(w http.ResponseWriter, r *http.Request, p rest.FindPoliciesParams) {
 	db, err := ra.GetDB(r)
 	if err != nil {
@@ -147,7 +147,7 @@ func (ra *RestApi) FindPolicyByUuid(w http.ResponseWriter, r *http.Request, id r
 	json.NewEncoder(w).Encode(policy)
 }
 
-// Update a specific policy by its UUID
+// UpdatePolicyByUuid updates a specific policy by its UUID
 func (ra *RestApi) UpdatePolicyByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	// We expect a UpdatePolicy object in the request body.
 	var updatePolicy rest.UpdatePolicy
@@ -194,7 +194,7 @@ func (ra *RestApi) UpdatePolicyByUuid(w http.ResponseWriter, r *http.Request, id
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// Delete a specific policy by its UUID
+// DeletePolicyByUuid deletes a specific policy by its UUID
 func (ra *RestApi) DeletePolicyByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	policyUUID, err := uuid.Parse(string(id))
 	if err != nil {
