@@ -17,7 +17,6 @@ info:
     - Timeseries
     - Datasets
     - Programs
-    - Search
     - Alerts (TBD)
     
     Every call requires you to be authenticated.
@@ -79,9 +78,7 @@ tags:
     description: Datasets are used to store and retrieve data structures more complex than time series. Configuration files or smaller computed data-sets are good examples.
   - name: programs
     description: Programs are code segments executed either as part of another code segment (module), as a program that runs ever so often (program) or as an externaly triggered call (webhook).
-  - name: search
-    description: Find objects by using a trivial query format.
-  
+
 components:
 
   headers:
@@ -987,7 +984,7 @@ components:
           type: array
           items:
             type: string
-      
+
     Thing:
       required:
         - uuid
@@ -1145,34 +1142,6 @@ security:
   - BasicAuth: []
 
 paths:
-  /v2/search/tags:
-    get:
-      tags:
-        - search
-      security:
-        - BasicAuth:
-          - "read:search"
-      summary: Search for elements by tags.
-      description: Search for elements matching a basic query format.
-      operationId: search for elements
-      parameters:
-        - $ref: '#/components/parameters/offsetParam'
-        - $ref: '#/components/parameters/limitParam'
-        - $ref: '#/components/parameters/tagsFilterParam'
-        - $ref: '#/components/parameters/namespaceParam'
-
-      responses:
-        '200':
-          description: OK
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
   /v2/alerts:
     get:
       security:
@@ -2817,6 +2786,7 @@ paths:
       operationId: find tsdata by query
       parameters:
         - $ref: '#/components/parameters/uuidsParam'
+          description: A series of timeseries UUIDs to search for
         - $ref: '#/components/parameters/rangeStartParam'
         - $ref: '#/components/parameters/rangeEndParam'
         - $ref: '#/components/parameters/greaterOrEqParam'
