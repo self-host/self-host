@@ -23,7 +23,6 @@ How interaction with external services takes places depends on your specific nee
 When developing external services, we recommend that you adhere to the structure outlined in this section. It makes interaction from or to the Self-host API much more effortless.
 
 
-# References
 
 [1]: <https://github.com/self-host/self-host/blob/main/docs/program_manager_worker.md> "Program Manager and Worker" 
 [fig1]: https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/external_service_interaction_ex.svg "External service interaction example"
