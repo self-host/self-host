@@ -1,9 +1,8 @@
 openapi: '3.0.0'
 info:
   contact:
-    name: API Support
-    url: http://www.noda.se/support
-    email: support@noda.se
+    name: Github page
+    url: https://github.com/self-host/self-host
 
   description: |
     ## Welcome to the official documentation of the NODA Selfhost API.
