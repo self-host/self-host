@@ -106,6 +106,7 @@ Hardware and software required;
     + [Rate control](https://github.com/self-host/self-host/blob/main/docs/rate_control.md)
     + [Program Manager and Workers](https://github.com/self-host/self-host/blob/main/docs/program_manager_worker.md)
     + [Unit handling](https://github.com/self-host/self-host/blob/main/docs/unit_handling.md)
+    + [Exernal services](https://github.com/self-host/self-host/blob/main/docs/external_services.md)
 - [Benchmark](https://github.com/self-host/self-host/blob/main/docs/benchmark_overview.md)
 - [Public-facing API specification](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/self-host/self-host/main/api/aapije/rest/openapiv3.yaml)
 - [Notes on deploying to production](https://github.com/self-host/self-host/blob/main/docs/production_deployment.md)
