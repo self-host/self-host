@@ -14,17 +14,21 @@ import (
 	"net/http"
 )
 
+// Error struct
 type Error struct {
 	Code    int32  `json:"code"`
 	Message string `json:"message"`
 }
 
+// The REST API structure
 type RestApi struct{}
 
+// Create a new instance of the REST API
 func NewRestApi() *RestApi {
 	return &RestApi{}
 }
 
+// Get the DB handle from the request context
 func (ra *RestApi) GetDB(r *http.Request) (*sql.DB, error) {
 	db, ok := r.Context().Value("db").(*sql.DB)
 	if ok == false {

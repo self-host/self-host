@@ -16,6 +16,7 @@ import (
 	"github.com/self-host/self-host/pkg/util"
 )
 
+// Query multiple time series for data
 func (ra *RestApi) FindTsdataByQuery(w http.ResponseWriter, r *http.Request, p rest.FindTsdataByQueryParams) {
 	timezone := "UTC"
 	aggregate := "avg"

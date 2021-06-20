@@ -11,11 +11,13 @@ import (
 	ie "github.com/self-host/self-host/internal/errors"
 )
 
+// User(name) and Password item
 type BasicAuthItem struct {
 	User     string
 	Password string
 }
 
+// Allow access only to the credentials declared in []BasicAuthItem
 func BasicAuth(auths []BasicAuthItem) func(http.HandlerFunc) http.HandlerFunc {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		fn := func(w http.ResponseWriter, r *http.Request) {

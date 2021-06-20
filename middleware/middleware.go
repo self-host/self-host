@@ -11,6 +11,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3filter"
 )
 
+// Error struct
 type Error struct {
 	Code    int32  `json:"code"`
 	Message string `json:"message"`
@@ -25,8 +26,10 @@ func sendError(w http.ResponseWriter, code int, message string) {
 	json.NewEncoder(w).Encode(reqErr)
 }
 
+// Type declaration of MiddlewareFunc
 type MiddlewareFunc func(http.HandlerFunc) http.HandlerFunc
 
+// Type declaration of Options
 type Options struct {
 	Options      openapi3filter.Options
 	ParamDecoder openapi3filter.ContentParameterDecoder

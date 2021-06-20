@@ -15,6 +15,7 @@ import (
 	"github.com/self-host/self-host/internal/services"
 )
 
+// Add a new group
 func (ra *RestApi) AddGroup(w http.ResponseWriter, r *http.Request) {
 	// We expect a NewGroup object in the request body.
 	var n rest.NewGroup
@@ -42,6 +43,7 @@ func (ra *RestApi) AddGroup(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(group)
 }
 
+// List groups
 func (ra *RestApi) FindGroups(w http.ResponseWriter, r *http.Request, p rest.FindGroupsParams) {
 	db, err := ra.GetDB(r)
 	if err != nil {
@@ -66,6 +68,7 @@ func (ra *RestApi) FindGroups(w http.ResponseWriter, r *http.Request, p rest.Fin
 	json.NewEncoder(w).Encode(groups)
 }
 
+// Find a specific group by its UUID
 func (ra *RestApi) FindGroupByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	groupUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -90,6 +93,7 @@ func (ra *RestApi) FindGroupByUuid(w http.ResponseWriter, r *http.Request, id re
 	json.NewEncoder(w).Encode(group)
 }
 
+// List all policies beloning to a specific group
 func (ra *RestApi) FindPoliciesForGroup(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	groupUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -115,6 +119,7 @@ func (ra *RestApi) FindPoliciesForGroup(w http.ResponseWriter, r *http.Request, 
 	json.NewEncoder(w).Encode(policies)
 }
 
+// Update a specific group by its UUID
 func (ra *RestApi) UpdateGroupByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	groupUUID, err := uuid.Parse(string(id))
 	if err != nil {
@@ -150,6 +155,7 @@ func (ra *RestApi) UpdateGroupByUuid(w http.ResponseWriter, r *http.Request, id 
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// Delete a specific group by its UUID
 func (ra *RestApi) DeleteGroupByUuid(w http.ResponseWriter, r *http.Request, id rest.UuidParam) {
 	groupUUID, err := uuid.Parse(string(id))
 	if err != nil {

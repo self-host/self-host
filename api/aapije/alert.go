@@ -10,6 +10,7 @@ import (
 	"github.com/self-host/self-host/api/aapije/rest"
 )
 
+// List alerts
 func (ra *RestApi) FindAlerts(w http.ResponseWriter, r *http.Request, p rest.FindAlertsParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }

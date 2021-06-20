@@ -86,6 +86,7 @@ func (c *visitorController) GetVisitor(token string) (*rate.Limiter, time.Time) 
 	return v.GetLimiter(), v.GetLastSeen()
 }
 
+// Background task
 func (c *visitorController) Start() {
 	go func() {
 		for {
@@ -112,6 +113,7 @@ func newVisitorController(r, b int, cleanUp time.Duration) *visitorController {
 	}
 }
 
+// Rate control middleware
 func RateControl(reqPerHour int, maxburst int, cleanup time.Duration) func(http.HandlerFunc) http.HandlerFunc {
 	// FIXME: From config, somehow.
 	vc := newVisitorController(reqPerHour, maxburst, cleanup)

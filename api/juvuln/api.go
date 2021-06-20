@@ -23,8 +23,10 @@ import (
 	"github.com/self-host/self-host/postgres"
 )
 
+// Main struct for the RestApi implementation
 type RestApi struct{}
 
+// Create a new RestApi instance
 func New() *RestApi {
 	return &RestApi{}
 }
@@ -48,6 +50,7 @@ func init() {
 	}
 }
 
+// Self registration subscription endpoint
 func (ra *RestApi) WorkerSubscribe(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -67,6 +70,7 @@ func (ra *RestApi) WorkerSubscribe(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
+// Self un-registration subscription endpoint
 func (ra *RestApi) WorkerUnsubscribe(w http.ResponseWriter, r *http.Request, id UuidParam) {
 	workforce.Delete(string(id))
 
@@ -74,10 +78,12 @@ func (ra *RestApi) WorkerUnsubscribe(w http.ResponseWriter, r *http.Request, id 
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// Forward a call to a webhook program
 func (ra *RestApi) ForwardWebhook(w http.ResponseWriter, r *http.Request, dom DomainPathParam, id UuidParam) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
+// Check registration
 func (ra *RestApi) CheckWorker(w http.ResponseWriter, r *http.Request, id UuidParam) {
 	if workforce.Exists(string(id)) == false {
 		ie.SendHTTPError(w, ie.ErrorNotFound)
@@ -87,6 +93,7 @@ func (ra *RestApi) CheckWorker(w http.ResponseWriter, r *http.Request, id UuidPa
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// Report the current load
 func (ra *RestApi) WorkerLoadUpdate(w http.ResponseWriter, r *http.Request, id UuidParam) {
 	if workforce.Exists(string(id)) == false {
 		ie.SendHTTPError(w, ie.ErrorNotFound)
@@ -105,6 +112,7 @@ func (ra *RestApi) WorkerLoadUpdate(w http.ResponseWriter, r *http.Request, id U
 	w.WriteHeader(http.StatusNoContent)
 }
 
+// Get the code for a program module
 func (ra *RestApi) GetModuleAtRevision(w http.ResponseWriter, r *http.Request, p GetModuleAtRevisionParams) {
 	db, err := postgres.GetDB(string(p.Domain))
 	if err != nil {
@@ -148,10 +156,12 @@ func (ra *RestApi) GetModuleAtRevision(w http.ResponseWriter, r *http.Request, p
 	w.Write(code)
 }
 
+// Get the OpenAPI file
 func GetOpenAPIFile() ([]byte, error) {
 	return decodeSpec()
 }
 
+// Update the program listing by queries each DB for content
 func UpdateProgramCache() error {
 	dbs := postgres.GetAllDB()
 

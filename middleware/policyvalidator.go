@@ -18,8 +18,9 @@ import (
 	"github.com/self-host/self-host/postgres"
 )
 
-var URLParamRegex = regexp.MustCompile(`(?m)\{([^\}]+)\}`)
+var urlParamRegex = regexp.MustCompile(`(?m)\{([^\}]+)\}`)
 
+// Check access rights against rules from the BasicAuth scopes declared in the OpenAPI file
 func PolicyValidator() func(http.HandlerFunc) http.HandlerFunc {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +64,7 @@ func PolicyValidator() func(http.HandlerFunc) http.HandlerFunc {
 
 				// Extract {<name>} parameters from the scope rule and
 				// build a new resource string using the scope "template" and URL parameters
-				matches := URLParamRegex.FindAllStringSubmatch(resource, -1)
+				matches := urlParamRegex.FindAllStringSubmatch(resource, -1)
 				if matches != nil {
 					// Rewrite resource
 					for _, match := range matches {

@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// Get the position of an item in a string slice
 func StringSliceIndex(haystack []string, needle string) int {
 	for idx, a := range haystack {
 		if a == needle {
@@ -17,6 +18,7 @@ func StringSliceIndex(haystack []string, needle string) int {
 	return -1
 }
 
+// Check if item exists in string slice
 func StringSliceContains(haystack []string, needle string) bool {
 	for _, a := range haystack {
 		if a == needle {
@@ -26,6 +28,7 @@ func StringSliceContains(haystack []string, needle string) bool {
 	return false
 }
 
+// Convert []string to []uuid.UUID
 func StringSliceToUuidSlice(in []string) ([]uuid.UUID, error) {
 	out := make([]uuid.UUID, len(in))
 	for idx, item := range in {

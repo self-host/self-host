@@ -8,6 +8,7 @@ import (
 	"net/http"
 )
 
+// Set the response header
 func SetHeader(key, value string) func(http.HandlerFunc) http.HandlerFunc {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		fn := func(w http.ResponseWriter, r *http.Request) {
