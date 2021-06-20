@@ -51,9 +51,9 @@ func (u *GroupService) AddGroup(ctx context.Context, name string) (*rest.Group, 
 	if err != nil {
 		tx.Rollback()
 		return nil, err
-	} else {
-		tx.Commit()
 	}
+
+	tx.Commit()
 
 	return &rest.Group{
 		Uuid: group.Uuid.String(),
@@ -100,13 +100,13 @@ func (u *GroupService) FindAll(ctx context.Context, token []byte, limit *int64, 
 
 	if err != nil {
 		return nil, err
-	} else {
-		for _, g := range groupList {
-			groups = append(groups, &rest.Group{
-				Uuid: g.Uuid.String(),
-				Name: g.Name,
-			})
-		}
+	}
+
+	for _, g := range groupList {
+		groups = append(groups, &rest.Group{
+			Uuid: g.Uuid.String(),
+			Name: g.Name,
+		})
 	}
 
 	return groups, nil

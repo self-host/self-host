@@ -74,9 +74,9 @@ func (svc *ThingService) AddThing(ctx context.Context, p *AddThingParams) (*rest
 	if err != nil {
 		tx.Rollback()
 		return nil, err
-	} else {
-		tx.Commit()
 	}
+
+	tx.Commit()
 
 	v := &rest.Thing{
 		Uuid:      thing.Uuid.String(),
@@ -131,21 +131,21 @@ func (svc *ThingService) FindAll(ctx context.Context, p FindAllParams) ([]*rest.
 	thingList, err := svc.q.FindThings(ctx, params)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, t := range thingList {
-			thing := &rest.Thing{
-				Uuid:      t.Uuid.String(),
-				Name:      t.Name,
-				State:     rest.ThingState(t.State),
-				CreatedBy: t.CreatedBy.String(),
-				Tags:      t.Tags,
-			}
-			if t.Type.Valid {
-				thing.Type = &t.Type.String
-			}
+	}
 
-			things = append(things, thing)
+	for _, t := range thingList {
+		thing := &rest.Thing{
+			Uuid:      t.Uuid.String(),
+			Name:      t.Name,
+			State:     rest.ThingState(t.State),
+			CreatedBy: t.CreatedBy.String(),
+			Tags:      t.Tags,
 		}
+		if t.Type.Valid {
+			thing.Type = &t.Type.String
+		}
+
+		things = append(things, thing)
 	}
 
 	return things, nil
@@ -168,21 +168,21 @@ func (svc *ThingService) FindByTags(ctx context.Context, p FindByTagsParams) ([]
 	thingList, err := svc.q.FindThingsByTags(ctx, params)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, t := range thingList {
-			thing := &rest.Thing{
-				Uuid:      t.Uuid.String(),
-				Name:      t.Name,
-				State:     rest.ThingState(t.State),
-				CreatedBy: t.CreatedBy.String(),
-				Tags:      t.Tags,
-			}
-			if t.Type.Valid {
-				thing.Type = &t.Type.String
-			}
+	}
 
-			things = append(things, thing)
+	for _, t := range thingList {
+		thing := &rest.Thing{
+			Uuid:      t.Uuid.String(),
+			Name:      t.Name,
+			State:     rest.ThingState(t.State),
+			CreatedBy: t.CreatedBy.String(),
+			Tags:      t.Tags,
 		}
+		if t.Type.Valid {
+			thing.Type = &t.Type.String
+		}
+
+		things = append(things, thing)
 	}
 
 	return things, nil

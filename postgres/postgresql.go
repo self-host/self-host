@@ -138,11 +138,11 @@ func AddDB(domain, connectionInfo string) error {
 		if c.Equals(newDBC) {
 			// Already exists
 			return nil
-		} else {
-			// Same domain, but new DB url
-			// Close existing background worker
-			c.Close()
 		}
+
+		// Same domain, but new DB url
+		// Close existing background worker
+		c.Close()
 	}
 
 	// Add to the domain cache (no matter if we can connect or not!)

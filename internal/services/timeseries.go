@@ -131,9 +131,9 @@ func (svc *TimeseriesService) AddTimeseries(ctx context.Context, opt *NewTimeser
 	if err != nil {
 		tx.Rollback()
 		return nil, err
-	} else {
-		tx.Commit()
 	}
+
+	tx.Commit()
 
 	var lb *float64
 	var ub *float64
@@ -269,35 +269,35 @@ func (svc *TimeseriesService) FindByTags(ctx context.Context, p FindByTagsParams
 	tsList, err := svc.q.FindTimeseriesByTags(ctx, params)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, item := range tsList {
-			var lBound *float64
-			var uBound *float64
+	}
 
-			if item.LowerBound.Valid {
-				lBound = &item.LowerBound.Float64
-			}
-			if item.UpperBound.Valid {
-				uBound = &item.UpperBound.Float64
-			}
+	for _, item := range tsList {
+		var lBound *float64
+		var uBound *float64
 
-			t := &rest.Timeseries{
-				CreatedBy:  item.CreatedBy.String(),
-				LowerBound: lBound,
-				Name:       item.Name,
-				SiUnit:     item.SiUnit,
-				Tags:       item.Tags,
-				UpperBound: uBound,
-				Uuid:       item.Uuid.String(),
-			}
-
-			if item.ThingUuid != NilUUID {
-				v := item.ThingUuid.String()
-				t.ThingUuid = &v
-			}
-
-			timeseries = append(timeseries, t)
+		if item.LowerBound.Valid {
+			lBound = &item.LowerBound.Float64
 		}
+		if item.UpperBound.Valid {
+			uBound = &item.UpperBound.Float64
+		}
+
+		t := &rest.Timeseries{
+			CreatedBy:  item.CreatedBy.String(),
+			LowerBound: lBound,
+			Name:       item.Name,
+			SiUnit:     item.SiUnit,
+			Tags:       item.Tags,
+			UpperBound: uBound,
+			Uuid:       item.Uuid.String(),
+		}
+
+		if item.ThingUuid != NilUUID {
+			v := item.ThingUuid.String()
+			t.ThingUuid = &v
+		}
+
+		timeseries = append(timeseries, t)
 	}
 
 	return timeseries, nil
@@ -316,35 +316,35 @@ func (svc *TimeseriesService) FindByThing(ctx context.Context, thing uuid.UUID) 
 	tsList, err := svc.q.FindTimeseriesByThing(ctx, thing)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, item := range tsList {
-			var lBound *float64
-			var uBound *float64
+	}
 
-			if item.LowerBound.Valid {
-				lBound = &item.LowerBound.Float64
-			}
-			if item.UpperBound.Valid {
-				uBound = &item.UpperBound.Float64
-			}
+	for _, item := range tsList {
+		var lBound *float64
+		var uBound *float64
 
-			t := &rest.Timeseries{
-				CreatedBy:  item.CreatedBy.String(),
-				LowerBound: lBound,
-				Name:       item.Name,
-				SiUnit:     item.SiUnit,
-				Tags:       item.Tags,
-				UpperBound: uBound,
-				Uuid:       item.Uuid.String(),
-			}
-
-			if item.ThingUuid != NilUUID {
-				v := item.ThingUuid.String()
-				t.ThingUuid = &v
-			}
-
-			timeseries = append(timeseries, t)
+		if item.LowerBound.Valid {
+			lBound = &item.LowerBound.Float64
 		}
+		if item.UpperBound.Valid {
+			uBound = &item.UpperBound.Float64
+		}
+
+		t := &rest.Timeseries{
+			CreatedBy:  item.CreatedBy.String(),
+			LowerBound: lBound,
+			Name:       item.Name,
+			SiUnit:     item.SiUnit,
+			Tags:       item.Tags,
+			UpperBound: uBound,
+			Uuid:       item.Uuid.String(),
+		}
+
+		if item.ThingUuid != NilUUID {
+			v := item.ThingUuid.String()
+			t.ThingUuid = &v
+		}
+
+		timeseries = append(timeseries, t)
 	}
 
 	return timeseries, nil
@@ -400,35 +400,35 @@ func (svc *TimeseriesService) FindAll(ctx context.Context, p FindAllParams) ([]*
 	tsList, err := svc.q.FindTimeseries(ctx, params)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, item := range tsList {
-			var lBound *float64
-			var uBound *float64
+	}
 
-			if item.LowerBound.Valid {
-				lBound = &item.LowerBound.Float64
-			}
-			if item.UpperBound.Valid {
-				uBound = &item.UpperBound.Float64
-			}
+	for _, item := range tsList {
+		var lBound *float64
+		var uBound *float64
 
-			t := &rest.Timeseries{
-				Uuid:       item.Uuid.String(),
-				Name:       item.Name,
-				SiUnit:     item.SiUnit,
-				UpperBound: uBound,
-				LowerBound: lBound,
-				Tags:       item.Tags,
-				CreatedBy:  item.CreatedBy.String(),
-			}
-
-			if item.ThingUuid != NilUUID {
-				v := item.ThingUuid.String()
-				t.ThingUuid = &v
-			}
-
-			timeseries = append(timeseries, t)
+		if item.LowerBound.Valid {
+			lBound = &item.LowerBound.Float64
 		}
+		if item.UpperBound.Valid {
+			uBound = &item.UpperBound.Float64
+		}
+
+		t := &rest.Timeseries{
+			Uuid:       item.Uuid.String(),
+			Name:       item.Name,
+			SiUnit:     item.SiUnit,
+			UpperBound: uBound,
+			LowerBound: lBound,
+			Tags:       item.Tags,
+			CreatedBy:  item.CreatedBy.String(),
+		}
+
+		if item.ThingUuid != NilUUID {
+			v := item.ThingUuid.String()
+			t.ThingUuid = &v
+		}
+
+		timeseries = append(timeseries, t)
 	}
 
 	return timeseries, nil
@@ -494,30 +494,30 @@ func (svc *TimeseriesService) QuerySingleSourceData(ctx context.Context, p Query
 	dataList, err := svc.q.GetTsDataRangeAgg(ctx, params)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, item := range dataList {
-			var f float32
-			if p.Unit != nil {
-				v := units.NewValue(item.Value, fromUnit)
-				conv, err := v.Convert(toUnit)
-				if err != nil {
-					return nil, ie.ErrorInvalidUnitConversion
-				}
-				f = float32(conv.Float())
-			} else {
-				f = float32(item.Value)
-			}
+	}
 
-			if inValidRange(f, p.LessOrEq, p.GreaterOrEq) == false {
-				continue
+	for _, item := range dataList {
+		var f float32
+		if p.Unit != nil {
+			v := units.NewValue(item.Value, fromUnit)
+			conv, err := v.Convert(toUnit)
+			if err != nil {
+				return nil, ie.ErrorInvalidUnitConversion
 			}
-
-			d := rest.TsRow{
-				V:  f,
-				Ts: item.Ts.In(tzloc),
-			}
-			tsdata = append(tsdata, &d)
+			f = float32(conv.Float())
+		} else {
+			f = float32(item.Value)
 		}
+
+		if inValidRange(f, p.LessOrEq, p.GreaterOrEq) == false {
+			continue
+		}
+
+		d := rest.TsRow{
+			V:  f,
+			Ts: item.Ts.In(tzloc),
+		}
+		tsdata = append(tsdata, &d)
 	}
 
 	return tsdata, nil
@@ -553,23 +553,23 @@ func (svc *TimeseriesService) QueryMultiSourceData(ctx context.Context, p QueryM
 	dataList, err := svc.q.GetTsDataRangeAgg(ctx, params)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, item := range dataList {
-			if _, ok := mapping[item.TsUuid]; ok == false {
-				mapping[item.TsUuid] = make([]rest.TsRow, 0)
-			}
+	}
 
-			f := float32(item.Value)
-
-			if inValidRange(f, p.LessOrEq, p.GreaterOrEq) == false {
-				continue
-			}
-
-			mapping[item.TsUuid] = append(mapping[item.TsUuid], rest.TsRow{
-				V:  f,
-				Ts: item.Ts.In(tzloc),
-			})
+	for _, item := range dataList {
+		if _, ok := mapping[item.TsUuid]; ok == false {
+			mapping[item.TsUuid] = make([]rest.TsRow, 0)
 		}
+
+		f := float32(item.Value)
+
+		if inValidRange(f, p.LessOrEq, p.GreaterOrEq) == false {
+			continue
+		}
+
+		mapping[item.TsUuid] = append(mapping[item.TsUuid], rest.TsRow{
+			V:  f,
+			Ts: item.Ts.In(tzloc),
+		})
 	}
 
 	tsResult := make([]*rest.TsResults, 0)

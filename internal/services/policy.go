@@ -83,17 +83,17 @@ func (s *PolicyService) FindByGroup(ctx context.Context, groupUUID uuid.UUID) ([
 	policyList, err := s.q.FindPoliciesByGroup(ctx, groupUUID)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, item := range policyList {
-			policies = append(policies, &rest.Policy{
-				Uuid:      item.Uuid.String(),
-				GroupUuid: item.GroupUuid.String(),
-				Priority:  item.Priority,
-				Effect:    rest.PolicyEffect(item.Effect),
-				Action:    rest.PolicyAction(item.Action),
-				Resource:  item.Resource,
-			})
-		}
+	}
+
+	for _, item := range policyList {
+		policies = append(policies, &rest.Policy{
+			Uuid:      item.Uuid.String(),
+			GroupUuid: item.GroupUuid.String(),
+			Priority:  item.Priority,
+			Effect:    rest.PolicyEffect(item.Effect),
+			Action:    rest.PolicyAction(item.Action),
+			Resource:  item.Resource,
+		})
 	}
 
 	return policies, nil
@@ -113,17 +113,17 @@ func (s *PolicyService) FindByUser(ctx context.Context, userUUID uuid.UUID) ([]*
 	policyList, err := s.q.FindPoliciesByUser(ctx, userUUID)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, item := range policyList {
-			policies = append(policies, &rest.Policy{
-				Uuid:      item.Uuid.String(),
-				GroupUuid: item.GroupUuid.String(),
-				Priority:  item.Priority,
-				Effect:    rest.PolicyEffect(item.Effect),
-				Action:    rest.PolicyAction(item.Action),
-				Resource:  item.Resource,
-			})
-		}
+	}
+
+	for _, item := range policyList {
+		policies = append(policies, &rest.Policy{
+			Uuid:      item.Uuid.String(),
+			GroupUuid: item.GroupUuid.String(),
+			Priority:  item.Priority,
+			Effect:    rest.PolicyEffect(item.Effect),
+			Action:    rest.PolicyAction(item.Action),
+			Resource:  item.Resource,
+		})
 	}
 
 	return policies, nil
@@ -176,17 +176,17 @@ func (s *PolicyService) FindAll(ctx context.Context, p FindAllPoliciesParams) ([
 	pList, err := s.q.FindPolicies(ctx, params)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, v := range pList {
-			policies = append(policies, &rest.Policy{
-				Uuid:      v.Uuid.String(),
-				GroupUuid: v.GroupUuid.String(),
-				Priority:  v.Priority,
-				Effect:    rest.PolicyEffect(v.Effect),
-				Action:    rest.PolicyAction(v.Action),
-				Resource:  v.Resource,
-			})
-		}
+	}
+
+	for _, v := range pList {
+		policies = append(policies, &rest.Policy{
+			Uuid:      v.Uuid.String(),
+			GroupUuid: v.GroupUuid.String(),
+			Priority:  v.Priority,
+			Effect:    rest.PolicyEffect(v.Effect),
+			Action:    rest.PolicyAction(v.Action),
+			Resource:  v.Resource,
+		})
 	}
 
 	return policies, nil

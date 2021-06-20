@@ -109,34 +109,34 @@ func (p *PrimusHost) Update(ctx context.Context) error {
 		var connectionInfo string
 		if err := rows.Scan(&domainName, &connectionInfo); err != nil {
 			return err
-		} else {
-			p.RLock()
-			c, ok := p.databases[domainName]
-			p.RUnlock()
+		}
 
-			if ok {
-				err = c.Ping()
-				if err != nil {
-					p.Lock()
-					delete(p.databases, domainName)
-					p.Unlock()
-				}
-			}
+		p.RLock()
+		c, ok := p.databases[domainName]
+		p.RUnlock()
 
-			conn, err := sql.Open("pgx", connectionInfo)
+		if ok {
+			err = c.Ping()
 			if err != nil {
 				p.Lock()
-				p.databases[domainName] = nil
+				delete(p.databases, domainName)
 				p.Unlock()
-
-				logger.Error("DB Error", zap.Error(err))
-			} else {
-				p.Lock()
-				p.databases[domainName] = conn
-				p.Unlock()
-
-				logger.Info("db", zap.String("domainName", domainName), zap.String("connectionInfo", connectionInfo))
 			}
+		}
+
+		conn, err := sql.Open("pgx", connectionInfo)
+		if err != nil {
+			p.Lock()
+			p.databases[domainName] = nil
+			p.Unlock()
+
+			logger.Error("DB Error", zap.Error(err))
+		} else {
+			p.Lock()
+			p.databases[domainName] = conn
+			p.Unlock()
+
+			logger.Info("db", zap.String("domainName", domainName), zap.String("connectionInfo", connectionInfo))
 		}
 
 		// FIXME: How do we remove databases no longer part of the index?

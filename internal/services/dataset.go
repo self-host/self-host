@@ -131,28 +131,28 @@ func (svc *DatasetService) FindByThing(ctx context.Context, id uuid.UUID) ([]*re
 	datasetsList, err := svc.q.FindDatasetByThing(ctx, id)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, t := range datasetsList {
-			dataset := &rest.Dataset{
-				Uuid:      t.Uuid.String(),
-				Name:      t.Name,
-				Format:    rest.DatasetFormat(t.Format),
-				Checksum:  t.Checksum,
-				Size:      int64(t.Size),
-				Created:   t.Created,
-				Updated:   t.Updated,
-				CreatedBy: t.CreatedBy.String(),
-				UpdatedBy: t.UpdatedBy.String(),
-				Tags:      t.Tags,
-			}
+	}
 
-			if t.BelongsTo != NilUUID {
-				v := t.BelongsTo.String()
-				dataset.BelongsTo = &v
-			}
-
-			datasets = append(datasets, dataset)
+	for _, t := range datasetsList {
+		dataset := &rest.Dataset{
+			Uuid:      t.Uuid.String(),
+			Name:      t.Name,
+			Format:    rest.DatasetFormat(t.Format),
+			Checksum:  t.Checksum,
+			Size:      int64(t.Size),
+			Created:   t.Created,
+			Updated:   t.Updated,
+			CreatedBy: t.CreatedBy.String(),
+			UpdatedBy: t.UpdatedBy.String(),
+			Tags:      t.Tags,
 		}
+
+		if t.BelongsTo != NilUUID {
+			v := t.BelongsTo.String()
+			dataset.BelongsTo = &v
+		}
+
+		datasets = append(datasets, dataset)
 	}
 
 	return datasets, nil
@@ -175,28 +175,28 @@ func (svc *DatasetService) FindAll(ctx context.Context, p FindAllParams) ([]*res
 	datasetsList, err := svc.q.FindDatasets(ctx, params)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, t := range datasetsList {
-			dataset := &rest.Dataset{
-				Uuid:      t.Uuid.String(),
-				Name:      t.Name,
-				Format:    rest.DatasetFormat(t.Format),
-				Checksum:  t.Checksum,
-				Size:      int64(t.Size),
-				Created:   t.Created,
-				Updated:   t.Updated,
-				CreatedBy: t.CreatedBy.String(),
-				UpdatedBy: t.UpdatedBy.String(),
-				Tags:      t.Tags,
-			}
+	}
 
-			if t.BelongsTo != NilUUID {
-				v := t.BelongsTo.String()
-				dataset.BelongsTo = &v
-			}
-
-			datasets = append(datasets, dataset)
+	for _, t := range datasetsList {
+		dataset := &rest.Dataset{
+			Uuid:      t.Uuid.String(),
+			Name:      t.Name,
+			Format:    rest.DatasetFormat(t.Format),
+			Checksum:  t.Checksum,
+			Size:      int64(t.Size),
+			Created:   t.Created,
+			Updated:   t.Updated,
+			CreatedBy: t.CreatedBy.String(),
+			UpdatedBy: t.UpdatedBy.String(),
+			Tags:      t.Tags,
 		}
+
+		if t.BelongsTo != NilUUID {
+			v := t.BelongsTo.String()
+			dataset.BelongsTo = &v
+		}
+
+		datasets = append(datasets, dataset)
 	}
 
 	return datasets, nil
@@ -219,28 +219,28 @@ func (svc *DatasetService) FindByTags(ctx context.Context, p FindByTagsParams) (
 	dsList, err := svc.q.FindDatasetsByTags(ctx, params)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, t := range dsList {
-			dataset := &rest.Dataset{
-				Uuid:      t.Uuid.String(),
-				Name:      t.Name,
-				Format:    rest.DatasetFormat(t.Format),
-				Checksum:  t.Checksum,
-				Size:      int64(t.Size),
-				Created:   t.Created,
-				Updated:   t.Updated,
-				CreatedBy: t.CreatedBy.String(),
-				UpdatedBy: t.UpdatedBy.String(),
-				Tags:      t.Tags,
-			}
+	}
 
-			if t.BelongsTo != NilUUID {
-				v := t.BelongsTo.String()
-				dataset.BelongsTo = &v
-			}
-
-			datasets = append(datasets, dataset)
+	for _, t := range dsList {
+		dataset := &rest.Dataset{
+			Uuid:      t.Uuid.String(),
+			Name:      t.Name,
+			Format:    rest.DatasetFormat(t.Format),
+			Checksum:  t.Checksum,
+			Size:      int64(t.Size),
+			Created:   t.Created,
+			Updated:   t.Updated,
+			CreatedBy: t.CreatedBy.String(),
+			UpdatedBy: t.UpdatedBy.String(),
+			Tags:      t.Tags,
 		}
+
+		if t.BelongsTo != NilUUID {
+			v := t.BelongsTo.String()
+			dataset.BelongsTo = &v
+		}
+
+		datasets = append(datasets, dataset)
 	}
 
 	return datasets, nil

@@ -29,11 +29,11 @@ func (p *ProgramCache) Add(obj *ProgramRevision) {
 		if a.Equals(obj) {
 			// Already exists
 			return
-		} else {
-			// Stop and delete current
-			a.Stop()
-			delete(p.m, id)
 		}
+
+		// Stop and delete current
+		a.Stop()
+		delete(p.m, id)
 	}
 
 	// Start background routine

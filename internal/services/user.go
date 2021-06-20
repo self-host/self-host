@@ -56,9 +56,9 @@ func (u *UserService) AddUser(ctx context.Context, name string) (*rest.User, err
 	if err != nil {
 		tx.Rollback()
 		return nil, err
-	} else {
-		tx.Commit()
 	}
+
+	tx.Commit()
 
 	ugs, err := u.q.FindGroupsByUser(ctx, user.Uuid)
 	if err != nil {
@@ -222,19 +222,19 @@ func (u *UserService) FindAll(ctx context.Context, token []byte, limit *int64, o
 	userList, err := u.q.FindUsers(ctx, params)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, u := range userList {
-			var groups []rest.Group
-			if err = json.Unmarshal([]byte(u.Groups), &groups); err != nil {
-				// LOG error
-			}
+	}
 
-			users = append(users, &rest.User{
-				Uuid:   u.Uuid.String(),
-				Name:   u.Name,
-				Groups: groups,
-			})
+	for _, u := range userList {
+		var groups []rest.Group
+		if err = json.Unmarshal([]byte(u.Groups), &groups); err != nil {
+			// FIXME: log error
 		}
+
+		users = append(users, &rest.User{
+			Uuid:   u.Uuid.String(),
+			Name:   u.Name,
+			Groups: groups,
+		})
 	}
 
 	return users, nil

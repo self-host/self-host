@@ -131,21 +131,21 @@ func (s *ProgramService) FindAll(ctx context.Context, p FindAllParams) ([]*rest.
 	programsList, err := s.q.FindPrograms(ctx, params)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, t := range programsList {
-			program := &rest.Program{
-				Uuid:     t.Uuid.String(),
-				Name:     t.Name,
-				Type:     rest.ProgramType(t.Type),
-				State:    rest.ProgramState(t.State),
-				Schedule: t.Schedule,
-				Deadline: int(t.Deadline),
-				Language: rest.ProgramLanguage(t.Language),
-				Tags:     t.Tags,
-			}
+	}
 
-			programs = append(programs, program)
+	for _, t := range programsList {
+		program := &rest.Program{
+			Uuid:     t.Uuid.String(),
+			Name:     t.Name,
+			Type:     rest.ProgramType(t.Type),
+			State:    rest.ProgramState(t.State),
+			Schedule: t.Schedule,
+			Deadline: int(t.Deadline),
+			Language: rest.ProgramLanguage(t.Language),
+			Tags:     t.Tags,
 		}
+
+		programs = append(programs, program)
 	}
 
 	return programs, nil
@@ -168,21 +168,21 @@ func (svc *ProgramService) FindByTags(ctx context.Context, p FindByTagsParams) (
 	progList, err := svc.q.FindProgramsByTags(ctx, params)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, t := range progList {
-			program := &rest.Program{
-				Uuid:     t.Uuid.String(),
-				Name:     t.Name,
-				Type:     rest.ProgramType(t.Type),
-				State:    rest.ProgramState(t.State),
-				Schedule: t.Schedule,
-				Deadline: int(t.Deadline),
-				Language: rest.ProgramLanguage(t.Language),
-				Tags:     t.Tags,
-			}
+	}
 
-			programs = append(programs, program)
+	for _, t := range progList {
+		program := &rest.Program{
+			Uuid:     t.Uuid.String(),
+			Name:     t.Name,
+			Type:     rest.ProgramType(t.Type),
+			State:    rest.ProgramState(t.State),
+			Schedule: t.Schedule,
+			Deadline: int(t.Deadline),
+			Language: rest.ProgramLanguage(t.Language),
+			Tags:     t.Tags,
 		}
+
+		programs = append(programs, program)
 	}
 
 	return programs, nil
@@ -214,26 +214,26 @@ func (s *ProgramService) FindAllCodeRevisions(ctx context.Context, id uuid.UUID)
 	revList, err := s.q.FindProgramCodeRevisions(ctx, id)
 	if err != nil {
 		return nil, err
-	} else {
-		for _, t := range revList {
-			rev := &rest.CodeRevision{
-				Revision:  int(t.Revision),
-				Created:   t.Created,
-				CreatedBy: t.CreatedBy.String(),
-				Checksum:  string(t.Checksum),
-			}
+	}
 
-			if t.Signed.Valid {
-				v := t.Signed.Time
-				rev.Signed = &v
-			}
-			if t.SignedBy != NilUUID {
-				u := t.SignedBy.String()
-				rev.SignedBy = &u
-			}
-
-			revisions = append(revisions, rev)
+	for _, t := range revList {
+		rev := &rest.CodeRevision{
+			Revision:  int(t.Revision),
+			Created:   t.Created,
+			CreatedBy: t.CreatedBy.String(),
+			Checksum:  string(t.Checksum),
 		}
+
+		if t.Signed.Valid {
+			v := t.Signed.Time
+			rev.Signed = &v
+		}
+		if t.SignedBy != NilUUID {
+			u := t.SignedBy.String()
+			rev.SignedBy = &u
+		}
+
+		revisions = append(revisions, rev)
 	}
 
 	return revisions, nil
@@ -329,9 +329,9 @@ func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, 
 		if err != nil {
 			tx.Rollback()
 			return 0, err
-		} else {
-			count += c
 		}
+
+		count += c
 	}
 
 	if p.Type != nil {
@@ -342,9 +342,9 @@ func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, 
 		if err != nil {
 			tx.Rollback()
 			return 0, err
-		} else {
-			count += c
 		}
+
+		count += c
 	}
 
 	if p.State != nil {
@@ -355,9 +355,9 @@ func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, 
 		if err != nil {
 			tx.Rollback()
 			return 0, err
-		} else {
-			count += c
 		}
+
+		count += c
 	}
 
 	if p.Schedule != nil {
@@ -368,9 +368,9 @@ func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, 
 		if err != nil {
 			tx.Rollback()
 			return 0, err
-		} else {
-			count += c
 		}
+
+		count += c
 	}
 
 	if p.Deadline != nil {
@@ -381,9 +381,9 @@ func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, 
 		if err != nil {
 			tx.Rollback()
 			return 0, err
-		} else {
-			count += c
 		}
+
+		count += c
 	}
 
 	if p.Language != nil {
@@ -394,9 +394,9 @@ func (s *ProgramService) UpdateProgramByUuid(ctx context.Context, id uuid.UUID, 
 		if err != nil {
 			tx.Rollback()
 			return 0, err
-		} else {
-			count += c
 		}
+
+		count += c
 	}
 
 	if p.Tags != nil {
