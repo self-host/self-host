@@ -14,13 +14,6 @@ import (
 	"github.com/self-host/self-host/postgres"
 )
 
-type FindAllPoliciesParams struct {
-	Token      []byte
-	Limit      *int64
-	Offset     *int64
-	GroupUuids *[]uuid.UUID
-}
-
 // PolicyService represents the repository used for interacting with Policy records.
 type PolicyService struct {
 	q  *postgres.Queries
@@ -35,14 +28,7 @@ func NewPolicyService(db *sql.DB) *PolicyService {
 	}
 }
 
-type NewPolicyParams struct {
-	GroupUuid uuid.UUID
-	Priority  int32
-	Effect    string
-	Action    string
-	Resource  string
-}
-
+// Check if the policy exists
 func (u *PolicyService) Exists(ctx context.Context, id uuid.UUID) (bool, error) {
 	found, err := u.q.ExistsPolicy(ctx, id)
 	if err != nil {
@@ -52,6 +38,16 @@ func (u *PolicyService) Exists(ctx context.Context, id uuid.UUID) (bool, error) 
 	return found > 0, nil
 }
 
+// Parameters for creating a new policy
+type NewPolicyParams struct {
+	GroupUuid uuid.UUID
+	Priority  int32
+	Effect    string
+	Action    string
+	Resource  string
+}
+
+// Add a new policy
 func (s *PolicyService) Add(ctx context.Context, p NewPolicyParams) (*rest.Policy, error) {
 	policy, err := s.q.CreatePolicy(ctx, postgres.CreatePolicyParams{
 		GroupUuid: p.GroupUuid,
@@ -73,6 +69,7 @@ func (s *PolicyService) Add(ctx context.Context, p NewPolicyParams) (*rest.Polic
 	}, nil
 }
 
+// Find all policies for a group
 func (s *PolicyService) FindByGroup(ctx context.Context, groupUUID uuid.UUID) ([]*rest.Policy, error) {
 	policies := make([]*rest.Policy, 0)
 
@@ -102,6 +99,7 @@ func (s *PolicyService) FindByGroup(ctx context.Context, groupUUID uuid.UUID) ([
 	return policies, nil
 }
 
+// Find all policies for a user
 func (s *PolicyService) FindByUser(ctx context.Context, userUUID uuid.UUID) ([]*rest.Policy, error) {
 	policies := make([]*rest.Policy, 0)
 
@@ -131,6 +129,7 @@ func (s *PolicyService) FindByUser(ctx context.Context, userUUID uuid.UUID) ([]*
 	return policies, nil
 }
 
+// Find a single policy matching a the UUID
 func (s *PolicyService) FindByUuid(ctx context.Context, policyUUID uuid.UUID) (*rest.Policy, error) {
 	item, err := s.q.FindPolicyByUUID(ctx, policyUUID)
 	if err != nil {
@@ -147,6 +146,15 @@ func (s *PolicyService) FindByUuid(ctx context.Context, policyUUID uuid.UUID) (*
 	}, nil
 }
 
+// Structure used as parameters for FindAll
+type FindAllPoliciesParams struct {
+	Token      []byte
+	Limit      *int64
+	Offset     *int64
+	GroupUuids *[]uuid.UUID
+}
+
+// Find all policies matching the criteria
 func (s *PolicyService) FindAll(ctx context.Context, p FindAllPoliciesParams) ([]*rest.Policy, error) {
 	policies := make([]*rest.Policy, 0)
 
@@ -184,6 +192,7 @@ func (s *PolicyService) FindAll(ctx context.Context, p FindAllPoliciesParams) ([
 	return policies, nil
 }
 
+// Parameters for updating a policy
 type UpdatePolicyParams struct {
 	GroupUuid *uuid.UUID
 	Priority  *int
@@ -192,6 +201,7 @@ type UpdatePolicyParams struct {
 	Resource  *string
 }
 
+// Update/Modify an existing policy
 func (s *PolicyService) Update(ctx context.Context, id uuid.UUID, p UpdatePolicyParams) (int64, error) {
 	var count int64
 
@@ -276,6 +286,7 @@ func (s *PolicyService) Update(ctx context.Context, id uuid.UUID, p UpdatePolicy
 	return count, nil
 }
 
+// Delete a policy
 func (s *PolicyService) Delete(ctx context.Context, id uuid.UUID) (int64, error) {
 	var count int64
 
