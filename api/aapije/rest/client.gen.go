@@ -214,9 +214,6 @@ type ClientInterface interface {
 	// ExecuteProgramWebhook request
 	ExecuteProgramWebhook(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// SearchForElements request
-	SearchForElements(ctx context.Context, params *SearchForElementsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// FindThings request
 	FindThings(ctx context.Context, params *FindThingsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -823,18 +820,6 @@ func (c *Client) SignProgramCodeRevisions(ctx context.Context, uuid UuidParam, r
 
 func (c *Client) ExecuteProgramWebhook(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewExecuteProgramWebhookRequest(c.Server, uuid)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) SearchForElements(ctx context.Context, params *SearchForElementsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewSearchForElementsRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -2897,101 +2882,6 @@ func NewExecuteProgramWebhookRequest(server string, uuid UuidParam) (*http.Reque
 	return req, nil
 }
 
-// NewSearchForElementsRequest generates requests for SearchForElements
-func NewSearchForElementsRequest(server string, params *SearchForElementsParams) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/v2/search/tags")
-	if operationPath[0] == '/' {
-		operationPath = operationPath[1:]
-	}
-	operationURL := url.URL{
-		Path: operationPath,
-	}
-
-	queryURL := serverURL.ResolveReference(&operationURL)
-
-	queryValues := queryURL.Query()
-
-	if params.Offset != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	if params.Limit != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	if params.Tags != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "tags", runtime.ParamLocationQuery, *params.Tags); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	if params.Ns != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "ns", runtime.ParamLocationQuery, *params.Ns); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
-			}
-		}
-
-	}
-
-	queryURL.RawQuery = queryValues.Encode()
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
 // NewFindThingsRequest generates requests for FindThings
 func NewFindThingsRequest(server string, params *FindThingsParams) (*http.Request, error) {
 	var err error
@@ -3868,20 +3758,16 @@ func NewFindTsdataByQueryRequest(server string, params *FindTsdataByQueryParams)
 
 	queryValues := queryURL.Query()
 
-	if params.Uuids != nil {
-
-		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "uuids", runtime.ParamLocationQuery, *params.Uuids); err != nil {
-			return nil, err
-		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-			return nil, err
-		} else {
-			for k, v := range parsed {
-				for _, v2 := range v {
-					queryValues.Add(k, v2)
-				}
+	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "uuids", runtime.ParamLocationQuery, params.Uuids); err != nil {
+		return nil, err
+	} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+		return nil, err
+	} else {
+		for k, v := range parsed {
+			for _, v2 := range v {
+				queryValues.Add(k, v2)
 			}
 		}
-
 	}
 
 	if queryFrag, err := runtime.StyleParamWithLocation("form", true, "start", runtime.ParamLocationQuery, params.Start); err != nil {
@@ -4609,9 +4495,6 @@ type ClientWithResponsesInterface interface {
 
 	// ExecuteProgramWebhook request
 	ExecuteProgramWebhookWithResponse(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*ExecuteProgramWebhookResponse, error)
-
-	// SearchForElements request
-	SearchForElementsWithResponse(ctx context.Context, params *SearchForElementsParams, reqEditors ...RequestEditorFn) (*SearchForElementsResponse, error)
 
 	// FindThings request
 	FindThingsWithResponse(ctx context.Context, params *FindThingsParams, reqEditors ...RequestEditorFn) (*FindThingsResponse, error)
@@ -5471,27 +5354,6 @@ func (r ExecuteProgramWebhookResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r ExecuteProgramWebhookResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type SearchForElementsResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-}
-
-// Status returns HTTPResponse.Status
-func (r SearchForElementsResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r SearchForElementsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -6459,15 +6321,6 @@ func (c *ClientWithResponses) ExecuteProgramWebhookWithResponse(ctx context.Cont
 		return nil, err
 	}
 	return ParseExecuteProgramWebhookResponse(rsp)
-}
-
-// SearchForElementsWithResponse request returning *SearchForElementsResponse
-func (c *ClientWithResponses) SearchForElementsWithResponse(ctx context.Context, params *SearchForElementsParams, reqEditors ...RequestEditorFn) (*SearchForElementsResponse, error) {
-	rsp, err := c.SearchForElements(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseSearchForElementsResponse(rsp)
 }
 
 // FindThingsWithResponse request returning *FindThingsResponse
@@ -7610,25 +7463,6 @@ func ParseExecuteProgramWebhookResponse(rsp *http.Response) (*ExecuteProgramWebh
 	}
 
 	response := &ExecuteProgramWebhookResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	}
-
-	return response, nil
-}
-
-// ParseSearchForElementsResponse parses an HTTP response from a SearchForElementsWithResponse call
-func ParseSearchForElementsResponse(rsp *http.Response) (*SearchForElementsResponse, error) {
-	bodyBytes, err := ioutil.ReadAll(rsp.Body)
-	defer rsp.Body.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &SearchForElementsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}

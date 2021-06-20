@@ -322,9 +322,6 @@ type LessOrEqParam float32
 // LimitParam defines model for limitParam.
 type LimitParam int64
 
-// NamespaceParam defines model for namespaceParam.
-type NamespaceParam string
-
 // OffsetParam defines model for offsetParam.
 type OffsetParam int64
 
@@ -348,9 +345,6 @@ type TimezoneParam string
 
 // UuidParam defines model for uuidParam.
 type UuidParam string
-
-// UuidsParam defines model for uuidsParam.
-type UuidsParam []string
 
 // NewDataset defines model for NewDataset.
 type NewDataset struct {
@@ -690,22 +684,6 @@ type GetProgramCodeRevisionsDiffParams struct {
 	RevB int `json:"rev_b"`
 }
 
-// SearchForElementsParams defines parameters for SearchForElements.
-type SearchForElementsParams struct {
-
-	// The number of items to skip before starting to collect the result set.
-	Offset *OffsetParam `json:"offset,omitempty"`
-
-	// The numbers of items to return.
-	Limit *LimitParam `json:"limit,omitempty"`
-
-	// Array of tags to search for
-	Tags *TagsFilterParam `json:"tags,omitempty"`
-
-	// Limit to the specific namespace. Allowed options; `datasets`, `things`, `timeseries` and `programs`.
-	Ns *NamespaceParam `json:"ns,omitempty"`
-}
-
 // FindThingsParams defines parameters for FindThings.
 type FindThingsParams struct {
 
@@ -796,7 +774,7 @@ type AddDataToTimeseriesParams struct {
 type FindTsdataByQueryParams struct {
 
 	// A series of timeseries UUIDs to search for
-	Uuids *UuidsParam `json:"uuids,omitempty"`
+	Uuids []string `json:"uuids"`
 
 	// Start of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
 	Start RangeStartParam `json:"start"`

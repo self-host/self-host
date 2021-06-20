@@ -2785,8 +2785,16 @@ paths:
         Query one or several Time series for data.
       operationId: find tsdata by query
       parameters:
-        - $ref: '#/components/parameters/uuidsParam'
+        - in: query
+          name: uuids
           description: A series of timeseries UUIDs to search for
+          required: true
+          example: ['1896048c-bdc9-43c4-af41-4a946b9a341e']
+          schema:
+            type: array
+            maxLength: 10
+            items:
+              type: string
         - $ref: '#/components/parameters/rangeStartParam'
         - $ref: '#/components/parameters/rangeEndParam'
         - $ref: '#/components/parameters/greaterOrEqParam'

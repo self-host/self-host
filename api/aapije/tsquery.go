@@ -54,7 +54,7 @@ func (ra *RestApi) FindTsdataByQuery(w http.ResponseWriter, r *http.Request, p r
 	svc := services.NewTimeseriesService(db)
 	policySvc := services.NewPolicyCheckService(db)
 
-	uuids, err := util.StringSliceToUuidSlice([]string(*p.Uuids))
+	uuids, err := util.StringSliceToUuidSlice([]string(p.Uuids))
 	if err != nil {
 		ie.SendHTTPError(w, ie.NewBadRequestError(fmt.Errorf("uuids has invalid format")))
 		return
