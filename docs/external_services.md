@@ -12,7 +12,7 @@ However, from a deployment viewpoint, one can argue that having multiple separat
 
 Our response to this is to use Self-host `programs` to trigger external services and `Datasets` as a way to manage parametric configuration centrally.
 
-Note that we don't expect one (rightfully so) to store settings such as `listening interface`, `database passwords` and other secrets necessary for the external service to start in a `dataset`. What should go into a `dataset` is `execution` specific arguments, such as Self-host `time-series UUID's, `things UUIDs`, `period ranges` etc. Configurable parameters used as input when triggering an external service.
+Note that we don't expect one (rightfully so) to store settings such as `listening interface`, `database passwords` and other secrets necessary for the external service to start in a `dataset`. What should go into a `dataset` is `execution` specific arguments, such as Self-host `time-series UUID's`, `things UUIDs`, `period ranges` etc. Configurable parameters used as input when triggering an external service.
 
 For example, instead of storing program-specific settings in a program, a dataset can be used, which the program loads on each execution. It then performs its task based on that input. It is possible that another dataset could be referenced by the first as input to an external service, something the program would use as part of the POST data to the external service.
 
