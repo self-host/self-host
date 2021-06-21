@@ -2684,7 +2684,12 @@ paths:
       description: |
         Query a Timeseries range for data.
         
-        **Note**: `ge > le: ge <= x OR x <= le` and `le >= ge: ge <= x <= le` are both allowed. Resulting in a range `outside` of the window and a range `inside` of the window respectivly.
+        ### Greater or equal and Less or equal checks
+        
+        These checks execute after the aggregate computation, which means that one can filter on the computed result value but not on the inputs going into the aggregate computation.
+        
+        `ge > le: ge <= x OR x <= le` and `le >= ge: ge <= x <= le` are both allowed. Resulting in a range `outside` of the window and a range `inside` of the window respectivly.
+
       operationId: query timeseries for data
       responses:
         '200':
@@ -2782,6 +2787,13 @@ paths:
       summary: Query for data from Time series.
       description: |
         Query one or several Time series for data.
+        
+        ### Greater or equal and Less or equal checks
+        
+        These checks execute after the aggregate computation, which means that one can filter on the computed result value but not on the inputs going into the aggregate computation.
+        
+        `ge > le: ge <= x OR x <= le` and `le >= ge: ge <= x <= le` are both allowed. Resulting in a range `outside` of the window and a range `inside` of the window respectivly.
+
       operationId: find tsdata by query
       parameters:
         - in: query
