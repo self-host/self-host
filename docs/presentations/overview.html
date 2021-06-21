@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Mikael Ganehag Brorsson @ganehag">
+  <meta name="dcterms.date" content="2021-06-21">
+  <title>Self-host: an Overview</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/css/reset.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/css/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/css/theme/league.css" id="theme">
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/css/print/pdf.css' : 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Self-host: an Overview</h1>
+  <p class="author">Mikael Ganehag Brorsson <span class="citation" data-cites="ganehag">@ganehag</span></p>
+  <p class="date">2021-06-21</p>
+</section>
+
+<section class="slide level2">
+
+<h3 id="what-is-the-self-host">What is the Self-host</h3>
+<p>The Self-host is;</p>
+<ul>
+<li>A complete environment to run the Self-host API.</li>
+<li>A time-series store and dataset store.</li>
+<li>An open API interface specification.</li>
+<li>Free and open source <a href="https://github.com/self-host/self-host">software</a>.</li>
+<li>Not necessarily the only solution.</li>
+<li>Spartacus.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="why-does-it-exist">Why does it exist?</h3>
+<p>We at Noda want to provide an alternative to our hosted solution as we are experiencing a growing need for customers to be in complete control. As a way to give that level of control, we have come up with the Self-host solution.</p>
+<p>As a way to ensure the future of the solution, we decided early on that it should be available to everyone as <a href="#/freelibre-software-and-open-source">free and open source software</a>.</p>
+</section>
+<section class="slide level2">
+
+<h3 id="the-target-audience">The target audience</h3>
+<p>Medium to large organization with the requirement that solutions should run under their banner and not in someones else’s environment.</p>
+<p>Examples are;</p>
+<ul>
+<li>Utility companies</li>
+<li>Property owners</li>
+<li>Research institutes</li>
+<li>Integrators</li>
+</ul>
+</section>
+<section>
+<section id="components-of-the-system" class="title-slide slide level1">
+<h1>Components of the system</h1>
+
+</section>
+<section id="overview" class="slide level2">
+<h2>Overview</h2>
+<p><img data-src="https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/overview.svg" title="Overview" /></p>
+</section>
+<section id="details" class="slide level2">
+<h2>Details</h2>
+<ul>
+<li>One (or more) instances of the <strong>Self-host API server</strong>.</li>
+<li>One instance of the <strong>Program Manager</strong>.</li>
+<li>One (or more) instances of the <strong>Program Worker</strong>.</li>
+<li>One (or more) DBMS to host all Self-host databases (Domains).</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="the-api-server-aapije">The API server (Aapije)</h3>
+<p>The server accepts client request from either the internet or from the <em>intranet</em>. Exposes an interface to the data in the <strong>Domain databases</strong>.</p>
+</section>
+<section class="slide level2">
+
+<h3 id="the-program-manager-juvuln">The Program Manager (Juvuln)</h3>
+<p>The program manager tracks all programs from all domains and submits program execution tasks to instances of the Program Worker.</p>
+</section>
+<section class="slide level2">
+
+<h3 id="the-program-worker-malgomaj">The Program Worker (Malgomaj)</h3>
+<p>Executes program code to perform various tasks like requests to external services on the <em>internet</em> or <em>intranet</em>, for example, the API server.</p>
+</section>
+<section class="slide level2">
+
+<h3 id="notes">Notes</h3>
+<ul>
+<li>An <strong>HTTP Proxy</strong> may/should be used in front of the <strong>API server</strong> depending on the deployment scenario.</li>
+<li>The API server (Aapije) and Program Worker (Malgomaj) supports horizontal scaling.</li>
+<li>You can spread domains over several DBMS:s. However, one domain can not be split over several different DBMS:s.</li>
+<li>We recommend pgBouncer as a database connection proxy.</li>
+</ul>
+</section></section>
+<section>
+<section id="the-api-specification" class="title-slide slide level1">
+<h1>The API specification</h1>
+
+</section>
+<section id="everything-is-on-github" class="slide level2">
+<h2>Everything is on GitHub</h2>
+<h4 id="api-specification">API specification</h4>
+<p><a href="https://github.com/self-host/self-host/blob/main/api/aapije/rest/openapiv3.yaml">https://github.com/self-host/self-host/blob/main/api/aapije/rest/openapiv3.yaml</a></p>
+<h4 id="swagger-ui-interface">Swagger UI interface</h4>
+<p><a href="https://petstore.swagger.io/?url=https://raw.githubusercontent.com/self-host/self-host/main/api/aapije/rest/openapiv3.yaml">Self-host API</a></p>
+</section>
+<section id="it-is-open" class="slide level2">
+<h2>It is Open</h2>
+<p>If you don’t feel like using our Self-host implementation, then you are free to implement the REST API specification using any language or system that you please.</p>
+<p><em>Make it yours.</em></p>
+</section></section>
+<section>
+<section id="design" class="title-slide slide level1">
+<h1>Design</h1>
+
+</section>
+<section id="the-abridged-version" class="slide level2">
+<h2>The abridged version</h2>
+<p>The Self-host has at the time of writing seven core concepts;</p>
+<ul>
+<li><strong>Users</strong>: required for access to the API.</li>
+<li><strong>Groups</strong>: a way to easily manage user access.</li>
+<li><strong>Policies</strong>: access controls for groups.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<ul>
+<li><strong>Timeseries</strong>: a series of numerical data points in time.</li>
+<li><strong>Things</strong>: a way to group time series.</li>
+<li><strong>Datasets</strong>: files that can store complex data types such as configuration.</li>
+<li><strong>Programs</strong>: Self-host managed small pieces of code to perform simple tasks.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="database">Database</h3>
+<p>We designed the Self-host to use PostgreSQL v12+ because;</p>
+<ul>
+<li>We have good experience with it.</li>
+<li>It is free and open-source software.</li>
+<li>It is well maintained.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="golang">Go(lang)</h3>
+<p>We decided to write the Self-host in Go because;</p>
+<ul>
+<li>The source code compiles to a binary.</li>
+<li>Cross-compilation (for different platforms) is a breeze.</li>
+<li>Static typing helps to prevent stupid mistakes.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="tengo">Tengo</h3>
+<p>The script language we choose for the program execution environment is called <a href="https://github.com/d5/tengo">Tengo</a>.</p>
+<p>It allows one to quickly deploy small pieces of code to perform simple tasks without creating a new software development project.</p>
+<p>It is our aim to in the future provide a library index of common programs, making it even easier to set up new programs quickly.</p>
+</section></section>
+<section>
+<section id="deployment" class="title-slide slide level1">
+<h1>Deployment</h1>
+
+</section>
+<section id="prebuilt-containers" class="slide level2">
+<h2>Prebuilt Containers</h2>
+<p>To simplify deployment, we provide prebuilt docker containers of the three main components. API server (Aapije), Program Manager (Juvuln) and Program Worker (Malgomaj).</p>
+<p><a href="https://hub.docker.com/u/selfhoster">https://hub.docker.com/u/selfhoster</a></p>
+</section>
+<section id="docker" class="slide level2">
+<h2>Docker</h2>
+<p>The containers we provide are built for Docker.</p>
+<p>You can use either Docker directly via the CLI or <a href="https://www.docker.com/products/docker-desktop">Docker Desktop</a> for local development.</p>
+<p>For some tips and guidelines, check out our <a href="https://github.com/self-host/self-host/blob/main/docs/docker_deployment.md">documentation</a>.</p>
+</section>
+<section id="kubernetes" class="slide level2">
+<h2>Kubernetes</h2>
+<p>For reliable production deployment, Kubernetes has become the de-facto standard.</p>
+<p>Our prebuilt Docker images workes just as well in a Kubernetes environment as in a Docker environment.</p>
+<p>For some tips and guidelines, check out our <a href="https://github.com/self-host/self-host/blob/main/docs/k8s_deployment.md">documentation</a>.</p>
+</section></section>
+<section>
+<section id="freelibre-software-and-open-source" class="title-slide slide level1">
+<h1>Free/Libre software and Open Source</h1>
+
+</section>
+<section id="what-is-what" class="slide level2">
+<h2>What is what?</h2>
+<p>The terms “free software” and “open source” stand for almost the same range of programs. However, they say profoundly different things about those programs and are based on different values. The open-source idea values mainly practical advantage and does not campaign for principles. While free or libre software aims to provide freedom for the users. The freedom to modify, fix and extend as they see fit.</p>
+</section>
+<section id="so-it-is-essentially-the-same-thing" class="slide level2">
+<h2>So it is essentially the same thing?</h2>
+<p>It depends on how you look at it. But, yes.</p>
+</section></section>
+<section id="questions" class="title-slide slide level1">
+<h1>Questions?</h1>
+<p>…</p>
+</section>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Push each slide change to the browser history
+        history: true,
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/plugin/zoom-js/zoom.js', async: true },
+          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+    </body>
+</html>
