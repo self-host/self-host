@@ -117,7 +117,7 @@ With some data point in our time series, we can now query data from it.
 ```
 11. Let's try with something else. Maybe `kWh`. What will happen?
 12. What you will get is an HTTP 400 error, with the message "*Unable to convert to the requested unit*" because it is impossible to convert from C to kWh.
-13. Change back to C for the unit and set the `precision to **hour** and the `aggregate` to `count`.
+13. Change back to C for the unit and set the `precision` to **hour** and the `aggregate` to `count`.
 14. The result you get depends on the number of data points in the giver period and the range of the period. As we are truncating each timestamp on the hour, then performing a `count` operation on the result, what we are left with is, as might have surmised already, is the number of data points for an hour.
 
 ### Delete data from a time series
