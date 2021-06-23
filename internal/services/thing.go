@@ -55,11 +55,16 @@ func (svc *ThingService) AddThing(ctx context.Context, p *AddThingParams) (*rest
 		return nil, err
 	}
 
-	q := svc.q.WithTx(tx)
+	tags := make([]string, 0)
+	if p.Tags != nil {
+		for _, tag := range p.Tags {
+			tags = append(tags, tag)
+		}
+	}
 
 	params := postgres.CreateThingParams{
 		Name: p.Name,
-		Tags: p.Tags,
+		Tags: tags,
 	}
 
 	if p.Type != nil {
@@ -69,6 +74,8 @@ func (svc *ThingService) AddThing(ctx context.Context, p *AddThingParams) (*rest
 	if p.CreatedBy != nil {
 		params.CreatedBy = *p.CreatedBy
 	}
+
+	q := svc.q.WithTx(tx)
 
 	thing, err := q.CreateThing(ctx, params)
 	if err != nil {
