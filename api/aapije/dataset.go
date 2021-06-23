@@ -265,7 +265,7 @@ func (ra *RestApi) InitializeDatasetUploadByUuid(w http.ResponseWriter, r *http.
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
-// DeleteDatasetUploadByKey cancels a partialy completed upload
+// DeleteDatasetUploadByKey cancels a partially completed upload
 func (ra *RestApi) DeleteDatasetUploadByKey(w http.ResponseWriter, r *http.Request, id rest.UuidParam, p rest.DeleteDatasetUploadByKeyParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
