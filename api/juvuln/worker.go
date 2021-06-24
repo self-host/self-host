@@ -25,6 +25,7 @@ func (w *Worker) SetLoad(l uint64) {
 	w.Lock()
 	defer w.Unlock()
 	w.load = l
+	w.lastSeen = time.Now()
 }
 
 func (w *Worker) GetLoad() uint64 {
