@@ -14,7 +14,7 @@ Go ahead and access it now.
 
 Authenticate with any user you like, but the user requires **full access** to the entire system. For simplicity's sake, use the root user if you are using your local development environment.
 
-*You did remember to change the server URL and add your credentials via the authorize button, right!?*
+*You remember to change the server URL and add your credentials via the authorize button, right!?*
 
 ---
 
@@ -69,7 +69,7 @@ Let's start with something simple. Let's create a time series to store a tempera
 
 ---
 
-7. Scroll down below the response example. There should be a response looking similar to this, yet with another UUID.
+7. Scroll down to the response section. There should be a response looking similar to this, yet with another UUID.
 
     ```json
     {
@@ -121,7 +121,7 @@ Now, let's add a few data points to our new time series.
 
 ---
 
-6. Scroll down below the response example. As you can see, we got nothing more than an HTTP 201 (Created) response from the server. This response means that everything is OK and that the server stored the data in the database.
+6. Scroll down to the response section. As you can see, we got nothing more than an HTTP 201 (Created) response from the server. This response means that everything is OK and that the server stored the data in the database.
 
 7. Let's scroll back up and click on the blue `Execute` button again.
 
@@ -150,7 +150,7 @@ With some data point in our time series, we can now query data from it.
 
 ---
 
-1. Scroll to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/QueryTimeseriesForData">GET /v2/timeseries/{uuid}/data</a> field, located right above the field from the last section and expand it.
+1. Navigate to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/QueryTimeseriesForData">GET /v2/timeseries/{uuid}/data</a> field, located right above the field from the last section and expand it.
 
 2. Click on the *Try it out* button.
 
@@ -166,7 +166,7 @@ With some data point in our time series, we can now query data from it.
 
 ---
 
-7. Scroll down below the response example. There should be a response similar to this, yet with different timestamps, possibly different values and numbers of items.
+7. Scroll down to the response section. There should be a similar response, yet with different timestamps, possibly different values and numbers of items.
 
     ```json
     [
@@ -198,7 +198,7 @@ With some data point in our time series, we can now query data from it.
 
 ---
 
-10. Scroll down below the response example. There should be a response looking similar to this, yet with (possibly) different elements. Moreso, as you can see, the value is not the same as before; it is converted from Celsius to Fahrenheit.
+10. Scroll down to the response section. There should be a response looking similar to this, yet with (possibly) different elements. Moreso, as you can see, the value is not the same as before; it is converted from Celsius to Fahrenheit.
 
     ```json
     [
@@ -259,7 +259,7 @@ For the final step in this segment, let's remove one of our data points.
 
 ---
 
-6. Scroll down below the response example. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server removed any data in the range from the database.
+6. Scroll down to the response section. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server removed any data in the range from the database.
 
 7. If you want to verify this, you can go back to the previous section and perform a new query over the same period; you shall have one data point less than before.
 
@@ -296,7 +296,7 @@ A thing is a collection of time series, representing... anything.
 
 ---
 
-5. Scroll down below the response example. There should be a response looking similar to this, yet with another UUID.
+5. Scroll down to the response section. There should be a response looking similar to this, yet with another UUID.
 
     ```json
     {
@@ -350,7 +350,7 @@ We now have one time series, and one thing, let's connect them.
 
 ---
 
-6. Scroll down below the response example. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.
+6. Scroll down to the response section. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.
 
 
 ## List time series assigned to a Thing
@@ -369,7 +369,7 @@ With our time series assigned to a thing, let's query the thing for a list of ti
 
 ---
 
-5. Scroll down below the response example. The response you get shall look similar to this;
+5. Scroll down to the response section. The response you get shall look similar to this;
 
     ```json
     [
@@ -445,7 +445,7 @@ Datasets are in themselves not used by the API server. They are used by external
 
 ---
 
-5. Scroll down below the response example. The response you get shall look similar to this;
+5. Scroll down to the response section. The response you get shall look similar to this;
 
     ```{.json data-line-numbers="|2|3-4|5|7|10-11|12" data-id="code-animation"}
     {
@@ -483,7 +483,7 @@ With our data set created. Let's find out what content it is hiding.
 
 ---
 
-5. Scroll down below the response example. The response you get shall look like this;
+5. Scroll down to the response section. The response you get shall look like this;
 
     ```text
     hello, world!
@@ -520,7 +520,7 @@ Let's change the content and format of our dataset to something else.
 
 ---
 
-6. Scroll down below the response example. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.
+6. Scroll down to the response section. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.
 
 ---
 
@@ -530,7 +530,7 @@ Let's change the content and format of our dataset to something else.
 
 ---
 
-9. Scroll down below the response example. The response you get shall now look like this;
+9. Scroll down to the response section. The response you get shall now look like this;
 
     ```yaml
     ---
@@ -588,7 +588,7 @@ While the first tag is obvious to humans, the second one is the identifier assig
 
 ---
 
-1. Scroll to the orange <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/UpdateTimeseriesByUuid">PUT /v2/timeseries/{uuid}</a> field and expand it.
+1. Navigate to the orange <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/UpdateTimeseriesByUuid">PUT /v2/timeseries/{uuid}</a> field and expand it.
 
 2. Click on the *Try it out* button.
 
@@ -610,11 +610,11 @@ While the first tag is obvious to humans, the second one is the identifier assig
 
 ---
 
-6. Scroll down below the response example. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.
+6. Scroll down to the response section. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.
 
 ---
 
-7. If you want to, you can scroll to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/FindTimeSeriesByUuid">GET /v2/timeseries/{uuid}</a> field, input the time series UUID, and execute the request to validate that the tags are indeed there.
+7. If you want to, you can Navigate to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/FindTimeSeriesByUuid">GET /v2/timeseries/{uuid}</a> field, input the time series UUID, and execute the request to validate that the tags are indeed there.
 
 ## Adding tags to things, datasets and programs
 
@@ -653,7 +653,7 @@ The interface is the same. The only difference is the specific URLs.
 
 ---
 
-1. Scroll to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/FindTimeSeries">GET /v2/timeseries</a> field and expand it.
+1. Navigate to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/FindTimeSeries">GET /v2/timeseries</a> field and expand it.
 
 2. Click on the *Try it out* button.
 
@@ -665,7 +665,7 @@ The interface is the same. The only difference is the specific URLs.
 
 ---
 
-5. Scroll down below the response example. The response you get shall look similar to this;
+5. Scroll down to the response section. The response you get shall look similar to this;
 
     ```{.json data-line-numbers="|1,15|2-14" data-id="code-animation"}
     [
@@ -708,7 +708,7 @@ The interface is the same. The only difference is the specific URLs.
 
 ---
 
-12. Scroll down below the response example. The response you get shall look similar to this;
+12. Scroll down to the response section. The response you get shall look similar to this;
 
     ```{.json data-line-numbers="" data-id="code-animation"}
     []
@@ -720,7 +720,7 @@ The interface is the same. The only difference is the specific URLs.
 
 ---
 
-14. Scroll down below the response example. The response you get shall look similar to this;
+14. Scroll down to the response section. The response you get shall look similar to this;
 
     ```{.json data-line-numbers="|8|1,15|" data-id="code-animation"}
     [
@@ -762,7 +762,7 @@ Let's wire it all together.
 
 ---
 
-1. Scroll to the green <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/programs/AddProgram">POST /v2/programs</a> field and expand it.
+1. Navigate to the green <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/programs/AddProgram">POST /v2/programs</a> field and expand it.
 
 2. Click on the *Try it out* button.
 
@@ -789,7 +789,7 @@ Let's wire it all together.
 
 ---
 
-5. Scroll down below the response example. There should be a response looking similar to this, yet with another UUID.
+5. Scroll down to the response section. There should be a response looking similar to this, yet with another UUID.
 
     ```{.json data-line-numbers="|12|" data-id="code-animation"}
     {
@@ -837,7 +837,7 @@ Good! Now let's submit some code.
 
 ---
 
-1. Scroll to the green <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/programs/AddProgramCodeRevision">POST /v2/programs/{uuid}/code</a> field and expand it.
+1. Navigate to the green <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/programs/AddProgramCodeRevision">POST /v2/programs/{uuid}/code</a> field and expand it.
 
 2. Click on the *Try it out* button.
 
@@ -895,7 +895,7 @@ Good! Now let's submit some code.
 
 ---
 
-7. Scroll down below the response example. There should be a response looking similar to this.
+7. Scroll down to the response section. There should be a response looking similar to this.
 
     ```{.json data-line-numbers="|2|5|6,7|" data-id="code-animation"}
     {
@@ -921,7 +921,7 @@ Requiring the signing of a code revision is meant to avoid having code deployed 
 
 ---
 
-1. Scroll to the green <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/programs/SignProgramCodeRevisions">POST /v2/programs/{uuid}/revisions/{revision_id}/sign</a> field and expand it.
+1. Navigate to the green <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/programs/SignProgramCodeRevisions">POST /v2/programs/{uuid}/revisions/{revision_id}/sign</a> field and expand it.
 
 2. Click on the *Try it out* button.
 
@@ -931,7 +931,7 @@ Requiring the signing of a code revision is meant to avoid having code deployed 
 
 ---
 
-5. Scroll down below the response example. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.
+5. Scroll down to the response section. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.
 
 6. Revision 0 is now signed (by us <i class="fas fa-user-ninja"></i>) and the code will be deployed by the Program Manager.
 
@@ -942,7 +942,7 @@ Requiring the signing of a code revision is meant to avoid having code deployed 
 
 7. To verify this, we can go back and query the time series for data once more.
 
-8. Scroll to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/QueryTimeseriesForData">GET /v2/timeseries/{uuid}/data</a> field and expand it.
+8. Navigate to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/QueryTimeseriesForData">GET /v2/timeseries/{uuid}/data</a> field and expand it.
 
 9. Click on the *Try it out* button.
 
@@ -958,7 +958,7 @@ Requiring the signing of a code revision is meant to avoid having code deployed 
 
 ---
 
-14. Scroll down below the response example, and there it is.
+14. Scroll down to the response section, and there it is.
 
     ```{.json data-line-numbers="|2-5|6-9|10-13|" data-id="code-animation"}
     [
@@ -1044,14 +1044,121 @@ So far, we've been using the default access key; in production, We should replac
 
 ## Replacing the default access key
 
-## Rotating keys
+This process is relatively straightforward. First, we need to create a new token, store that token someplace secure, then delete the original token.
 
-While the rotation of keys is not implemented in the system itself, one can "easily" implement key rotations if this is a requirement by the organization.
+---
 
+1. Navigate to the green <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/users/AddNewTokenToUser">POST /v2/users/{uuid}/tokens</a> field and expand it.
+
+2. Click on the *Try it out* button.
+
+3. Erase the example UUID in the field and insert the root user UUID, which is always "00000000-0000-1000-8000-000000000000" on a fresh installation.
+
+4. Change the value of "name" in the request body. For this example, we choose;
+
+    ```json
+    {
+      "name": "New secure token"
+    }
+    ```
+
+5. Click on the blue `Execute` button.
+
+---
+
+6. Scroll down to the response section. There should be a response looking similar to this.
+
+    ```{.json data-line-numbers="|2|3|4|" data-id="code-animation"}
+    {
+      "name": "New secret token",
+      "secret": "secret-token.nfadcilv7cq2bpa56f43ngqc8wfx6p7tfp7v76e8",
+      "uuid": "8366b436-6897-4f89-8835-ed5092830a7f"
+    }
+    ```
+
+7. Copy the secret and store it someplace safe. Once the insecure token has been removed, this is the only way for you to access the system.
+
+---
+
+8. Click on any of the black padlocks in any of the sections. This action brings up the authorization dialogue.
+
+    Click on logout. Then input "test" as the user and the secret token the server has generated for us.
+
+    Click on authorize, then close the dialogue.
+
+    You are now using the new secure token instead of the old insecure one.
+
+---
+
+9. Navigate to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/users/FindTokensForUser">GET /v2/users/{uuid}/tokens</a> field and expand it.
+
+10. Click on the *Try it out* button.
+
+11. Erase the example UUID in the field and insert the root user UUID, which is always "00000000-0000-1000-8000-000000000000" on a fresh installation.
+
+12. Click on the blue `Execute` button.
+
+---
+
+13. Scroll down to the response section. There should be a response looking similar to this.
+
+    ```json
+    [
+      {
+        "created": "2021-06-17T07:53:56.622235+02:00",
+        "name": "Main admin token",
+        "uuid": "ca898044-16d4-4891-9276-c26819e0b9fa"
+      },
+      {
+        "created": "2021-06-24T20:24:50.029749+02:00",
+        "name": "New secret token",
+        "uuid": "8366b436-6897-4f89-8835-ed5092830a7f"
+      }
+    ]
+    ```
+14. Copy the UUID from the old token. The name is "Main admin token".
+
+---
+
+15. Navigate to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/users/DeleteTokenForUser">GET /v2/users/{uuid}/tokens/{token_uuid}</a> field and expand it.
+
+16. Erase the example UUID in the field and insert the root user UUID, which is always "00000000-0000-1000-8000-000000000000" on a fresh installation. Also, enter the token UUID you just copies.
+
+17. Scroll down to the response section. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has deleted the target.
+
+---
+
+#### The system is now free from insecure tokens.
+
+## Key rotation
+
+It is the process of replacing existing keys with new ones.
+
+---
+
+While the rotation of keys is not implemented in the system itself, one can "easily" implement key rotation if this is a requirement by the organization.
+
+A custom automated solution, backed with a secure store and key distribution solution, can easily rotate the keys as often as you want.
+
+---
+
+## Exposing ports
+
+Never expose a system on a port without requiring authentication to access it.
+
+This rule is often bent on private networks. An unwanted behaviour because anything on a network is a potential target for an infected machine. And for as long as anything on the network can get infected, this problem remains.
+
+In the end, it is better to be safe than sorry.
+
+---
+
+That is it. Thank you for your patience.
+
+![You made it!][use-the-force-link]
 
 # The Code
 
-Along with documentat, is available at;
+Everything is available on GitHub;
 
 [https://github.com/self-host/self-host](https://github.com/self-host/self-host)
 
@@ -1064,3 +1171,4 @@ Now is the time to ask them.
 [dangerous-to-go-alone]: https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/its_dangerous_to_go_alone.png "It's dangerous to go alone"
 [you-received-an-item]: https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/you_received_an_item.png "You received an item!"
 [onwards-and-upwards]: https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/onwards_and_upwards.png "On to the next section!"
+[use-the-force-link]: https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/use_the_force_link.png "Hey, listen!"

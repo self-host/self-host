@@ -43,7 +43,7 @@
 <p>Throughout this guide, we will use the Swagger UI interface embedded in the Self-host API server.</p>
 <p>Go ahead and access it now.</p>
 <p>Authenticate with any user you like, but the user requires <strong>full access</strong> to the entire system. For simplicity’s sake, use the root user if you are using your local development environment.</p>
-<p><em>You did remember to change the server URL and add your credentials via the authorize button, right!?</em></p>
+<p><em>You remember to change the server URL and add your credentials via the authorize button, right!?</em></p>
 </section>
 <section class="slide level2">
 
@@ -93,7 +93,7 @@
 <section class="slide level2">
 
 <ol start="7" type="1">
-<li><p>Scroll down below the response example. There should be a response looking similar to this, yet with another UUID.</p>
+<li><p>Scroll down to the response section. There should be a response looking similar to this, yet with another UUID.</p>
 <pre ><code class="json">{
   "created_by": "00000000-0000-1000-8000-000000000000",
   "lower_bound": -50,
@@ -143,7 +143,7 @@
 <section class="slide level2">
 
 <ol start="6" type="1">
-<li><p>Scroll down below the response example. As you can see, we got nothing more than an HTTP 201 (Created) response from the server. This response means that everything is OK and that the server stored the data in the database.</p></li>
+<li><p>Scroll down to the response section. As you can see, we got nothing more than an HTTP 201 (Created) response from the server. This response means that everything is OK and that the server stored the data in the database.</p></li>
 <li><p>Let’s scroll back up and click on the blue <code>Execute</code> button again.</p></li>
 </ol>
 </section>
@@ -175,7 +175,7 @@
 <section class="slide level2">
 
 <ol type="1">
-<li><p>Scroll to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/QueryTimeseriesForData">GET /v2/timeseries/{uuid}/data</a> field, located right above the field from the last section and expand it.</p></li>
+<li><p>Navigate to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/QueryTimeseriesForData">GET /v2/timeseries/{uuid}/data</a> field, located right above the field from the last section and expand it.</p></li>
 <li><p>Click on the <em>Try it out</em> button.</p></li>
 </ol>
 </section>
@@ -191,7 +191,7 @@
 <section class="slide level2">
 
 <ol start="7" type="1">
-<li><p>Scroll down below the response example. There should be a response similar to this, yet with different timestamps, possibly different values and numbers of items.</p>
+<li><p>Scroll down to the response section. There should be a similar response, yet with different timestamps, possibly different values and numbers of items.</p>
 <pre ><code class="json">[
   {
     "ts": "2021-06-22T13:20:55.286Z",
@@ -228,7 +228,7 @@
 <section class="slide level2">
 
 <ol start="10" type="1">
-<li><p>Scroll down below the response example. There should be a response looking similar to this, yet with (possibly) different elements. Moreso, as you can see, the value is not the same as before; it is converted from Celsius to Fahrenheit.</p>
+<li><p>Scroll down to the response section. There should be a response looking similar to this, yet with (possibly) different elements. Moreso, as you can see, the value is not the same as before; it is converted from Celsius to Fahrenheit.</p>
 <pre ><code class="json">[
   {
     "ts": "2021-06-22T13:20:55.286Z",
@@ -289,7 +289,7 @@
 <section class="slide level2">
 
 <ol start="6" type="1">
-<li><p>Scroll down below the response example. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server removed any data in the range from the database.</p></li>
+<li><p>Scroll down to the response section. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server removed any data in the range from the database.</p></li>
 <li><p>If you want to verify this, you can go back to the previous section and perform a new query over the same period; you shall have one data point less than before.</p></li>
 </ol>
 </section>
@@ -326,7 +326,7 @@
 <section class="slide level2">
 
 <ol start="5" type="1">
-<li><p>Scroll down below the response example. There should be a response looking similar to this, yet with another UUID.</p>
+<li><p>Scroll down to the response section. There should be a response looking similar to this, yet with another UUID.</p>
 <pre ><code class="json">{
   "created_by": "00000000-0000-1000-8000-000000000000",
   "name": "My Thing",
@@ -371,7 +371,7 @@
 <section class="slide level2">
 
 <ol start="6" type="1">
-<li>Scroll down below the response example. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.</li>
+<li>Scroll down to the response section. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.</li>
 </ol>
 </section>
 <section id="list-time-series-assigned-to-a-thing" class="slide level2">
@@ -390,7 +390,7 @@
 <section class="slide level2">
 
 <ol start="5" type="1">
-<li><p>Scroll down below the response example. The response you get shall look similar to this;</p>
+<li><p>Scroll down to the response section. The response you get shall look similar to this;</p>
 <pre ><code class="json">[
   {
     "created_by": "00000000-0000-1000-8000-000000000000",
@@ -468,7 +468,7 @@
 <section class="slide level2">
 
 <ol start="5" type="1">
-<li><p>Scroll down below the response example. The response you get shall look similar to this;</p>
+<li><p>Scroll down to the response section. The response you get shall look similar to this;</p>
 <pre data-id="code-animation"><code class="json" data-line-numbers="|2|3-4|5|7|10-11|12">{
   "checksum": "68e656b251e67e8358bef8483ab0d51c6619f3e7a1a9f0e75838d41ff368f728",
   "created": "2021-06-24T08:07:49.182709+02:00",
@@ -501,7 +501,7 @@
 <section class="slide level2">
 
 <ol start="5" type="1">
-<li><p>Scroll down below the response example. The response you get shall look like this;</p>
+<li><p>Scroll down to the response section. The response you get shall look like this;</p>
 <pre ><code class="text">hello, world!</code></pre>
 <p>The Content-Type is also set to “text/plain; charset=utf-8” in the response header. Different formats result in a response with different Content-Type.</p></li>
 </ol>
@@ -532,7 +532,7 @@
 <section class="slide level2">
 
 <ol start="6" type="1">
-<li>Scroll down below the response example. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.</li>
+<li>Scroll down to the response section. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.</li>
 </ol>
 </section>
 <section class="slide level2">
@@ -545,7 +545,7 @@
 <section class="slide level2">
 
 <ol start="9" type="1">
-<li><p>Scroll down below the response example. The response you get shall now look like this;</p>
+<li><p>Scroll down to the response section. The response you get shall now look like this;</p>
 <pre ><code class="yaml">---
 doe: "a deer, a female deer"
 pi: 3.14159</code></pre>
@@ -597,7 +597,7 @@ pi: 3.14159</code></pre>
 <section class="slide level2">
 
 <ol type="1">
-<li><p>Scroll to the orange <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/UpdateTimeseriesByUuid">PUT /v2/timeseries/{uuid}</a> field and expand it.</p></li>
+<li><p>Navigate to the orange <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/UpdateTimeseriesByUuid">PUT /v2/timeseries/{uuid}</a> field and expand it.</p></li>
 <li><p>Click on the <em>Try it out</em> button.</p></li>
 </ol>
 </section>
@@ -618,13 +618,13 @@ pi: 3.14159</code></pre>
 <section class="slide level2">
 
 <ol start="6" type="1">
-<li>Scroll down below the response example. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.</li>
+<li>Scroll down to the response section. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.</li>
 </ol>
 </section>
 <section class="slide level2">
 
 <ol start="7" type="1">
-<li>If you want to, you can scroll to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/FindTimeSeriesByUuid">GET /v2/timeseries/{uuid}</a> field, input the time series UUID, and execute the request to validate that the tags are indeed there.</li>
+<li>If you want to, you can Navigate to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/FindTimeSeriesByUuid">GET /v2/timeseries/{uuid}</a> field, input the time series UUID, and execute the request to validate that the tags are indeed there.</li>
 </ol>
 </section>
 <section id="adding-tags-to-things-datasets-and-programs" class="slide level2">
@@ -666,7 +666,7 @@ pi: 3.14159</code></pre>
 <section class="slide level2">
 
 <ol type="1">
-<li><p>Scroll to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/FindTimeSeries">GET /v2/timeseries</a> field and expand it.</p></li>
+<li><p>Navigate to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/FindTimeSeries">GET /v2/timeseries</a> field and expand it.</p></li>
 <li><p>Click on the <em>Try it out</em> button.</p></li>
 </ol>
 </section>
@@ -680,7 +680,7 @@ pi: 3.14159</code></pre>
 <section class="slide level2">
 
 <ol start="5" type="1">
-<li><p>Scroll down below the response example. The response you get shall look similar to this;</p>
+<li><p>Scroll down to the response section. The response you get shall look similar to this;</p>
 <pre data-id="code-animation"><code class="json" data-line-numbers="|1,15|2-14">[
   {
     "created_by": "00000000-0000-1000-8000-000000000000",
@@ -722,7 +722,7 @@ pi: 3.14159</code></pre>
 <section class="slide level2">
 
 <ol start="12" type="1">
-<li><p>Scroll down below the response example. The response you get shall look similar to this;</p>
+<li><p>Scroll down to the response section. The response you get shall look similar to this;</p>
 <pre data-id="code-animation"><code class="json" data-line-numbers="">[]</code></pre>
 <p>We found no items matching the query request; No time series has a tag matching “foobar”.</p></li>
 <li><p>Go back up and change “foobar” to “outdoortemp”. Then execute the request once more.</p></li>
@@ -731,7 +731,7 @@ pi: 3.14159</code></pre>
 <section class="slide level2">
 
 <ol start="14" type="1">
-<li><p>Scroll down below the response example. The response you get shall look similar to this;</p>
+<li><p>Scroll down to the response section. The response you get shall look similar to this;</p>
 <pre data-id="code-animation"><code class="json" data-line-numbers="|8|1,15|">[
   {
     "created_by": "00000000-0000-1000-8000-000000000000",
@@ -770,7 +770,7 @@ pi: 3.14159</code></pre>
 <section class="slide level2">
 
 <ol type="1">
-<li><p>Scroll to the green <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/programs/AddProgram">POST /v2/programs</a> field and expand it.</p></li>
+<li><p>Navigate to the green <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/programs/AddProgram">POST /v2/programs</a> field and expand it.</p></li>
 <li><p>Click on the <em>Try it out</em> button.</p></li>
 </ol>
 </section>
@@ -796,7 +796,7 @@ pi: 3.14159</code></pre>
 <section class="slide level2">
 
 <ol start="5" type="1">
-<li><p>Scroll down below the response example. There should be a response looking similar to this, yet with another UUID.</p>
+<li><p>Scroll down to the response section. There should be a response looking similar to this, yet with another UUID.</p>
 <pre data-id="code-animation"><code class="json" data-line-numbers="|12|">{
   "deadline": 5000,
   "language": "tengo",
@@ -837,7 +837,7 @@ pi: 3.14159</code></pre>
 <section class="slide level2">
 
 <ol type="1">
-<li><p>Scroll to the green <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/programs/AddProgramCodeRevision">POST /v2/programs/{uuid}/code</a> field and expand it.</p></li>
+<li><p>Navigate to the green <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/programs/AddProgramCodeRevision">POST /v2/programs/{uuid}/code</a> field and expand it.</p></li>
 <li><p>Click on the <em>Try it out</em> button.</p></li>
 <li><p>Erase the example UUID in the field and insert our program UUID.</p></li>
 </ol>
@@ -894,7 +894,7 @@ store_value(SELFHOST_API_URL, TARGET_TIMESERIES, v)</code></pre></li>
 <section class="slide level2">
 
 <ol start="7" type="1">
-<li><p>Scroll down below the response example. There should be a response looking similar to this.</p>
+<li><p>Scroll down to the response section. There should be a response looking similar to this.</p>
 <pre data-id="code-animation"><code class="json" data-line-numbers="|2|5|6,7|">{
   "checksum": "0c0b8a8b9d800fc15184a886eade24bae5a3622081121f1f0e6168bb423d8b26",
   "created": "2021-06-24T13:47:18.869496+02:00",
@@ -917,7 +917,7 @@ store_value(SELFHOST_API_URL, TARGET_TIMESERIES, v)</code></pre></li>
 <section class="slide level2">
 
 <ol type="1">
-<li><p>Scroll to the green <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/programs/SignProgramCodeRevisions">POST /v2/programs/{uuid}/revisions/{revision_id}/sign</a> field and expand it.</p></li>
+<li><p>Navigate to the green <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/programs/SignProgramCodeRevisions">POST /v2/programs/{uuid}/revisions/{revision_id}/sign</a> field and expand it.</p></li>
 <li><p>Click on the <em>Try it out</em> button.</p></li>
 <li><p>Erase the example UUID in the field and insert our program UUID. Then replace the example revision_id with 0.</p></li>
 <li><p>Click on the blue <code>Execute</code> button.</p></li>
@@ -926,7 +926,7 @@ store_value(SELFHOST_API_URL, TARGET_TIMESERIES, v)</code></pre></li>
 <section class="slide level2">
 
 <ol start="5" type="1">
-<li><p>Scroll down below the response example. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.</p></li>
+<li><p>Scroll down to the response section. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has updated the target.</p></li>
 <li><p>Revision 0 is now signed (by us <i class="fas fa-user-ninja"></i>) and the code will be deployed by the Program Manager.</p>
 <p><em>You did start the Program Manager and one Program Worker, right?!</em></p></li>
 </ol>
@@ -935,7 +935,7 @@ store_value(SELFHOST_API_URL, TARGET_TIMESERIES, v)</code></pre></li>
 
 <ol start="7" type="1">
 <li><p>To verify this, we can go back and query the time series for data once more.</p></li>
-<li><p>Scroll to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/QueryTimeseriesForData">GET /v2/timeseries/{uuid}/data</a> field and expand it.</p></li>
+<li><p>Navigate to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/timeseries/QueryTimeseriesForData">GET /v2/timeseries/{uuid}/data</a> field and expand it.</p></li>
 <li><p>Click on the <em>Try it out</em> button.</p></li>
 </ol>
 </section>
@@ -951,7 +951,7 @@ store_value(SELFHOST_API_URL, TARGET_TIMESERIES, v)</code></pre></li>
 <section class="slide level2">
 
 <ol start="14" type="1">
-<li><p>Scroll down below the response example, and there it is.</p>
+<li><p>Scroll down to the response section, and there it is.</p>
 <pre data-id="code-animation"><code class="json" data-line-numbers="|2-5|6-9|10-13|">[
   {
     "ts": "2021-06-24T13:02:00Z",
@@ -1033,14 +1033,107 @@ store_value(SELFHOST_API_URL, TARGET_TIMESERIES, v)</code></pre></li>
 </section>
 <section id="replacing-the-default-access-key" class="slide level2">
 <h2>Replacing the default access key</h2>
+<p>This process is relatively straightforward. First, we need to create a new token, store that token someplace secure, then delete the original token.</p>
 </section>
-<section id="rotating-keys" class="slide level2">
-<h2>Rotating keys</h2>
-<p>While the rotation of keys is not implemented in the system itself, one can “easily” implement key rotations if this is a requirement by the organization.</p>
+<section class="slide level2">
+
+<ol type="1">
+<li><p>Navigate to the green <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/users/AddNewTokenToUser">POST /v2/users/{uuid}/tokens</a> field and expand it.</p></li>
+<li><p>Click on the <em>Try it out</em> button.</p></li>
+<li><p>Erase the example UUID in the field and insert the root user UUID, which is always “00000000-0000-1000-8000-000000000000” on a fresh installation.</p></li>
+<li><p>Change the value of “name” in the request body. For this example, we choose;</p>
+<pre ><code class="json">{
+  "name": "New secure token"
+}</code></pre></li>
+<li><p>Click on the blue <code>Execute</code> button.</p></li>
+</ol>
+</section>
+<section class="slide level2">
+
+<ol start="6" type="1">
+<li><p>Scroll down to the response section. There should be a response looking similar to this.</p>
+<pre data-id="code-animation"><code class="json" data-line-numbers="|2|3|4|">{
+  "name": "New secret token",
+  "secret": "secret-token.nfadcilv7cq2bpa56f43ngqc8wfx6p7tfp7v76e8",
+  "uuid": "8366b436-6897-4f89-8835-ed5092830a7f"
+}</code></pre></li>
+<li><p>Copy the secret and store it someplace safe. Once the insecure token has been removed, this is the only way for you to access the system.</p></li>
+</ol>
+</section>
+<section class="slide level2">
+
+<ol start="8" type="1">
+<li><p>Click on any of the black padlocks in any of the sections. This action brings up the authorization dialogue.</p>
+<p>Click on logout. Then input “test” as the user and the secret token the server has generated for us.</p>
+<p>Click on authorize, then close the dialogue.</p>
+<p>You are now using the new secure token instead of the old insecure one.</p></li>
+</ol>
+</section>
+<section class="slide level2">
+
+<ol start="9" type="1">
+<li><p>Navigate to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/users/FindTokensForUser">GET /v2/users/{uuid}/tokens</a> field and expand it.</p></li>
+<li><p>Click on the <em>Try it out</em> button.</p></li>
+<li><p>Erase the example UUID in the field and insert the root user UUID, which is always “00000000-0000-1000-8000-000000000000” on a fresh installation.</p></li>
+<li><p>Click on the blue <code>Execute</code> button.</p></li>
+</ol>
+</section>
+<section class="slide level2">
+
+<ol start="13" type="1">
+<li><p>Scroll down to the response section. There should be a response looking similar to this.</p>
+<pre ><code class="json">[
+  {
+    "created": "2021-06-17T07:53:56.622235+02:00",
+    "name": "Main admin token",
+    "uuid": "ca898044-16d4-4891-9276-c26819e0b9fa"
+  },
+  {
+    "created": "2021-06-24T20:24:50.029749+02:00",
+    "name": "New secret token",
+    "uuid": "8366b436-6897-4f89-8835-ed5092830a7f"
+  }
+]</code></pre></li>
+<li><p>Copy the UUID from the old token. The name is “Main admin token”.</p></li>
+</ol>
+</section>
+<section class="slide level2">
+
+<ol start="15" type="1">
+<li><p>Navigate to the blue <a target="_blank" href="http://127.0.0.1:8095/static/swagger-ui#/users/DeleteTokenForUser">GET /v2/users/{uuid}/tokens/{token_uuid}</a> field and expand it.</p></li>
+<li><p>Erase the example UUID in the field and insert the root user UUID, which is always “00000000-0000-1000-8000-000000000000” on a fresh installation. Also, enter the token UUID you just copies.</p></li>
+<li><p>Scroll down to the response section. As you can see, we got nothing more than an HTTP 204 (No Content) response from the server. This response means that everything is OK and that the server has deleted the target.</p></li>
+</ol>
+</section>
+<section class="slide level2">
+
+<h4 id="the-system-is-now-free-from-insecure-tokens.">The system is now free from insecure tokens.</h4>
+</section>
+<section id="key-rotation" class="slide level2">
+<h2>Key rotation</h2>
+<p>It is the process of replacing existing keys with new ones.</p>
+</section>
+<section class="slide level2">
+
+<p>While the rotation of keys is not implemented in the system itself, one can “easily” implement key rotation if this is a requirement by the organization.</p>
+<p>A custom automated solution, backed with a secure store and key distribution solution, can easily rotate the keys as often as you want.</p>
+</section>
+<section id="exposing-ports" class="slide level2">
+<h2>Exposing ports</h2>
+<p>Never expose a system on a port without requiring authentication to access it.</p>
+<p>This rule is often bent on private networks. An unwanted behaviour because anything on a network is a potential target for an infected machine. And for as long as anything on the network can get infected, this problem remains.</p>
+<p>In the end, it is better to be safe than sorry.</p>
+</section>
+<section class="slide level2">
+
+<p>That is it. Thank you for your patience.</p>
+<figure>
+<img data-src="https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/use_the_force_link.png" title="Hey, listen!" alt="" /><figcaption>You made it!</figcaption>
+</figure>
 </section></section>
 <section id="the-code" class="title-slide slide level1">
 <h1>The Code</h1>
-<p>Along with documentat, is available at;</p>
+<p>Everything is available on GitHub;</p>
 <p><a href="https://github.com/self-host/self-host">https://github.com/self-host/self-host</a></p>
 </section>
 
