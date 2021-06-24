@@ -12,5 +12,7 @@ all: $(OBJS)
 		--slide-level=2 \
 		-V revealjs-url='https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2' \
 		-V theme=league \
+		-V highlightjs \
+		-L lib/revealjs-codeblock.lua \
+		--template template/template.html \
 		$< -o $@
-
