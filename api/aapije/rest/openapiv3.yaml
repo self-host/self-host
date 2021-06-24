@@ -349,7 +349,7 @@ components:
               format:
                 type: string
                 enum: [csv, ini, json, misc, toml, xml, yaml]
-                example: misc
+                example: ini
               content:
                 type: string
                 description: Content of the resource.
@@ -858,7 +858,7 @@ components:
           type: string
           description: File format of the data set.
           enum: [csv, ini, json, misc, toml, xml, yaml]
-          example: json
+          example: ini
         checksum:
           type: string
           description: The sha256 checksum of the content
