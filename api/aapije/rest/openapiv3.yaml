@@ -349,13 +349,14 @@ components:
               format:
                 type: string
                 enum: [csv, ini, json, misc, toml, xml, yaml]
+                example: misc
               content:
                 type: string
                 description: Content of the resource.
                 format: byte
                 example: 'aGVsbG8sIHdvcmxkIQ=='
                 nullable: true
-              belongs_to:
+              thing_uuid:
                 type: string
                 nullable: true
                 example: '54295623-c5e3-4085-80cf-542338b1bc30'
@@ -840,7 +841,7 @@ components:
         - size
         - created
         - updated
-        - belongs_to
+        - thing_uuid
         - created_by
         - updated_by
         - tags
@@ -866,7 +867,7 @@ components:
           type: integer
           format: int64
           description: The size of the content in number of bytes.
-        belongs_to:
+        thing_uuid:
           type: string
           description: UUID reference to a Thing as a way to track data-sets to things.
           nullable: true
@@ -1194,7 +1195,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Dataset'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dataset'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':

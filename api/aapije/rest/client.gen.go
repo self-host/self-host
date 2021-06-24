@@ -4621,7 +4621,7 @@ func (r FindAlertsResponse) StatusCode() int {
 type FindDatasetsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Dataset
+	JSON200      *[]Dataset
 }
 
 // Status returns HTTPResponse.Status
@@ -6679,7 +6679,7 @@ func ParseFindDatasetsResponse(rsp *http.Response) (*FindDatasetsResponse, error
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Dataset
+		var dest []Dataset
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

@@ -42,7 +42,7 @@ type AddDatasetParams struct {
 	Format    string
 	Content   []byte
 	CreatedBy uuid.UUID
-	BelongsTo uuid.UUID
+	ThingUuid uuid.UUID
 	Tags      []string
 }
 
@@ -68,7 +68,7 @@ func (svc *DatasetService) AddDataset(ctx context.Context, p *AddDatasetParams) 
 		Content:   p.Content,
 		Format:    p.Format,
 		CreatedBy: p.CreatedBy,
-		BelongsTo: p.BelongsTo,
+		BelongsTo: p.ThingUuid,
 		Tags:      tags,
 	}
 
@@ -92,7 +92,7 @@ func (svc *DatasetService) AddDataset(ctx context.Context, p *AddDatasetParams) 
 
 	if dataset.BelongsTo != NilUUID {
 		belongsTo := dataset.BelongsTo.String()
-		v.BelongsTo = &belongsTo
+		v.ThingUuid = &belongsTo
 	}
 
 	return v, nil
@@ -119,7 +119,7 @@ func (svc *DatasetService) FindDatasetByUuid(ctx context.Context, id uuid.UUID) 
 
 	if dataset.BelongsTo != NilUUID {
 		belongsTo := dataset.BelongsTo.String()
-		v.BelongsTo = &belongsTo
+		v.ThingUuid = &belongsTo
 	}
 
 	return v, nil
@@ -149,7 +149,7 @@ func (svc *DatasetService) FindByThing(ctx context.Context, id uuid.UUID) ([]*re
 
 		if t.BelongsTo != NilUUID {
 			v := t.BelongsTo.String()
-			dataset.BelongsTo = &v
+			dataset.ThingUuid = &v
 		}
 
 		datasets = append(datasets, dataset)
@@ -193,7 +193,7 @@ func (svc *DatasetService) FindAll(ctx context.Context, p FindAllParams) ([]*res
 
 		if t.BelongsTo != NilUUID {
 			v := t.BelongsTo.String()
-			dataset.BelongsTo = &v
+			dataset.ThingUuid = &v
 		}
 
 		datasets = append(datasets, dataset)
@@ -237,7 +237,7 @@ func (svc *DatasetService) FindByTags(ctx context.Context, p FindByTagsParams) (
 
 		if t.BelongsTo != NilUUID {
 			v := t.BelongsTo.String()
-			dataset.BelongsTo = &v
+			dataset.ThingUuid = &v
 		}
 
 		datasets = append(datasets, dataset)

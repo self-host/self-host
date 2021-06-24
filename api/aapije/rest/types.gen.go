@@ -154,9 +154,6 @@ type CodeRevision struct {
 // Dataset defines model for Dataset.
 type Dataset struct {
 
-	// UUID reference to a Thing as a way to track data-sets to things.
-	BelongsTo *string `json:"belongs_to"`
-
 	// The sha256 checksum of the content
 	Checksum string `json:"checksum"`
 
@@ -175,6 +172,9 @@ type Dataset struct {
 	// The size of the content in number of bytes.
 	Size int64    `json:"size"`
 	Tags []string `json:"tags"`
+
+	// UUID reference to a Thing as a way to track data-sets to things.
+	ThingUuid *string `json:"thing_uuid"`
 
 	// Date-time of last change, as defined by RFC 3339, section 5.6.
 	Updated time.Time `json:"updated"`
@@ -349,9 +349,6 @@ type UuidParam string
 // NewDataset defines model for NewDataset.
 type NewDataset struct {
 
-	// A reference to a Thing
-	BelongsTo *string `json:"belongs_to"`
-
 	// Content of the resource.
 	Content *[]byte          `json:"content"`
 	Format  NewDatasetFormat `json:"format"`
@@ -359,6 +356,9 @@ type NewDataset struct {
 
 	// An array of text labels (tags) for tracking and filtering purposes.
 	Tags *[]string `json:"tags,omitempty"`
+
+	// A reference to a Thing
+	ThingUuid *string `json:"thing_uuid"`
 }
 
 // NewGroup defines model for NewGroup.

@@ -49,8 +49,8 @@ func (ra *RestApi) AddDatasets(w http.ResponseWriter, r *http.Request) {
 		params.Tags = *n.Tags
 	}
 
-	if n.BelongsTo != nil {
-		params.BelongsTo, err = uuid.Parse(*n.BelongsTo)
+	if n.ThingUuid != nil {
+		params.ThingUuid, err = uuid.Parse(*n.ThingUuid)
 		if err != nil {
 			ie.SendHTTPError(w, ie.ErrorMalformedRequest)
 			return
@@ -222,18 +222,14 @@ func (ra *RestApi) GetRawDatasetByUuid(w http.ResponseWriter, r *http.Request, i
 		ie.SendHTTPError(w, ie.ParseDBError(err))
 		return
 	}
+
 	if f == nil {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
-	if p.IfNoneMatch != nil && (string)(*p.IfNoneMatch) == f.Checksum {
-		w.WriteHeader(http.StatusNotModified)
-		return
-	}
-
 	// Change Content-Type based on Dataset type
-	switch f.Format {
+	switch string(f.Format) {
 	case "csv":
 		w.Header().Set("Content-Type", "text/csv")
 	case "ini":
@@ -250,13 +246,20 @@ func (ra *RestApi) GetRawDatasetByUuid(w http.ResponseWriter, r *http.Request, i
 		w.Header().Set("Content-Type", "application/octet-stream")
 	}
 
+	 w.Header().Set("ETag", f.Checksum)
+
+	if p.IfNoneMatch != nil && (string)(*p.IfNoneMatch) == f.Checksum {
+		w.WriteHeader(http.StatusNotModified)
+		return
+	}
+
 	if len(f.Content) == 0 {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
-	w.Header().Set("ETag", f.Checksum)
 	w.WriteHeader(http.StatusOK)
+
 	w.Write(f.Content)
 }
 
