@@ -9,7 +9,7 @@ The Self-host is;
 - A complete environment to run the Self-host API.
 - A time-series store and dataset store.
 - An open API interface specification.
-- Free and open source [software](https://github.com/self-host/self-host).
+- Free and open-source [software](https://github.com/self-host/self-host).
 - Not necessarily the only solution.
 - Spartacus.
 
@@ -19,13 +19,13 @@ The Self-host is;
 
 We at Noda want to provide an alternative to our hosted solution as we are experiencing a growing need for customers to be in complete control. As a way to give that level of control, we have come up with the Self-host solution.
 
-As a way to ensure the future of the solution, we decided early on that it should be available to everyone as [free and open source software](#freelibre-software-and-open-source).
+To ensure the future of the solution, we decided early on that it should be available to everyone as [free and open-source software](#freelibre-software-and-open-source).
 
 ---
 
 ### The target audience
 
-Medium to large organization with the requirement that solutions should run under their banner and not in someones else's environment.
+Medium to large organization with the requirement that solutions run under their banner and not in someone else's environment.
 
 Examples are;
 
@@ -87,7 +87,7 @@ Executes program code to perform various tasks like requests to external service
 
 ## It is Open
 
-If you don't feel like using our Self-host implementation, then you are free to implement the REST API specification using any language or system that you please.
+If you don't feel like using our Self-host implementation, you are free to implement the REST API specification using any language or system you please.
 
 *Make it yours.*
 
@@ -136,7 +136,7 @@ The script language we choose for the program execution environment is called [T
 
 It allows one to quickly deploy small pieces of code to perform simple tasks without creating a new software development project.
 
-It is our aim to in the future provide a library index of common programs, making it even easier to set up new programs quickly.
+In the future, we aim to provide a library index of programs, making it even easier to set up new programs quickly.
 
 # Deployment
 
@@ -150,7 +150,7 @@ To simplify deployment, we provide prebuilt docker containers of the three main 
 
 The containers we provide are built for Docker.
 
-You can use either Docker directly via the CLI or [Docker Desktop](https://www.docker.com/products/docker-desktop) for local development.
+For local development, you can use either Docker directly via the CLI or [Docker Desktop](https://www.docker.com/products/docker-desktop).
 
 For some tips and guidelines, check out our [documentation](https://github.com/self-host/self-host/blob/main/docs/docker_deployment.md).
 
@@ -167,7 +167,9 @@ For some tips and guidelines, check out our [documentation](https://github.com/s
 
 ## What is what?
 
-The terms "free software" and "open source" stand for almost the same range of programs. However, they say profoundly different things about those programs and are based on different values. The open-source idea values mainly practical advantage and does not campaign for principles. While free or libre software aims to provide freedom for the users. The freedom to modify, fix and extend as they see fit.
+The terms "free software" and "open source" often stand for almost the same thing in many programs. However, they do say profoundly different things about those programs and are based on different values.
+
+The open-source idea values mainly practical advantage and does not campaign for principles. While free or libre software aims to provide freedom for the users. The freedom to modify, fix and extend as one sees fit.
 
 ## So it is essentially the same thing?
 
