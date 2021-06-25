@@ -11,6 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/css/reset.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/css/reveal.css">
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -20,17 +21,7 @@
     ul.task-list{list-style: none;}
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/css/theme/league.css" id="theme">
-  <!-- Printing and PDF exports -->
-  <script>
-    var link = document.createElement( 'link' );
-    link.rel = 'stylesheet';
-    link.type = 'text/css';
-    link.href = window.location.search.match( /print-pdf/gi ) ? 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/css/print/pdf.css' : 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/css/print/paper.css';
-    document.getElementsByTagName( 'head' )[0].appendChild( link );
-  </script>
-  <!--[if lt IE 9]>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/lib/js/html5shiv.js"></script>
-  <![endif]-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/lib/css/monokai.min.css">
 </head>
 <body>
   <div class="reveal">
@@ -50,7 +41,7 @@
 <li>A complete environment to run the Self-host API.</li>
 <li>A time-series store and dataset store.</li>
 <li>An open API interface specification.</li>
-<li>Free and open source <a href="https://github.com/self-host/self-host">software</a>.</li>
+<li>Free and open-source <a href="https://github.com/self-host/self-host">software</a>.</li>
 <li>Not necessarily the only solution.</li>
 <li>Spartacus.</li>
 </ul>
@@ -59,12 +50,12 @@
 
 <h3 id="why-does-it-exist">Why does it exist?</h3>
 <p>We at Noda want to provide an alternative to our hosted solution as we are experiencing a growing need for customers to be in complete control. As a way to give that level of control, we have come up with the Self-host solution.</p>
-<p>As a way to ensure the future of the solution, we decided early on that it should be available to everyone as <a href="#/freelibre-software-and-open-source">free and open source software</a>.</p>
+<p>To ensure the future of the solution, we decided early on that it should be available to everyone as <a href="#/freelibre-software-and-open-source">free and open-source software</a>.</p>
 </section>
 <section class="slide level2">
 
 <h3 id="the-target-audience">The target audience</h3>
-<p>Medium to large organization with the requirement that solutions should run under their banner and not in someones else’s environment.</p>
+<p>Medium to large organization with the requirement that solutions run under their banner and not in someone else’s environment.</p>
 <p>Examples are;</p>
 <ul>
 <li>Utility companies</li>
@@ -130,7 +121,7 @@
 </section>
 <section id="it-is-open" class="slide level2">
 <h2>It is Open</h2>
-<p>If you don’t feel like using our Self-host implementation, then you are free to implement the REST API specification using any language or system that you please.</p>
+<p>If you don’t feel like using our Self-host implementation, you are free to implement the REST API specification using any language or system you please.</p>
 <p><em>Make it yours.</em></p>
 </section></section>
 <section>
@@ -181,7 +172,7 @@
 <h3 id="tengo">Tengo</h3>
 <p>The script language we choose for the program execution environment is called <a href="https://github.com/d5/tengo">Tengo</a>.</p>
 <p>It allows one to quickly deploy small pieces of code to perform simple tasks without creating a new software development project.</p>
-<p>It is our aim to in the future provide a library index of common programs, making it even easier to set up new programs quickly.</p>
+<p>In the future, we aim to provide a library index of programs, making it even easier to set up new programs quickly.</p>
 </section></section>
 <section>
 <section id="deployment" class="title-slide slide level1">
@@ -196,7 +187,7 @@
 <section id="docker" class="slide level2">
 <h2>Docker</h2>
 <p>The containers we provide are built for Docker.</p>
-<p>You can use either Docker directly via the CLI or <a href="https://www.docker.com/products/docker-desktop">Docker Desktop</a> for local development.</p>
+<p>For local development, you can use either Docker directly via the CLI or <a href="https://www.docker.com/products/docker-desktop">Docker Desktop</a>.</p>
 <p>For some tips and guidelines, check out our <a href="https://github.com/self-host/self-host/blob/main/docs/docker_deployment.md">documentation</a>.</p>
 </section>
 <section id="kubernetes" class="slide level2">
@@ -212,7 +203,8 @@
 </section>
 <section id="what-is-what" class="slide level2">
 <h2>What is what?</h2>
-<p>The terms “free software” and “open source” stand for almost the same range of programs. However, they say profoundly different things about those programs and are based on different values. The open-source idea values mainly practical advantage and does not campaign for principles. While free or libre software aims to provide freedom for the users. The freedom to modify, fix and extend as they see fit.</p>
+<p>The terms “free software” and “open source” often stand for almost the same thing in many programs. However, they do say profoundly different things about those programs and are based on different values.</p>
+<p>The open-source idea values mainly practical advantage and does not campaign for principles. While free or libre software aims to provide freedom for the users. The freedom to modify, fix and extend as one sees fit.</p>
 </section>
 <section id="so-it-is-essentially-the-same-thing" class="slide level2">
 <h2>So it is essentially the same thing?</h2>
@@ -227,19 +219,26 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/js/reveal.js"></script>
 
+  // reveal.js plugins
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/plugin/notes/notes.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/plugin/search/search.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/plugin/zoom-js/zoom.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/plugin/highlight/highlight.js"></script>
+
   <script>
 
       // Full list of configuration options available at:
-      // https://github.com/hakimel/reveal.js#configuration
+      // https://revealjs.com/config/
       Reveal.initialize({
         // Push each slide change to the browser history
         history: true,
 
-        // Optional reveal.js plugins
-        dependencies: [
-          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/lib/js/classList.js', condition: function() { return !document.body.classList; } },
-          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/plugin/zoom-js/zoom.js', async: true },
-          { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.9.2/plugin/notes/notes.js', async: true }
+        // reveal.js plugins
+        plugins: [
+          RevealHighlight,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
         ]
       });
     </script>
