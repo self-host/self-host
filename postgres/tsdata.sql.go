@@ -11,15 +11,14 @@ import (
 	"github.com/lib/pq"
 )
 
-const createTsData = `-- name: CreateTsData :one
-SELECT
-	COUNT(*) AS count
-FROM tsdata_insert(
-  $1,
-  $2,
-  $3,
-  $4
-) AS tsdata_insert
+const createTsData = `-- name: CreateTsData :execrows
+INSERT INTO tsdata(ts_uuid, value, ts, created_by)
+VALUES (
+	$1,
+	$2,
+	$3,
+	$4
+)
 `
 
 type CreateTsDataParams struct {
@@ -30,15 +29,16 @@ type CreateTsDataParams struct {
 }
 
 func (q *Queries) CreateTsData(ctx context.Context, arg CreateTsDataParams) (int64, error) {
-	row := q.queryRow(ctx, q.createTsDataStmt, createTsData,
+	result, err := q.exec(ctx, q.createTsDataStmt, createTsData,
 		arg.TsUuid,
 		arg.Value,
 		arg.Ts,
 		arg.CreatedBy,
 	)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
 
 const deleteAllTsData = `-- name: DeleteAllTsData :execrows

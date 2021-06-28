@@ -167,6 +167,774 @@ type Timeseries struct {
 	Tags       []string
 }
 
+type Tsdata0 struct {
+}
+
+type Tsdata1 struct {
+}
+
+type Tsdata10 struct {
+}
+
+type Tsdata100 struct {
+}
+
+type Tsdata101 struct {
+}
+
+type Tsdata102 struct {
+}
+
+type Tsdata103 struct {
+}
+
+type Tsdata104 struct {
+}
+
+type Tsdata105 struct {
+}
+
+type Tsdata106 struct {
+}
+
+type Tsdata107 struct {
+}
+
+type Tsdata108 struct {
+}
+
+type Tsdata109 struct {
+}
+
+type Tsdata11 struct {
+}
+
+type Tsdata110 struct {
+}
+
+type Tsdata111 struct {
+}
+
+type Tsdata112 struct {
+}
+
+type Tsdata113 struct {
+}
+
+type Tsdata114 struct {
+}
+
+type Tsdata115 struct {
+}
+
+type Tsdata116 struct {
+}
+
+type Tsdata117 struct {
+}
+
+type Tsdata118 struct {
+}
+
+type Tsdata119 struct {
+}
+
+type Tsdata12 struct {
+}
+
+type Tsdata120 struct {
+}
+
+type Tsdata121 struct {
+}
+
+type Tsdata122 struct {
+}
+
+type Tsdata123 struct {
+}
+
+type Tsdata124 struct {
+}
+
+type Tsdata125 struct {
+}
+
+type Tsdata126 struct {
+}
+
+type Tsdata127 struct {
+}
+
+type Tsdata128 struct {
+}
+
+type Tsdata129 struct {
+}
+
+type Tsdata13 struct {
+}
+
+type Tsdata130 struct {
+}
+
+type Tsdata131 struct {
+}
+
+type Tsdata132 struct {
+}
+
+type Tsdata133 struct {
+}
+
+type Tsdata134 struct {
+}
+
+type Tsdata135 struct {
+}
+
+type Tsdata136 struct {
+}
+
+type Tsdata137 struct {
+}
+
+type Tsdata138 struct {
+}
+
+type Tsdata139 struct {
+}
+
+type Tsdata14 struct {
+}
+
+type Tsdata140 struct {
+}
+
+type Tsdata141 struct {
+}
+
+type Tsdata142 struct {
+}
+
+type Tsdata143 struct {
+}
+
+type Tsdata144 struct {
+}
+
+type Tsdata145 struct {
+}
+
+type Tsdata146 struct {
+}
+
+type Tsdata147 struct {
+}
+
+type Tsdata148 struct {
+}
+
+type Tsdata149 struct {
+}
+
+type Tsdata15 struct {
+}
+
+type Tsdata150 struct {
+}
+
+type Tsdata151 struct {
+}
+
+type Tsdata152 struct {
+}
+
+type Tsdata153 struct {
+}
+
+type Tsdata154 struct {
+}
+
+type Tsdata155 struct {
+}
+
+type Tsdata156 struct {
+}
+
+type Tsdata157 struct {
+}
+
+type Tsdata158 struct {
+}
+
+type Tsdata159 struct {
+}
+
+type Tsdata16 struct {
+}
+
+type Tsdata160 struct {
+}
+
+type Tsdata161 struct {
+}
+
+type Tsdata162 struct {
+}
+
+type Tsdata163 struct {
+}
+
+type Tsdata164 struct {
+}
+
+type Tsdata165 struct {
+}
+
+type Tsdata166 struct {
+}
+
+type Tsdata167 struct {
+}
+
+type Tsdata168 struct {
+}
+
+type Tsdata169 struct {
+}
+
+type Tsdata17 struct {
+}
+
+type Tsdata170 struct {
+}
+
+type Tsdata171 struct {
+}
+
+type Tsdata172 struct {
+}
+
+type Tsdata173 struct {
+}
+
+type Tsdata174 struct {
+}
+
+type Tsdata175 struct {
+}
+
+type Tsdata176 struct {
+}
+
+type Tsdata177 struct {
+}
+
+type Tsdata178 struct {
+}
+
+type Tsdata179 struct {
+}
+
+type Tsdata18 struct {
+}
+
+type Tsdata180 struct {
+}
+
+type Tsdata181 struct {
+}
+
+type Tsdata182 struct {
+}
+
+type Tsdata183 struct {
+}
+
+type Tsdata184 struct {
+}
+
+type Tsdata185 struct {
+}
+
+type Tsdata186 struct {
+}
+
+type Tsdata187 struct {
+}
+
+type Tsdata188 struct {
+}
+
+type Tsdata189 struct {
+}
+
+type Tsdata19 struct {
+}
+
+type Tsdata190 struct {
+}
+
+type Tsdata191 struct {
+}
+
+type Tsdata192 struct {
+}
+
+type Tsdata193 struct {
+}
+
+type Tsdata194 struct {
+}
+
+type Tsdata195 struct {
+}
+
+type Tsdata196 struct {
+}
+
+type Tsdata197 struct {
+}
+
+type Tsdata198 struct {
+}
+
+type Tsdata199 struct {
+}
+
+type Tsdata2 struct {
+}
+
+type Tsdata20 struct {
+}
+
+type Tsdata200 struct {
+}
+
+type Tsdata201 struct {
+}
+
+type Tsdata202 struct {
+}
+
+type Tsdata203 struct {
+}
+
+type Tsdata204 struct {
+}
+
+type Tsdata205 struct {
+}
+
+type Tsdata206 struct {
+}
+
+type Tsdata207 struct {
+}
+
+type Tsdata208 struct {
+}
+
+type Tsdata209 struct {
+}
+
+type Tsdata21 struct {
+}
+
+type Tsdata210 struct {
+}
+
+type Tsdata211 struct {
+}
+
+type Tsdata212 struct {
+}
+
+type Tsdata213 struct {
+}
+
+type Tsdata214 struct {
+}
+
+type Tsdata215 struct {
+}
+
+type Tsdata216 struct {
+}
+
+type Tsdata217 struct {
+}
+
+type Tsdata218 struct {
+}
+
+type Tsdata219 struct {
+}
+
+type Tsdata22 struct {
+}
+
+type Tsdata220 struct {
+}
+
+type Tsdata221 struct {
+}
+
+type Tsdata222 struct {
+}
+
+type Tsdata223 struct {
+}
+
+type Tsdata224 struct {
+}
+
+type Tsdata225 struct {
+}
+
+type Tsdata226 struct {
+}
+
+type Tsdata227 struct {
+}
+
+type Tsdata228 struct {
+}
+
+type Tsdata229 struct {
+}
+
+type Tsdata23 struct {
+}
+
+type Tsdata230 struct {
+}
+
+type Tsdata231 struct {
+}
+
+type Tsdata232 struct {
+}
+
+type Tsdata233 struct {
+}
+
+type Tsdata234 struct {
+}
+
+type Tsdata235 struct {
+}
+
+type Tsdata236 struct {
+}
+
+type Tsdata237 struct {
+}
+
+type Tsdata238 struct {
+}
+
+type Tsdata239 struct {
+}
+
+type Tsdata24 struct {
+}
+
+type Tsdata240 struct {
+}
+
+type Tsdata241 struct {
+}
+
+type Tsdata242 struct {
+}
+
+type Tsdata243 struct {
+}
+
+type Tsdata244 struct {
+}
+
+type Tsdata245 struct {
+}
+
+type Tsdata246 struct {
+}
+
+type Tsdata247 struct {
+}
+
+type Tsdata248 struct {
+}
+
+type Tsdata249 struct {
+}
+
+type Tsdata25 struct {
+}
+
+type Tsdata250 struct {
+}
+
+type Tsdata251 struct {
+}
+
+type Tsdata252 struct {
+}
+
+type Tsdata253 struct {
+}
+
+type Tsdata254 struct {
+}
+
+type Tsdata255 struct {
+}
+
+type Tsdata26 struct {
+}
+
+type Tsdata27 struct {
+}
+
+type Tsdata28 struct {
+}
+
+type Tsdata29 struct {
+}
+
+type Tsdata3 struct {
+}
+
+type Tsdata30 struct {
+}
+
+type Tsdata31 struct {
+}
+
+type Tsdata32 struct {
+}
+
+type Tsdata33 struct {
+}
+
+type Tsdata34 struct {
+}
+
+type Tsdata35 struct {
+}
+
+type Tsdata36 struct {
+}
+
+type Tsdata37 struct {
+}
+
+type Tsdata38 struct {
+}
+
+type Tsdata39 struct {
+}
+
+type Tsdata4 struct {
+}
+
+type Tsdata40 struct {
+}
+
+type Tsdata41 struct {
+}
+
+type Tsdata42 struct {
+}
+
+type Tsdata43 struct {
+}
+
+type Tsdata44 struct {
+}
+
+type Tsdata45 struct {
+}
+
+type Tsdata46 struct {
+}
+
+type Tsdata47 struct {
+}
+
+type Tsdata48 struct {
+}
+
+type Tsdata49 struct {
+}
+
+type Tsdata5 struct {
+}
+
+type Tsdata50 struct {
+}
+
+type Tsdata51 struct {
+}
+
+type Tsdata52 struct {
+}
+
+type Tsdata53 struct {
+}
+
+type Tsdata54 struct {
+}
+
+type Tsdata55 struct {
+}
+
+type Tsdata56 struct {
+}
+
+type Tsdata57 struct {
+}
+
+type Tsdata58 struct {
+}
+
+type Tsdata59 struct {
+}
+
+type Tsdata6 struct {
+}
+
+type Tsdata60 struct {
+}
+
+type Tsdata61 struct {
+}
+
+type Tsdata62 struct {
+}
+
+type Tsdata63 struct {
+}
+
+type Tsdata64 struct {
+}
+
+type Tsdata65 struct {
+}
+
+type Tsdata66 struct {
+}
+
+type Tsdata67 struct {
+}
+
+type Tsdata68 struct {
+}
+
+type Tsdata69 struct {
+}
+
+type Tsdata7 struct {
+}
+
+type Tsdata70 struct {
+}
+
+type Tsdata71 struct {
+}
+
+type Tsdata72 struct {
+}
+
+type Tsdata73 struct {
+}
+
+type Tsdata74 struct {
+}
+
+type Tsdata75 struct {
+}
+
+type Tsdata76 struct {
+}
+
+type Tsdata77 struct {
+}
+
+type Tsdata78 struct {
+}
+
+type Tsdata79 struct {
+}
+
+type Tsdata8 struct {
+}
+
+type Tsdata80 struct {
+}
+
+type Tsdata81 struct {
+}
+
+type Tsdata82 struct {
+}
+
+type Tsdata83 struct {
+}
+
+type Tsdata84 struct {
+}
+
+type Tsdata85 struct {
+}
+
+type Tsdata86 struct {
+}
+
+type Tsdata87 struct {
+}
+
+type Tsdata88 struct {
+}
+
+type Tsdata89 struct {
+}
+
+type Tsdata9 struct {
+}
+
+type Tsdata90 struct {
+}
+
+type Tsdata91 struct {
+}
+
+type Tsdata92 struct {
+}
+
+type Tsdata93 struct {
+}
+
+type Tsdata94 struct {
+}
+
+type Tsdata95 struct {
+}
+
+type Tsdata96 struct {
+}
+
+type Tsdata97 struct {
+}
+
+type Tsdata98 struct {
+}
+
+type Tsdata99 struct {
+}
+
 type Tsdatum struct {
 	TsUuid    uuid.UUID
 	Value     float64

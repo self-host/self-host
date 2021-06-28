@@ -45,15 +45,14 @@ FROM tsdata_trunc
 GROUP BY ts_uuid, ts
 ORDER BY ts ASC;
 
--- name: CreateTsData :one
-SELECT
-	COUNT(*) AS count
-FROM tsdata_insert(
-  sqlc.arg(ts_uuid),
-  sqlc.arg(value),
-  sqlc.arg(ts),
-  sqlc.arg(created_by)
-) AS tsdata_insert;
+-- name: CreateTsData :execrows
+INSERT INTO tsdata(ts_uuid, value, ts, created_by)
+VALUES (
+	sqlc.arg(ts_uuid),
+	sqlc.arg(value),
+	sqlc.arg(ts),
+	sqlc.arg(created_by)
+);
 
 -- name: DeleteAllTsData :execrows
 DELETE FROM tsdata
