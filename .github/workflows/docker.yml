@@ -20,7 +20,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Docker aapije meta
-      id: serv-meta
+      id: aapije-meta
       uses: docker/metadata-action@v3
       with:
         images: |
@@ -35,7 +35,7 @@ jobs:
           type=sha
 
     - name: Docker meta
-      id: pmgr-meta
+      id: juvuln-meta
       uses: docker/metadata-action@v3
       with:
         images: |
@@ -50,7 +50,7 @@ jobs:
           type=sha
 
     - name: Docker meta
-      id: pwrk-meta
+      id: malgomaj-meta
       uses: docker/metadata-action@v3
       with:
         images: |
@@ -83,8 +83,8 @@ jobs:
         platforms: linux/amd64,linux/arm64
         file: build/aapije/Dockerfile
         push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ steps.serv-meta.outputs.tags }}
-        labels: ${{ steps.serv-meta.outputs.labels }}
+        tags: ${{ steps.aapije-meta.outputs.tags }}
+        labels: ${{ steps.aapije-meta.outputs.labels }}
 
     - name: Update aapije repo description
       uses: peter-evans/dockerhub-description@v2
@@ -101,8 +101,8 @@ jobs:
         platforms: linux/amd64,linux/arm64
         file: build/juvuln/Dockerfile
         push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ steps.pmgr-meta.outputs.tags }}
-        labels: ${{ steps.pmgr-meta.outputs.labels }}
+        tags: ${{ steps.juvuln-meta.outputs.tags }}
+        labels: ${{ steps.juvuln-meta.outputs.labels }}
 
     - name: Update juvuln repo description
       if: github.event_name == 'push'
@@ -119,8 +119,8 @@ jobs:
         platforms: linux/amd64,linux/arm64
         file: build/malgomaj/Dockerfile
         push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ steps.pwrk-meta.outputs.tags }}
-        labels: ${{ steps.pwrk-meta.outputs.labels }}
+        tags: ${{ steps.malgomaj-meta.outputs.tags }}
+        labels: ${{ steps.malgomaj-meta.outputs.labels }}
 
     - name: Update malgomaj repo description
       if: github.event_name == 'push'
