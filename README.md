@@ -11,7 +11,7 @@
 
 [![GPLv3 License](https://img.shields.io/badge/license-GPLv3-blue)](https://github.com/self-host/self-host/blob/master/LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/self-host/self-host)](https://goreportcard.com/report/github.com/self-host/self-host)
-[![Aapije](https://github.com/self-host/self-host/actions/workflows/aapije.yml/badge.svg)](https://github.com/self-host/self-host/actions/workflows/aapije.yml)
+[![Aapije](https://github.com/self-host/self-host/actions/workflows/aapije.yaml/badge.svg)](https://github.com/self-host/self-host/actions/workflows/aapije.yaml)
 [![Juvuln](https://github.com/self-host/self-host/actions/workflows/juvuln.yml/badge.svg)](https://github.com/self-host/self-host/actions/workflows/juvuln.yml)
 [![Malgomaj](https://github.com/self-host/self-host/actions/workflows/malgomaj.yml/badge.svg)](https://github.com/self-host/self-host/actions/workflows/malgomaj.yml)
 
