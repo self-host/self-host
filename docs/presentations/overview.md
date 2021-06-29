@@ -1,6 +1,6 @@
 % Self-host: an Overview
 % Mikael Ganehag Brorsson @ganehag
-% 2021-06-21
+% 2021-06-27
 
 ### What is the Self-host
 
@@ -11,7 +11,6 @@ The Self-host is;
 - An open API interface specification.
 - Free and open-source [software](https://github.com/self-host/self-host).
 - Not necessarily the only solution.
-- Spartacus.
 
 ---
 

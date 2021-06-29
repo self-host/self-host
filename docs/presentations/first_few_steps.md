@@ -1,6 +1,6 @@
 % Self-host API: First steps
 % Mikael Ganehag Brorsson @ganehag
-% 2021-06-24
+% 2021-06-27
 
 # Before venturing forth
 
