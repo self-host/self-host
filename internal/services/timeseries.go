@@ -20,12 +20,8 @@ import (
 )
 
 const insertDataToTimeseries = `
-SELECT tsdata_insert(
-	$1::uuid,
-	x.v,
-	x.ts,
-	$2::uuid
-)
+INSERT INTO tsdata(ts_uuid, value, ts, created_by)
+SELECT $1::uuid, x.v, x.ts, $2::uuid
 FROM
 json_to_recordset($3::json) AS x("v" double precision, "ts" timestamptz);
 `
