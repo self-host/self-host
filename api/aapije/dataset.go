@@ -246,7 +246,7 @@ func (ra *RestApi) GetRawDatasetByUuid(w http.ResponseWriter, r *http.Request, i
 		w.Header().Set("Content-Type", "application/octet-stream")
 	}
 
-	 w.Header().Set("ETag", f.Checksum)
+	w.Header().Set("ETag", f.Checksum)
 
 	if p.IfNoneMatch != nil && (string)(*p.IfNoneMatch) == f.Checksum {
 		w.WriteHeader(http.StatusNotModified)
