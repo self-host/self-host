@@ -20,6 +20,7 @@ import (
 
 	"github.com/self-host/self-host/api/malgomaj"
 	"github.com/self-host/self-host/api/malgomaj/library"
+	"github.com/self-host/self-host/pkg/configdir"
 )
 
 var logger *zap.Logger
@@ -35,10 +36,12 @@ func init() {
 
 	viper.SetConfigName(os.Getenv("CONFIG_FILENAME"))
 	viper.SetConfigType("yaml")
-
-	// How do we handle multiple OS?
-	viper.AddConfigPath("/etc/selfhost/")
-	viper.AddConfigPath("$HOME/.config/selfhost")
+	for _, p := range configdir.SystemConfig("selfhost") {
+		viper.AddConfigPath(p)
+	}
+	for _, p := range configdir.LocalConfig("selfhost") {
+		viper.AddConfigPath(p)
+	}
 	viper.AddConfigPath(".")
 
 	viper.SetDefault("module_library.scheme", "http")
