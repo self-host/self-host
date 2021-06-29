@@ -26,6 +26,7 @@ import (
 	"github.com/self-host/self-host/api/aapije"
 	"github.com/self-host/self-host/api/aapije/rest"
 	"github.com/self-host/self-host/middleware"
+	"github.com/self-host/self-host/pkg/configdir"
 	"github.com/self-host/self-host/pkg/util"
 	"github.com/self-host/self-host/postgres"
 )
@@ -48,8 +49,12 @@ func Server(address string) (<-chan error, error) {
 		v := viper.New()
 		v.SetConfigName(domainfile)
 		v.SetConfigType("yaml")
-		v.AddConfigPath("/etc/selfhost/")
-		v.AddConfigPath("$HOME/.config/selfhost")
+		for _, p := range configdir.SystemConfig("selfhost") {
+			v.AddConfigPath(p)
+		}
+		for _, p := range configdir.LocalConfig("selfhost") {
+			v.AddConfigPath(p)
+		}
 		v.AddConfigPath(".")
 
 		err := v.ReadInConfig()

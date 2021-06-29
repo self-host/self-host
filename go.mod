@@ -12,6 +12,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.0
 	github.com/go-chi/cors v1.2.0
 	github.com/golang-migrate/migrate/v4 v4.14.2-0.20201125065321-a53e6fc42574
+	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/google/uuid v1.2.0
 	github.com/hexops/gotextdiff v1.0.3
@@ -25,6 +26,7 @@ require (
 	github.com/spf13/viper v1.7.0
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/zap v1.15.0
+	golang.org/x/exp v0.0.0-20200224162631-6cc2880d07d6 // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/yaml.v2 v2.4.0
