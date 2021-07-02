@@ -35,17 +35,19 @@ generate_tsdata = """
 WITH year_range AS (
     SELECT generate_series(
         '2019-01-01'::timestamptz,
-        '2020-01-01'::timestamptz, 
+        '2020-01-01'::timestamptz,
         '10 minutes'::interval) AS when
-)
-SELECT
-    COUNT(*) AS count
-FROM year_range, tsdata_insert(
-    '{0}',
+), inserted AS (
+  INSERT INTO tsdata(
+    ts_uuid, value, ts, created_by)
+  SELECT '{0}',
     floor(random() * 100 - 50),
-        year_range.when,
-        '00000000-0000-1000-8000-000000000000'
-) AS tsdata_insert;
+    year_range.when,
+    '00000000-0000-1000-8000-000000000000'
+  FROM year_range
+  RETURNING 1
+)
+SELECT COUNT(*) AS count FROM inserted;
 """
 
 conn = psycopg2.connect("dbname='selfhost-test' user='postgres' host='pg13.selfhost' password='mysecretpassword'")
