@@ -48,7 +48,7 @@ func (p *ProgramCacheItem) Start() {
 
 func (p *ProgramCacheItem) Stop() {
 	if p.timer != nil {
-		p.Stop()
+		p.timer.Stop()
 	}
 	p.timer = nil
 }
