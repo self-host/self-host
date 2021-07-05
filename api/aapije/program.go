@@ -6,11 +6,13 @@ package aapije
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
 
 	"github.com/google/uuid"
+	"github.com/robfig/cron/v3"
 
 	"github.com/self-host/self-host/api/aapije/rest"
 	ie "github.com/self-host/self-host/internal/errors"
@@ -42,6 +44,16 @@ func (ra *RestApi) AddProgram(w http.ResponseWriter, r *http.Request) {
 	createdBy, err := u.GetUserUuidFromToken(r.Context(), []byte(domaintoken.Token))
 
 	s := services.NewProgramService(db)
+
+	// Validate CRON formated schedule
+	specParser := cron.NewParser(cron.Second | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor)
+	_, err = specParser.Parse(string(newProgram.Schedule))
+	if err != nil {
+		ie.SendHTTPError(w, ie.NewInvalidRequestError(
+			fmt.Errorf("unable to parse schedule: \n%v", err),
+		))
+		return
+	}
 
 	params := services.AddProgramParams{
 		Name:      newProgram.Name,
@@ -168,6 +180,18 @@ func (ra *RestApi) UpdateProgramByUuid(w http.ResponseWriter, r *http.Request, i
 	if err := json.NewDecoder(r.Body).Decode(&updProgram); err != nil {
 		ie.SendHTTPError(w, ie.ErrorMalformedRequest)
 		return
+	}
+
+	// Validate CRON formated schedule
+	if updProgram.Schedule != nil {
+		specParser := cron.NewParser(cron.Second | cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow | cron.Descriptor)
+		_, err = specParser.Parse(string(*updProgram.Schedule))
+		if err != nil {
+			ie.SendHTTPError(w, ie.NewInvalidRequestError(
+				fmt.Errorf("unable to parse schedule: \n%v", err),
+			))
+			return
+		}
 	}
 
 	svc := services.NewProgramService(db)
