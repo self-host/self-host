@@ -222,7 +222,7 @@ type Program struct {
 	Language ProgramLanguage `json:"language"`
 	Name     string          `json:"name"`
 
-	// Ignored for Modules and Webhooks. An interval at which this Program (routine) shall execute. An interval string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+	// Ignored for Modules and Webhooks. A CRON schedule on the typical [CRON format](https://en.wikipedia.org/wiki/Cron), yet with support for seconds.
 	Schedule string       `json:"schedule"`
 	State    ProgramState `json:"state"`
 	Tags     []string     `json:"tags"`
@@ -385,7 +385,7 @@ type NewProgram struct {
 	Language NewProgramLanguage `json:"language"`
 	Name     string             `json:"name"`
 
-	// Ignored for Modules and Webhooks. An interval at which this Program (routine) shall execute. An interval string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+	// Ignored for Modules and Webhooks. A CRON schedule on the typical [CRON format](https://en.wikipedia.org/wiki/Cron), yet with support for seconds.
 	Schedule string          `json:"schedule"`
 	State    NewProgramState `json:"state"`
 
@@ -476,7 +476,7 @@ type UpdateProgram struct {
 	Language *UpdateProgramLanguage `json:"language,omitempty"`
 	Name     *string                `json:"name,omitempty"`
 
-	// Ignored for Modules and Webhooks. An interval at which this Program (routine) shall execute. An interval string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+	// Ignored for Modules and Webhooks. A CRON schedule on the typical [CRON format](https://en.wikipedia.org/wiki/Cron), yet with support for seconds.
 	Schedule *string             `json:"schedule,omitempty"`
 	State    *UpdateProgramState `json:"state,omitempty"`
 

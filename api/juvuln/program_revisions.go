@@ -10,27 +10,33 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/google/uuid"
-	"github.com/self-host/self-host/pkg/util"
+	"github.com/robfig/cron/v3"
 	"github.com/self-host/self-host/pkg/workforce"
 	"go.uber.org/zap"
 )
+
+var watch *cron.Cron
+
+func init() {
+	watch = cron.New(cron.WithSeconds())
+	watch.Start()
+}
 
 type ProgramRevision struct {
 	Domain      string
 	Name        string
 	ProgramUuid uuid.UUID
 	Type        string
-	Schedule    time.Duration
+	Schedule    string
 	Deadline    int32
 	Language    string
 	Revision    int32
 	Code        []byte
 	Checksum    string
 
-	terminate chan struct{}
+	eid cron.EntryID
 }
 
 type WorkerTask struct {
@@ -42,27 +48,19 @@ type WorkerTask struct {
 }
 
 func NewProgramRevision(domain string, name string, programUUID uuid.UUID, ptype string, schedule string,
-	deadline int32, language string, revision int32, code []byte, checksum string) (*ProgramRevision, error) {
-	p := &ProgramRevision{
+	deadline int32, language string, revision int32, code []byte, checksum string) *ProgramRevision {
+	return &ProgramRevision{
 		Domain:      domain,
 		Name:        name,
 		ProgramUuid: programUUID,
 		Type:        ptype,
+		Schedule:    schedule,
 		Deadline:    deadline,
 		Language:    language,
 		Revision:    revision,
 		Code:        code,
 		Checksum:    checksum,
-		terminate:   make(chan struct{}),
 	}
-
-	sch, err := time.ParseDuration(schedule)
-	if err != nil {
-		return nil, err
-	}
-	p.Schedule = sch
-
-	return p, nil
 }
 
 func (p *ProgramRevision) Equals(b *ProgramRevision) bool {
@@ -82,19 +80,18 @@ func (p *ProgramRevision) Start() {
 		return
 	}
 
-	go func() {
-		for {
-			select {
-			case <-p.terminate:
-				return
-			case <-util.AtInterval(p.Schedule):
-				err := p.Execute()
-				if err != nil {
-					logger.Error("unable to execute task", zap.Error(err))
-				}
-			}
-		}
-	}()
+	eid, err := watch.AddFunc(p.Schedule, p.Run)
+	if err != nil {
+		logger.Error("unable to schedule task", zap.Error(err))
+	}
+	p.eid = eid
+}
+
+func (p *ProgramRevision) Run() {
+	err := p.Execute()
+	if err != nil {
+		logger.Error("unable to execute task", zap.Error(err))
+	}
 }
 
 func (p *ProgramRevision) Execute() error {
@@ -134,8 +131,7 @@ func (p *ProgramRevision) Stop() {
 		return
 	}
 
-	// FIXME: log?
-	close(p.terminate)
+	watch.Remove(p.eid)
 }
 
 func (p *ProgramRevision) GetId() string {

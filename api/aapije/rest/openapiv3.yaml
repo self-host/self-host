@@ -441,9 +441,9 @@ components:
                 type: string
                 enum: [active, inactive, failed]
               schedule:
-                description: Ignored for Modules and Webhooks. An interval at which this Program (routine) shall execute. An interval string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+                description: Ignored for Modules and Webhooks. A CRON schedule on the typical [CRON format](https://en.wikipedia.org/wiki/Cron), yet with support for seconds.
                 type: string
-                example: "1h"
+                example: "0 45 23 * * 6"
               deadline:
                 description: Ignored for Modules. An duration (in milliseconds) after which a Program (routine, webhook) shall terminate, to avoid long running programs.
                 type: integer
@@ -654,9 +654,9 @@ components:
                 type: string
                 enum: [active, inactive, failed]
               schedule:
-                description: Ignored for Modules and Webhooks. An interval at which this Program (routine) shall execute. An interval string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+                description: Ignored for Modules and Webhooks. A CRON schedule on the typical [CRON format](https://en.wikipedia.org/wiki/Cron), yet with support for seconds.
                 type: string
-                example: "1h"
+                example: "0 45 23 * * 6"
               deadline:
                 description: Ignored for Modules. An duration (in milliseconds) after which a Program (routine, webhook) shall terminate, to avoid long running programs.
                 type: integer
@@ -969,9 +969,9 @@ components:
           type: string
           enum: [active, inactive, failed]
         schedule:
-          description: Ignored for Modules and Webhooks. An interval at which this Program (routine) shall execute. An interval string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
+          description: Ignored for Modules and Webhooks. A CRON schedule on the typical [CRON format](https://en.wikipedia.org/wiki/Cron), yet with support for seconds.
           type: string
-          example: "1h"
+          example: "0 45 23 * * 6"
         deadline:
           description: Ignored for Modules. An duration (in milliseconds) after which a Program (routine, webhook) shall terminate, to avoid long running programs.
           type: integer

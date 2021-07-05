@@ -184,7 +184,7 @@ func UpdateProgramCache() error {
 		}
 
 		for _, p := range routines {
-			rev, err := NewProgramRevision(
+			pcache.Add(NewProgramRevision(
 				item.Domain,
 				p.Name,
 				p.ProgramUuid,
@@ -195,13 +195,7 @@ func UpdateProgramCache() error {
 				p.Revision,
 				p.Code,
 				p.Checksum,
-			)
-			if err != nil {
-				continue
-				// Ignore, log? do not return
-			}
-
-			pcache.Add(rev)
+			))
 		}
 	}
 
