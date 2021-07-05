@@ -27,26 +27,43 @@ type Program interface {
 }
 
 type ProgramCacheItem struct {
+	sync.RWMutex
+
 	program Program
 	expires time.Time
 	timer   *time.Timer
 }
 
 func (p *ProgramCacheItem) Expires() time.Time {
+	p.RLock()
+	defer p.RUnlock()
 	return p.expires
 }
 
 func (p *ProgramCacheItem) Start() {
+	// Ensure that we are not running
 	p.Stop()
+
+	p.RLock()
+	defer p.RUnlock()
+
+	// Background routine to delete item
 	p.timer = time.AfterFunc(time.Until(p.expires), func() {
+		p.RLock()
+		id := p.GetId()
+		p.RUnlock()
+
 		// Access the "global" cache
 		programCache.mux.Lock()
 		defer programCache.mux.Unlock()
-		delete(programCache.m, p.GetId())
+		delete(programCache.m, id)
 	})
 }
 
 func (p *ProgramCacheItem) Stop() {
+	p.Lock()
+	defer p.Unlock()
+
 	if p.timer != nil {
 		p.timer.Stop()
 	}
@@ -54,6 +71,8 @@ func (p *ProgramCacheItem) Stop() {
 }
 
 func (p *ProgramCacheItem) GetId() string {
+	p.RLock()
+	defer p.RUnlock()
 	return p.program.Id()
 }
 
@@ -96,6 +115,9 @@ func ProgramCacheAdd(p Program) *ProgramCacheItem {
 }
 
 func ProgramCacheGet(id string) *ProgramCacheItem {
+	programCache.mux.RLock()
+	defer programCache.mux.RUnlock()
+
 	p, ok := programCache.m[id]
 	if ok == false {
 		return nil
