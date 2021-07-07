@@ -30,6 +30,55 @@ func (e *AccountState) Scan(src interface{}) error {
 	return nil
 }
 
+type AlertSeverity string
+
+const (
+	AlertSeveritySecurity      AlertSeverity = "security"
+	AlertSeverityCritical      AlertSeverity = "critical"
+	AlertSeverityMajor         AlertSeverity = "major"
+	AlertSeverityMinor         AlertSeverity = "minor"
+	AlertSeverityWarning       AlertSeverity = "warning"
+	AlertSeverityInformational AlertSeverity = "informational"
+	AlertSeverityDebug         AlertSeverity = "debug"
+	AlertSeverityTrace         AlertSeverity = "trace"
+	AlertSeverityIndeterminate AlertSeverity = "indeterminate"
+)
+
+func (e *AlertSeverity) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = AlertSeverity(s)
+	case string:
+		*e = AlertSeverity(s)
+	default:
+		return fmt.Errorf("unsupported scan type for AlertSeverity: %T", src)
+	}
+	return nil
+}
+
+type AlertStatus string
+
+const (
+	AlertStatusOpen        AlertStatus = "open"
+	AlertStatusClose       AlertStatus = "close"
+	AlertStatusExpire      AlertStatus = "expire"
+	AlertStatusShelve      AlertStatus = "shelve"
+	AlertStatusAcknowledge AlertStatus = "acknowledge"
+	AlertStatusUnknown     AlertStatus = "unknown"
+)
+
+func (e *AlertStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = AlertStatus(s)
+	case string:
+		*e = AlertStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for AlertStatus: %T", src)
+	}
+	return nil
+}
+
 type PolicyAction string
 
 const (
@@ -89,6 +138,26 @@ func (e *ThingState) Scan(src interface{}) error {
 		return fmt.Errorf("unsupported scan type for ThingState: %T", src)
 	}
 	return nil
+}
+
+type Alert struct {
+	Uuid             uuid.UUID
+	Resource         string
+	Environment      string
+	Event            string
+	Severity         AlertSeverity
+	Status           AlertStatus
+	Service          []string
+	Value            string
+	Description      string
+	Origin           string
+	Tags             []string
+	Created          time.Time
+	Timeout          int32
+	Rawdata          []byte
+	Duplicate        int32
+	PreviousSeverity AlertSeverity
+	LastReceiveTime  sql.NullTime
 }
 
 type Dataset struct {
@@ -959,4 +1028,24 @@ type UserToken struct {
 	Name      string
 	TokenHash []byte
 	Created   time.Time
+}
+
+type VAlert struct {
+	Uuid             uuid.UUID
+	Resource         string
+	Environment      string
+	Event            string
+	Severity         AlertSeverity
+	PreviousSeverity AlertSeverity
+	Status           AlertStatus
+	Description      string
+	Value            string
+	Origin           string
+	Created          time.Time
+	LastReceiveTime  sql.NullTime
+	Timeout          int32
+	Duplicate        int32
+	Service          []string
+	Tags             []string
+	Rawdata          []byte
 }

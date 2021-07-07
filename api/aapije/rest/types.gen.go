@@ -11,6 +11,42 @@ const (
 	BasicAuthScopes = "BasicAuth.Scopes"
 )
 
+// Defines values for AlertSeverity.
+const (
+	AlertSeverityCritical AlertSeverity = "critical"
+
+	AlertSeverityDebug AlertSeverity = "debug"
+
+	AlertSeverityIndeterminate AlertSeverity = "indeterminate"
+
+	AlertSeverityInformational AlertSeverity = "informational"
+
+	AlertSeverityMajor AlertSeverity = "major"
+
+	AlertSeverityMinor AlertSeverity = "minor"
+
+	AlertSeveritySecurity AlertSeverity = "security"
+
+	AlertSeverityTrace AlertSeverity = "trace"
+
+	AlertSeverityWarning AlertSeverity = "warning"
+)
+
+// Defines values for AlertStatus.
+const (
+	AlertStatusAcknowledge AlertStatus = "acknowledge"
+
+	AlertStatusClose AlertStatus = "close"
+
+	AlertStatusExpire AlertStatus = "expire"
+
+	AlertStatusOpen AlertStatus = "open"
+
+	AlertStatusShelve AlertStatus = "shelve"
+
+	AlertStatusUnknown AlertStatus = "unknown"
+)
+
 // Defines values for DatasetFormat.
 const (
 	DatasetFormatCsv DatasetFormat = "csv"
@@ -132,8 +168,30 @@ const (
 
 // Alert defines model for Alert.
 type Alert struct {
-	Uuid *string `json:"uuid,omitempty"`
+	Created          time.Time     `json:"created"`
+	Description      string        `json:"description"`
+	Duplicate        int32         `json:"duplicate"`
+	Environment      string        `json:"environment"`
+	Event            string        `json:"event"`
+	LastReceiveTime  *time.Time    `json:"last_receive_time"`
+	Origin           string        `json:"origin"`
+	PreviousSeverity AlertSeverity `json:"previous_severity"`
+	Rawdata          []byte        `json:"rawdata"`
+	Resource         string        `json:"resource"`
+	Service          []string      `json:"service"`
+	Severity         AlertSeverity `json:"severity"`
+	Status           AlertStatus   `json:"status"`
+	Tags             []string      `json:"tags"`
+	Timeout          int32         `json:"timeout"`
+	Uuid             string        `json:"uuid"`
+	Value            string        `json:"value"`
 }
+
+// AlertSeverity defines model for AlertSeverity.
+type AlertSeverity string
+
+// AlertStatus defines model for AlertStatus.
+type AlertStatus string
 
 // CodeRevision defines model for CodeRevision.
 type CodeRevision struct {
@@ -195,6 +253,11 @@ type Error string
 // Group defines model for Group.
 type Group struct {
 	Name string `json:"name"`
+	Uuid string `json:"uuid"`
+}
+
+// The model returned when an Alert was created.
+type NewAlertReply struct {
 	Uuid string `json:"uuid"`
 }
 
@@ -310,6 +373,12 @@ type User struct {
 // AggregateParam defines model for aggregateParam.
 type AggregateParam string
 
+// EnvFilterParam defines model for envFilterParam.
+type EnvFilterParam string
+
+// EventFilterParam defines model for eventFilterParam.
+type EventFilterParam string
+
 // GreaterOrEqParam defines model for greaterOrEqParam.
 type GreaterOrEqParam float32
 
@@ -325,6 +394,9 @@ type LimitParam int64
 // OffsetParam defines model for offsetParam.
 type OffsetParam int64
 
+// OriginFilterParam defines model for originFilterParam.
+type OriginFilterParam string
+
 // PrecisionParam defines model for precisionParam.
 type PrecisionParam string
 
@@ -334,8 +406,26 @@ type RangeEndParam time.Time
 // RangeStartParam defines model for rangeStartParam.
 type RangeStartParam time.Time
 
+// ResourceFilterParam defines model for resourceFilterParam.
+type ResourceFilterParam string
+
+// ServiceFilterParam defines model for serviceFilterParam.
+type ServiceFilterParam []string
+
+// SeverityFilterParam defines model for severityFilterParam.
+type SeverityFilterParam string
+
+// SeverityGeFilterParam defines model for severityGeFilterParam.
+type SeverityGeFilterParam string
+
+// SeverityLeFilterParam defines model for severityLeFilterParam.
+type SeverityLeFilterParam string
+
 // SiUnitParam defines model for siUnitParam.
 type SiUnitParam string
+
+// StatusFilterParam defines model for statusFilterParam.
+type StatusFilterParam string
 
 // TagsFilterParam defines model for tagsFilterParam.
 type TagsFilterParam []string
@@ -345,6 +435,24 @@ type TimezoneParam string
 
 // UuidParam defines model for uuidParam.
 type UuidParam string
+
+// NewAlert defines model for NewAlert.
+type NewAlert struct {
+	Description string `json:"description"`
+	Environment string `json:"environment"`
+	Event       string `json:"event"`
+	Origin      string `json:"origin"`
+
+	// Base64 encoded raw data.
+	Rawdata  *[]byte       `json:"rawdata,omitempty"`
+	Resource string        `json:"resource"`
+	Service  *[]string     `json:"service,omitempty"`
+	Severity AlertSeverity `json:"severity"`
+	Status   *AlertStatus  `json:"status,omitempty"`
+	Tags     *[]string     `json:"tags,omitempty"`
+	Timeout  *int32        `json:"timeout,omitempty"`
+	Value    string        `json:"value"`
+}
 
 // NewDataset defines model for NewDataset.
 type NewDataset struct {
@@ -440,6 +548,24 @@ type NewUser struct {
 
 	// Name of the user
 	Name string `json:"name"`
+}
+
+// UpdateAlert defines model for UpdateAlert.
+type UpdateAlert struct {
+	Description *string `json:"description,omitempty"`
+	Environment *string `json:"environment,omitempty"`
+	Event       *string `json:"event,omitempty"`
+	Origin      *string `json:"origin,omitempty"`
+
+	// Base64 encoded raw data.
+	Rawdata  *[]byte        `json:"rawdata,omitempty"`
+	Resource *string        `json:"resource,omitempty"`
+	Service  *[]string      `json:"service,omitempty"`
+	Severity *AlertSeverity `json:"severity,omitempty"`
+	Status   *AlertStatus   `json:"status,omitempty"`
+	Tags     *[]string      `json:"tags,omitempty"`
+	Timeout  *int32         `json:"timeout,omitempty"`
+	Value    *string        `json:"value,omitempty"`
 }
 
 // The max allowed size of the complete request body is 1048576 bytes (1 MB). Performing a request with a Content-Length over this limit will result in a 400, malformed request error.
@@ -552,6 +678,36 @@ type FindAlertsParams struct {
 
 	// The numbers of items to return.
 	Limit *LimitParam `json:"limit,omitempty"`
+
+	// Alert resource
+	Resource *ResourceFilterParam `json:"resource,omitempty"`
+
+	// Alert environment
+	Environment *EnvFilterParam `json:"environment,omitempty"`
+
+	// Alert event
+	Event *EventFilterParam `json:"event,omitempty"`
+
+	// Alert origin
+	Origin *OriginFilterParam `json:"origin,omitempty"`
+
+	// Alert status
+	Status *StatusFilterParam `json:"status,omitempty"`
+
+	// Alert severity LessOrEqual to
+	SeverityLe *SeverityLeFilterParam `json:"severity_le,omitempty"`
+
+	// Alert severity GreaterOrEqual to
+	SeverityGe *SeverityGeFilterParam `json:"severity_ge,omitempty"`
+
+	// Alert severity
+	Severity *SeverityFilterParam `json:"severity,omitempty"`
+
+	// Array of tags to match on
+	Tags *TagsFilterParam `json:"tags,omitempty"`
+
+	// Array of services to match on
+	Service *ServiceFilterParam `json:"service,omitempty"`
 }
 
 // FindDatasetsParams defines parameters for FindDatasets.
@@ -563,7 +719,7 @@ type FindDatasetsParams struct {
 	// The numbers of items to return.
 	Limit *LimitParam `json:"limit,omitempty"`
 
-	// Array of tags to search for
+	// Array of tags to match on
 	Tags *TagsFilterParam `json:"tags,omitempty"`
 }
 
@@ -652,7 +808,7 @@ type FindProgramsParams struct {
 	// The numbers of items to return.
 	Limit *LimitParam `json:"limit,omitempty"`
 
-	// Array of tags to search for
+	// Array of tags to match on
 	Tags *TagsFilterParam `json:"tags,omitempty"`
 }
 
@@ -693,7 +849,7 @@ type FindThingsParams struct {
 	// The number of items to skip before starting to collect the result set.
 	Offset *OffsetParam `json:"offset,omitempty"`
 
-	// Array of tags to search for
+	// Array of tags to match on
 	Tags *TagsFilterParam `json:"tags,omitempty"`
 }
 
@@ -709,7 +865,7 @@ type FindTimeSeriesParams struct {
 	// The number of items to skip before starting to collect the result set.
 	Offset *OffsetParam `json:"offset,omitempty"`
 
-	// Array of tags to search for
+	// Array of tags to match on
 	Tags *TagsFilterParam `json:"tags,omitempty"`
 }
 
@@ -813,6 +969,12 @@ type FindUsersParams struct {
 	// The number of items to skip before starting to collect the result set.
 	Offset *OffsetParam `json:"offset,omitempty"`
 }
+
+// CreateAlertJSONRequestBody defines body for CreateAlert for application/json ContentType.
+type CreateAlertJSONRequestBody NewAlert
+
+// UpdateAlertByUuidJSONRequestBody defines body for UpdateAlertByUuid for application/json ContentType.
+type UpdateAlertByUuidJSONRequestBody UpdateAlert
 
 // AddDatasetsJSONRequestBody defines body for AddDatasets for application/json ContentType.
 type AddDatasetsJSONRequestBody NewDataset

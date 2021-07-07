@@ -96,6 +96,22 @@ type ClientInterface interface {
 	// FindAlerts request
 	FindAlerts(ctx context.Context, params *FindAlertsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// CreateAlert request  with any body
+	CreateAlertWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateAlert(ctx context.Context, body CreateAlertJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteAlertByUuid request
+	DeleteAlertByUuid(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// FindAlertByUuid request
+	FindAlertByUuid(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateAlertByUuid request  with any body
+	UpdateAlertByUuidWithBody(ctx context.Context, uuid UuidParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateAlertByUuid(ctx context.Context, uuid UuidParam, body UpdateAlertByUuidJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// FindDatasets request
 	FindDatasets(ctx context.Context, params *FindDatasetsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -316,6 +332,78 @@ type ClientInterface interface {
 
 func (c *Client) FindAlerts(ctx context.Context, params *FindAlertsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewFindAlertsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAlertWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAlertRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateAlert(ctx context.Context, body CreateAlertJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAlertRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteAlertByUuid(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteAlertByUuidRequest(c.Server, uuid)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) FindAlertByUuid(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewFindAlertByUuidRequest(c.Server, uuid)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateAlertByUuidWithBody(ctx context.Context, uuid UuidParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateAlertByUuidRequestWithBody(c.Server, uuid, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateAlertByUuid(ctx context.Context, uuid UuidParam, body UpdateAlertByUuidJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateAlertByUuidRequest(c.Server, uuid, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1315,12 +1403,327 @@ func NewFindAlertsRequest(server string, params *FindAlertsParams) (*http.Reques
 
 	}
 
+	if params.Resource != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "resource", runtime.ParamLocationQuery, *params.Resource); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Environment != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "environment", runtime.ParamLocationQuery, *params.Environment); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Event != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "event", runtime.ParamLocationQuery, *params.Event); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Origin != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "origin", runtime.ParamLocationQuery, *params.Origin); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Status != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "status", runtime.ParamLocationQuery, *params.Status); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.SeverityLe != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "severity_le", runtime.ParamLocationQuery, *params.SeverityLe); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.SeverityGe != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "severity_ge", runtime.ParamLocationQuery, *params.SeverityGe); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Severity != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "severity", runtime.ParamLocationQuery, *params.Severity); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Tags != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "tags", runtime.ParamLocationQuery, *params.Tags); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
+	if params.Service != nil {
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "service", runtime.ParamLocationQuery, *params.Service); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+	}
+
 	queryURL.RawQuery = queryValues.Encode()
 
 	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewCreateAlertRequest calls the generic CreateAlert builder with application/json body
+func NewCreateAlertRequest(server string, body CreateAlertJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateAlertRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateAlertRequestWithBody generates requests for CreateAlert with any type of body
+func NewCreateAlertRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/alerts")
+	if operationPath[0] == '/' {
+		operationPath = operationPath[1:]
+	}
+	operationURL := url.URL{
+		Path: operationPath,
+	}
+
+	queryURL := serverURL.ResolveReference(&operationURL)
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteAlertByUuidRequest generates requests for DeleteAlertByUuid
+func NewDeleteAlertByUuidRequest(server string, uuid UuidParam) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "uuid", runtime.ParamLocationPath, uuid)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/alerts/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = operationPath[1:]
+	}
+	operationURL := url.URL{
+		Path: operationPath,
+	}
+
+	queryURL := serverURL.ResolveReference(&operationURL)
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewFindAlertByUuidRequest generates requests for FindAlertByUuid
+func NewFindAlertByUuidRequest(server string, uuid UuidParam) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "uuid", runtime.ParamLocationPath, uuid)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/alerts/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = operationPath[1:]
+	}
+	operationURL := url.URL{
+		Path: operationPath,
+	}
+
+	queryURL := serverURL.ResolveReference(&operationURL)
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateAlertByUuidRequest calls the generic UpdateAlertByUuid builder with application/json body
+func NewUpdateAlertByUuidRequest(server string, uuid UuidParam, body UpdateAlertByUuidJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateAlertByUuidRequestWithBody(server, uuid, "application/json", bodyReader)
+}
+
+// NewUpdateAlertByUuidRequestWithBody generates requests for UpdateAlertByUuid with any type of body
+func NewUpdateAlertByUuidRequestWithBody(server string, uuid UuidParam, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "uuid", runtime.ParamLocationPath, uuid)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/alerts/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = operationPath[1:]
+	}
+	operationURL := url.URL{
+		Path: operationPath,
+	}
+
+	queryURL := serverURL.ResolveReference(&operationURL)
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -4378,6 +4781,22 @@ type ClientWithResponsesInterface interface {
 	// FindAlerts request
 	FindAlertsWithResponse(ctx context.Context, params *FindAlertsParams, reqEditors ...RequestEditorFn) (*FindAlertsResponse, error)
 
+	// CreateAlert request  with any body
+	CreateAlertWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAlertResponse, error)
+
+	CreateAlertWithResponse(ctx context.Context, body CreateAlertJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAlertResponse, error)
+
+	// DeleteAlertByUuid request
+	DeleteAlertByUuidWithResponse(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*DeleteAlertByUuidResponse, error)
+
+	// FindAlertByUuid request
+	FindAlertByUuidWithResponse(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*FindAlertByUuidResponse, error)
+
+	// UpdateAlertByUuid request  with any body
+	UpdateAlertByUuidWithBodyWithResponse(ctx context.Context, uuid UuidParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateAlertByUuidResponse, error)
+
+	UpdateAlertByUuidWithResponse(ctx context.Context, uuid UuidParam, body UpdateAlertByUuidJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateAlertByUuidResponse, error)
+
 	// FindDatasets request
 	FindDatasetsWithResponse(ctx context.Context, params *FindDatasetsParams, reqEditors ...RequestEditorFn) (*FindDatasetsResponse, error)
 
@@ -4612,6 +5031,92 @@ func (r FindAlertsResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r FindAlertsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateAlertResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *NewAlertReply
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateAlertResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateAlertResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteAlertByUuidResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteAlertByUuidResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteAlertByUuidResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type FindAlertByUuidResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Alert
+}
+
+// Status returns HTTPResponse.Status
+func (r FindAlertByUuidResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r FindAlertByUuidResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateAlertByUuidResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateAlertByUuidResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateAlertByUuidResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -5953,6 +6458,58 @@ func (c *ClientWithResponses) FindAlertsWithResponse(ctx context.Context, params
 	return ParseFindAlertsResponse(rsp)
 }
 
+// CreateAlertWithBodyWithResponse request with arbitrary body returning *CreateAlertResponse
+func (c *ClientWithResponses) CreateAlertWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAlertResponse, error) {
+	rsp, err := c.CreateAlertWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAlertResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateAlertWithResponse(ctx context.Context, body CreateAlertJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAlertResponse, error) {
+	rsp, err := c.CreateAlert(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAlertResponse(rsp)
+}
+
+// DeleteAlertByUuidWithResponse request returning *DeleteAlertByUuidResponse
+func (c *ClientWithResponses) DeleteAlertByUuidWithResponse(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*DeleteAlertByUuidResponse, error) {
+	rsp, err := c.DeleteAlertByUuid(ctx, uuid, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteAlertByUuidResponse(rsp)
+}
+
+// FindAlertByUuidWithResponse request returning *FindAlertByUuidResponse
+func (c *ClientWithResponses) FindAlertByUuidWithResponse(ctx context.Context, uuid UuidParam, reqEditors ...RequestEditorFn) (*FindAlertByUuidResponse, error) {
+	rsp, err := c.FindAlertByUuid(ctx, uuid, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseFindAlertByUuidResponse(rsp)
+}
+
+// UpdateAlertByUuidWithBodyWithResponse request with arbitrary body returning *UpdateAlertByUuidResponse
+func (c *ClientWithResponses) UpdateAlertByUuidWithBodyWithResponse(ctx context.Context, uuid UuidParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateAlertByUuidResponse, error) {
+	rsp, err := c.UpdateAlertByUuidWithBody(ctx, uuid, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateAlertByUuidResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateAlertByUuidWithResponse(ctx context.Context, uuid UuidParam, body UpdateAlertByUuidJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateAlertByUuidResponse, error) {
+	rsp, err := c.UpdateAlertByUuid(ctx, uuid, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateAlertByUuidResponse(rsp)
+}
+
 // FindDatasetsWithResponse request returning *FindDatasetsResponse
 func (c *ClientWithResponses) FindDatasetsWithResponse(ctx context.Context, params *FindDatasetsParams, reqEditors ...RequestEditorFn) (*FindDatasetsResponse, error) {
 	rsp, err := c.FindDatasets(ctx, params, reqEditors...)
@@ -6659,6 +7216,96 @@ func ParseFindAlertsResponse(rsp *http.Response) (*FindAlertsResponse, error) {
 		}
 		response.JSON200 = &dest
 
+	}
+
+	return response, nil
+}
+
+// ParseCreateAlertResponse parses an HTTP response from a CreateAlertWithResponse call
+func ParseCreateAlertResponse(rsp *http.Response) (*CreateAlertResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer rsp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateAlertResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest NewAlertReply
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteAlertByUuidResponse parses an HTTP response from a DeleteAlertByUuidWithResponse call
+func ParseDeleteAlertByUuidResponse(rsp *http.Response) (*DeleteAlertByUuidResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer rsp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteAlertByUuidResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	}
+
+	return response, nil
+}
+
+// ParseFindAlertByUuidResponse parses an HTTP response from a FindAlertByUuidWithResponse call
+func ParseFindAlertByUuidResponse(rsp *http.Response) (*FindAlertByUuidResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer rsp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &FindAlertByUuidResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Alert
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateAlertByUuidResponse parses an HTTP response from a UpdateAlertByUuidWithResponse call
+func ParseUpdateAlertByUuidResponse(rsp *http.Response) (*UpdateAlertByUuidResponse, error) {
+	bodyBytes, err := ioutil.ReadAll(rsp.Body)
+	defer rsp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateAlertByUuidResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
 	}
 
 	return response, nil

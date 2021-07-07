@@ -77,6 +77,8 @@ tags:
     description: Datasets are used to store and retrieve data structures more complex than time series. Configuration files or smaller computed data-sets are good examples.
   - name: programs
     description: Programs are code segments executed either as part of another code segment (module), as a program that runs ever so often (program) or as an externaly triggered call (webhook).
+  - name: alerts
+    description: Storage location for alerts. A basic bucket to mangage various alert notifications.
 
 components:
 
@@ -289,10 +291,10 @@ components:
       description: Value should be less or equal to (<=) this.
       schema:
         type: number
-    tagsFilterParam:
+    serviceFilterParam:
       in: query
-      name: tags
-      description: Array of tags to search for
+      name: service
+      description: Array of services to match on
       required: false
       style: form
       schema:
@@ -300,6 +302,81 @@ components:
         items:
           type: string
         maxLength: 5
+    tagsFilterParam:
+      in: query
+      name: tags
+      description: Array of tags to match on
+      required: false
+      style: form
+      schema:
+        type: array
+        items:
+          type: string
+        maxLength: 5
+    resourceFilterParam:
+      in: query
+      name: resource
+      description: Alert resource
+      required: false
+      style: form
+      schema:
+        type: string
+    envFilterParam:
+      in: query
+      name: environment
+      description: Alert environment
+      required: false
+      style: form
+      schema:
+        type: string
+    eventFilterParam:
+      in: query
+      name: event
+      description: Alert event
+      required: false
+      style: form
+      schema:
+        type: string
+    originFilterParam:
+      in: query
+      name: origin
+      description: Alert origin
+      required: false
+      style: form
+      schema:
+        type: string
+    statusFilterParam:
+      in: query
+      name: status
+      description: Alert status
+      required: false
+      style: form
+      schema:
+        type: string
+    severityLeFilterParam:
+      in: query
+      name: severity_le
+      description: Alert severity LessOrEqual to
+      required: false
+      style: form
+      schema:
+        type: string
+    severityGeFilterParam:
+      in: query
+      name: severity_ge
+      description: Alert severity GreaterOrEqual to
+      required: false
+      style: form
+      schema:
+        type: string
+    severityFilterParam:
+      in: query
+      name: severity
+      description: Alert severity
+      required: false
+      style: form
+      schema:
+        type: string
     namespaceParam:
       in: query
       name: ns
@@ -331,6 +408,63 @@ components:
         type: string
 
   requestBodies:
+    NewAlert:
+      description: Alert to add to the system
+      required: true
+      content:
+        application/json:
+          schema:
+            required:
+              - resource
+              - environment
+              - event
+              - severity
+              - description
+              - origin
+              - value
+            properties:
+              resource:
+                type: string
+                example: 'webfrontend'
+              environment:
+                type: string
+                example: 'production'
+              event:
+                type: string
+                example: 'Down'
+              severity:
+                $ref: '#/components/schemas/AlertSeverity'
+              status:
+                $ref: '#/components/schemas/AlertStatus'
+              value:
+                type: string
+                example: "OOM"
+              description:
+                type: string
+                example: "Process died due to low memory"
+              origin:
+                type: string
+                example: "watcher.go:check L123"
+              service:
+                type: array
+                items:
+                  type: string
+                example: [web]
+              tags:
+                type: array
+                items:
+                  type: string
+                example: [fixme, not-a-drill]
+              timeout:
+                type: integer
+                format: int32
+                default: 3600
+              rawdata:
+                description: Base64 encoded raw data.
+                type: string
+                format: byte
+                example: "aGVsbG8sIHdvcmxkIQo="
+
     NewDataset:
       description: Dataset to add to the system
       required: true
@@ -565,6 +699,55 @@ components:
                 description: Name of the user
                 example: "alice"
 
+    UpdateAlert:
+      description: Update an alert
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              resource:
+                type: string
+                example: 'webfrontend'
+              environment:
+                type: string
+                example: 'production'
+              event:
+                type: string
+                example: 'Down'
+              severity:
+                $ref: '#/components/schemas/AlertSeverity'
+              status:
+                $ref: '#/components/schemas/AlertStatus'
+              value:
+                type: string
+                example: "OOM"
+              description:
+                type: string
+                example: "Process died due to low memory"
+              origin:
+                type: string
+                example: "watcher.go:check L123"
+              service:
+                type: array
+                items:
+                  type: string
+                example: [web]
+              tags:
+                type: array
+                items:
+                  type: string
+                example: [fixme, not-a-drill]
+              timeout:
+                type: integer
+                format: int32
+                default: 3600
+              rawdata:
+                description: Base64 encoded raw data.
+                type: string
+                format: byte
+                example: "aGVsbG8sIHdvcmxkIQo="
+
     UpdateDataset:
       description: Dataset object for update
       required: true
@@ -789,10 +972,97 @@ components:
                   description: UUID of groups
 
   schemas:
+    AlertSeverity:
+      type: string
+      enum:
+      - security
+      - critical
+      - major
+      - minor
+      - warning
+      - informational
+      - debug
+      - trace
+      - indeterminate
+      example: critical
+  
+    AlertStatus:
+      type: string
+      enum:
+      - open
+      - close
+      - expire
+      - shelve
+      - acknowledge
+      - unknown
+      example: open
+
     Alert:
+      required:
+        - uuid
+        - resource
+        - environment
+        - event
+        - severity
+        - status
+        - service
+        - value
+        - description
+        - origin
+        - tags
+        - created
+        - timeout
+        - rawdata
+        - duplicate
+        - previous_severity
+        - last_receive_time
       properties:
         uuid:
           type: string
+        resource:
+          type: string
+        environment:
+          type: string
+        event:
+          type: string
+        severity:
+          $ref: '#/components/schemas/AlertSeverity'
+        status:
+          $ref: '#/components/schemas/AlertStatus'
+        service:
+          type: array
+          items:
+            type: string
+        value:
+          type: string
+        description:
+          type: string
+        origin:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        created:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28+02:00'
+        timeout:
+          type: integer
+          format: int32
+        rawdata:
+          type: string
+          format: byte
+        duplicate:
+          type: integer
+          format: int32
+        previous_severity:
+          $ref: '#/components/schemas/AlertSeverity'
+        last_receive_time:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28+02:00'
+          nullable: true
 
     CodeRevision:
       required:
@@ -911,6 +1181,15 @@ components:
           type: string
           minLength: 3
           example: "alice"
+          
+    NewAlertReply:
+      description: The model returned when an Alert was created.
+      required:
+        - uuid
+      properties:
+        uuid:
+          type: string
+          example: 'a9214980-2c89-42e4-a08d-71689af86b67'
 
     Policy:
       required:
@@ -1144,15 +1423,27 @@ security:
 paths:
   /v2/alerts:
     get:
+      tags:
+        - alerts
       security:
         - BasicAuth:
           - "read:alerts"
-      summary: Get alerts. TBD
+      summary: Get alerts.
       description: List and filter alerts.
       operationId: find alerts
       parameters:
         - $ref: '#/components/parameters/offsetParam'
         - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/resourceFilterParam'
+        - $ref: '#/components/parameters/envFilterParam'
+        - $ref: '#/components/parameters/eventFilterParam'
+        - $ref: '#/components/parameters/originFilterParam'
+        - $ref: '#/components/parameters/statusFilterParam'
+        - $ref: '#/components/parameters/severityLeFilterParam'
+        - $ref: '#/components/parameters/severityGeFilterParam'
+        - $ref: '#/components/parameters/severityFilterParam'
+        - $ref: '#/components/parameters/tagsFilterParam'
+        - $ref: '#/components/parameters/serviceFilterParam'
 
       responses:
         '200':
@@ -1161,6 +1452,115 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Alert'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+    post:
+      tags:
+        - alerts
+      security:
+        - BasicAuth:
+          - "create:alerts"
+      summary: Create a new alert.
+      description: List and filter alerts.
+      operationId: create alert
+      requestBody:
+        $ref: '#/components/requestBodies/NewAlert'
+      responses:
+        '201':
+          description: Created, returning UUID of object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewAlertReply'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/alerts/{uuid}:
+    parameters:
+      - $ref: '#/components/parameters/uuidParam'
+    get:
+      tags:
+        - alerts
+      security:
+        - BasicAuth:
+          - "read:alerts/{uuid}"
+      summary: Get a specific alert.
+      description: Return a alert by UUID.
+      operationId: find alert by uuid
+      responses:
+        '200':
+          description: An alert object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Alert'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - alerts
+      security:
+        - BasicAuth:
+          - "update:alerts/{uuid}"
+      summary: Update a specific alert.
+      description: Update an alert by UUID
+      operationId: update alert by uuid
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateAlert"
+      responses:
+        '204':
+          description: Alert updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          description: Validation exception
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - alerts
+      security:
+        - BasicAuth:
+          - "delete:alerts/{uuid}"
+      summary: Delete a specific alert.
+      description: Deletes a alert based on the UUID.
+      operationId: delete alert by uuid
+      responses:
+        '204':
+          $ref: '#/components/responses/Deleted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':

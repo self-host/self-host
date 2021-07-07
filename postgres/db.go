@@ -34,6 +34,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.checkUserTokenHasAccessManyStmt, err = db.PrepareContext(ctx, checkUserTokenHasAccessMany); err != nil {
 		return nil, fmt.Errorf("error preparing query CheckUserTokenHasAccessMany: %w", err)
 	}
+	if q.createAlertStmt, err = db.PrepareContext(ctx, createAlert); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateAlert: %w", err)
+	}
 	if q.createCodeRevisionStmt, err = db.PrepareContext(ctx, createCodeRevision); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateCodeRevision: %w", err)
 	}
@@ -63,6 +66,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	}
 	if q.createUserTokenStmt, err = db.PrepareContext(ctx, createUserToken); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateUserToken: %w", err)
+	}
+	if q.deleteAlertStmt, err = db.PrepareContext(ctx, deleteAlert); err != nil {
+		return nil, fmt.Errorf("error preparing query DeleteAlert: %w", err)
 	}
 	if q.deleteAllTsDataStmt, err = db.PrepareContext(ctx, deleteAllTsData); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteAllTsData: %w", err)
@@ -97,6 +103,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.deleteUserStmt, err = db.PrepareContext(ctx, deleteUser); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteUser: %w", err)
 	}
+	if q.existsAlertStmt, err = db.PrepareContext(ctx, existsAlert); err != nil {
+		return nil, fmt.Errorf("error preparing query ExistsAlert: %w", err)
+	}
 	if q.existsDatasetStmt, err = db.PrepareContext(ctx, existsDataset); err != nil {
 		return nil, fmt.Errorf("error preparing query ExistsDataset: %w", err)
 	}
@@ -117,6 +126,12 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	}
 	if q.existsUserStmt, err = db.PrepareContext(ctx, existsUser); err != nil {
 		return nil, fmt.Errorf("error preparing query ExistsUser: %w", err)
+	}
+	if q.findAlertByUUIDStmt, err = db.PrepareContext(ctx, findAlertByUUID); err != nil {
+		return nil, fmt.Errorf("error preparing query FindAlertByUUID: %w", err)
+	}
+	if q.findAlertsStmt, err = db.PrepareContext(ctx, findAlerts); err != nil {
+		return nil, fmt.Errorf("error preparing query FindAlerts: %w", err)
 	}
 	if q.findAllModulesStmt, err = db.PrepareContext(ctx, findAllModules); err != nil {
 		return nil, fmt.Errorf("error preparing query FindAllModules: %w", err)
@@ -325,6 +340,48 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.signProgramCodeRevisionStmt, err = db.PrepareContext(ctx, signProgramCodeRevision); err != nil {
 		return nil, fmt.Errorf("error preparing query SignProgramCodeRevision: %w", err)
 	}
+	if q.updateAlertIncDuplicateStmt, err = db.PrepareContext(ctx, updateAlertIncDuplicate); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAlertIncDuplicate: %w", err)
+	}
+	if q.updateAlertSetDescriptionStmt, err = db.PrepareContext(ctx, updateAlertSetDescription); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAlertSetDescription: %w", err)
+	}
+	if q.updateAlertSetEnvironmentStmt, err = db.PrepareContext(ctx, updateAlertSetEnvironment); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAlertSetEnvironment: %w", err)
+	}
+	if q.updateAlertSetEventStmt, err = db.PrepareContext(ctx, updateAlertSetEvent); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAlertSetEvent: %w", err)
+	}
+	if q.updateAlertSetLastReceivedTimeStmt, err = db.PrepareContext(ctx, updateAlertSetLastReceivedTime); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAlertSetLastReceivedTime: %w", err)
+	}
+	if q.updateAlertSetOriginStmt, err = db.PrepareContext(ctx, updateAlertSetOrigin); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAlertSetOrigin: %w", err)
+	}
+	if q.updateAlertSetRawdataStmt, err = db.PrepareContext(ctx, updateAlertSetRawdata); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAlertSetRawdata: %w", err)
+	}
+	if q.updateAlertSetResourceStmt, err = db.PrepareContext(ctx, updateAlertSetResource); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAlertSetResource: %w", err)
+	}
+	if q.updateAlertSetServiceStmt, err = db.PrepareContext(ctx, updateAlertSetService); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAlertSetService: %w", err)
+	}
+	if q.updateAlertSetSeverityStmt, err = db.PrepareContext(ctx, updateAlertSetSeverity); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAlertSetSeverity: %w", err)
+	}
+	if q.updateAlertSetStatusStmt, err = db.PrepareContext(ctx, updateAlertSetStatus); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAlertSetStatus: %w", err)
+	}
+	if q.updateAlertSetTagsStmt, err = db.PrepareContext(ctx, updateAlertSetTags); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAlertSetTags: %w", err)
+	}
+	if q.updateAlertSetTimeoutStmt, err = db.PrepareContext(ctx, updateAlertSetTimeout); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAlertSetTimeout: %w", err)
+	}
+	if q.updateAlertSetValueStmt, err = db.PrepareContext(ctx, updateAlertSetValue); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateAlertSetValue: %w", err)
+	}
 	return &q, nil
 }
 
@@ -348,6 +405,11 @@ func (q *Queries) Close() error {
 	if q.checkUserTokenHasAccessManyStmt != nil {
 		if cerr := q.checkUserTokenHasAccessManyStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing checkUserTokenHasAccessManyStmt: %w", cerr)
+		}
+	}
+	if q.createAlertStmt != nil {
+		if cerr := q.createAlertStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createAlertStmt: %w", cerr)
 		}
 	}
 	if q.createCodeRevisionStmt != nil {
@@ -398,6 +460,11 @@ func (q *Queries) Close() error {
 	if q.createUserTokenStmt != nil {
 		if cerr := q.createUserTokenStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing createUserTokenStmt: %w", cerr)
+		}
+	}
+	if q.deleteAlertStmt != nil {
+		if cerr := q.deleteAlertStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing deleteAlertStmt: %w", cerr)
 		}
 	}
 	if q.deleteAllTsDataStmt != nil {
@@ -455,6 +522,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing deleteUserStmt: %w", cerr)
 		}
 	}
+	if q.existsAlertStmt != nil {
+		if cerr := q.existsAlertStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing existsAlertStmt: %w", cerr)
+		}
+	}
 	if q.existsDatasetStmt != nil {
 		if cerr := q.existsDatasetStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing existsDatasetStmt: %w", cerr)
@@ -488,6 +560,16 @@ func (q *Queries) Close() error {
 	if q.existsUserStmt != nil {
 		if cerr := q.existsUserStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing existsUserStmt: %w", cerr)
+		}
+	}
+	if q.findAlertByUUIDStmt != nil {
+		if cerr := q.findAlertByUUIDStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing findAlertByUUIDStmt: %w", cerr)
+		}
+	}
+	if q.findAlertsStmt != nil {
+		if cerr := q.findAlertsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing findAlertsStmt: %w", cerr)
 		}
 	}
 	if q.findAllModulesStmt != nil {
@@ -835,6 +917,76 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing signProgramCodeRevisionStmt: %w", cerr)
 		}
 	}
+	if q.updateAlertIncDuplicateStmt != nil {
+		if cerr := q.updateAlertIncDuplicateStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAlertIncDuplicateStmt: %w", cerr)
+		}
+	}
+	if q.updateAlertSetDescriptionStmt != nil {
+		if cerr := q.updateAlertSetDescriptionStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAlertSetDescriptionStmt: %w", cerr)
+		}
+	}
+	if q.updateAlertSetEnvironmentStmt != nil {
+		if cerr := q.updateAlertSetEnvironmentStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAlertSetEnvironmentStmt: %w", cerr)
+		}
+	}
+	if q.updateAlertSetEventStmt != nil {
+		if cerr := q.updateAlertSetEventStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAlertSetEventStmt: %w", cerr)
+		}
+	}
+	if q.updateAlertSetLastReceivedTimeStmt != nil {
+		if cerr := q.updateAlertSetLastReceivedTimeStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAlertSetLastReceivedTimeStmt: %w", cerr)
+		}
+	}
+	if q.updateAlertSetOriginStmt != nil {
+		if cerr := q.updateAlertSetOriginStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAlertSetOriginStmt: %w", cerr)
+		}
+	}
+	if q.updateAlertSetRawdataStmt != nil {
+		if cerr := q.updateAlertSetRawdataStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAlertSetRawdataStmt: %w", cerr)
+		}
+	}
+	if q.updateAlertSetResourceStmt != nil {
+		if cerr := q.updateAlertSetResourceStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAlertSetResourceStmt: %w", cerr)
+		}
+	}
+	if q.updateAlertSetServiceStmt != nil {
+		if cerr := q.updateAlertSetServiceStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAlertSetServiceStmt: %w", cerr)
+		}
+	}
+	if q.updateAlertSetSeverityStmt != nil {
+		if cerr := q.updateAlertSetSeverityStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAlertSetSeverityStmt: %w", cerr)
+		}
+	}
+	if q.updateAlertSetStatusStmt != nil {
+		if cerr := q.updateAlertSetStatusStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAlertSetStatusStmt: %w", cerr)
+		}
+	}
+	if q.updateAlertSetTagsStmt != nil {
+		if cerr := q.updateAlertSetTagsStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAlertSetTagsStmt: %w", cerr)
+		}
+	}
+	if q.updateAlertSetTimeoutStmt != nil {
+		if cerr := q.updateAlertSetTimeoutStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAlertSetTimeoutStmt: %w", cerr)
+		}
+	}
+	if q.updateAlertSetValueStmt != nil {
+		if cerr := q.updateAlertSetValueStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateAlertSetValueStmt: %w", cerr)
+		}
+	}
 	return err
 }
 
@@ -872,215 +1024,253 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                               DBTX
-	tx                               *sql.Tx
-	addTokenToUserStmt               *sql.Stmt
-	addUserToGroupStmt               *sql.Stmt
-	checkUserTokenHasAccessStmt      *sql.Stmt
-	checkUserTokenHasAccessManyStmt  *sql.Stmt
-	createCodeRevisionStmt           *sql.Stmt
-	createDatasetStmt                *sql.Stmt
-	createGroupStmt                  *sql.Stmt
-	createPolicyStmt                 *sql.Stmt
-	createProgramStmt                *sql.Stmt
-	createThingStmt                  *sql.Stmt
-	createTimeseriesStmt             *sql.Stmt
-	createTsDataStmt                 *sql.Stmt
-	createUserStmt                   *sql.Stmt
-	createUserTokenStmt              *sql.Stmt
-	deleteAllTsDataStmt              *sql.Stmt
-	deleteDatasetStmt                *sql.Stmt
-	deleteGroupStmt                  *sql.Stmt
-	deletePolicyByUUIDStmt           *sql.Stmt
-	deleteProgramStmt                *sql.Stmt
-	deleteProgramCodeRevisionStmt    *sql.Stmt
-	deleteThingStmt                  *sql.Stmt
-	deleteTimeseriesStmt             *sql.Stmt
-	deleteTokenFromUserStmt          *sql.Stmt
-	deleteTsDataRangeStmt            *sql.Stmt
-	deleteUserStmt                   *sql.Stmt
-	existsDatasetStmt                *sql.Stmt
-	existsGroupStmt                  *sql.Stmt
-	existsPolicyStmt                 *sql.Stmt
-	existsProgramStmt                *sql.Stmt
-	existsThingStmt                  *sql.Stmt
-	existsTimeseriesStmt             *sql.Stmt
-	existsUserStmt                   *sql.Stmt
-	findAllModulesStmt               *sql.Stmt
-	findAllRoutineRevisionsStmt      *sql.Stmt
-	findDatasetByThingStmt           *sql.Stmt
-	findDatasetByUUIDStmt            *sql.Stmt
-	findDatasetsStmt                 *sql.Stmt
-	findDatasetsByTagsStmt           *sql.Stmt
-	findGroupByUuidStmt              *sql.Stmt
-	findGroupsStmt                   *sql.Stmt
-	findGroupsByUserStmt             *sql.Stmt
-	findPoliciesStmt                 *sql.Stmt
-	findPoliciesByGroupStmt          *sql.Stmt
-	findPoliciesByUserStmt           *sql.Stmt
-	findPolicyByUUIDStmt             *sql.Stmt
-	findProgramByUUIDStmt            *sql.Stmt
-	findProgramCodeRevisionsStmt     *sql.Stmt
-	findProgramsStmt                 *sql.Stmt
-	findProgramsByTagsStmt           *sql.Stmt
-	findThingByUUIDStmt              *sql.Stmt
-	findThingsStmt                   *sql.Stmt
-	findThingsByTagsStmt             *sql.Stmt
-	findTimeseriesStmt               *sql.Stmt
-	findTimeseriesByTagsStmt         *sql.Stmt
-	findTimeseriesByThingStmt        *sql.Stmt
-	findTimeseriesByUUIDStmt         *sql.Stmt
-	findTokensByUserStmt             *sql.Stmt
-	findUserByUUIDStmt               *sql.Stmt
-	findUsersStmt                    *sql.Stmt
-	getDatasetContentByUUIDStmt      *sql.Stmt
-	getNamedModuleCodeAtHeadStmt     *sql.Stmt
-	getNamedModuleCodeAtRevisionStmt *sql.Stmt
-	getProgramCodeAtHeadStmt         *sql.Stmt
-	getProgramCodeAtRevisionStmt     *sql.Stmt
-	getSignedProgramCodeAtHeadStmt   *sql.Stmt
-	getTimeseriesByUUIDStmt          *sql.Stmt
-	getTsDataRangeStmt               *sql.Stmt
-	getTsDataRangeAggStmt            *sql.Stmt
-	getUnitFromTimeseriesStmt        *sql.Stmt
-	getUserUuidFromTokenStmt         *sql.Stmt
-	removeUserFromAllGroupsStmt      *sql.Stmt
-	removeUserFromGroupsStmt         *sql.Stmt
-	setDatasetContentByUUIDStmt      *sql.Stmt
-	setDatasetFormatByUUIDStmt       *sql.Stmt
-	setDatasetNameByUUIDStmt         *sql.Stmt
-	setDatasetTagsStmt               *sql.Stmt
-	setGroupNameByUUIDStmt           *sql.Stmt
-	setPolicyActionStmt              *sql.Stmt
-	setPolicyEffectStmt              *sql.Stmt
-	setPolicyGroupStmt               *sql.Stmt
-	setPolicyPriorityStmt            *sql.Stmt
-	setPolicyResourceStmt            *sql.Stmt
-	setProgramDeadlineByUUIDStmt     *sql.Stmt
-	setProgramLanguageByUUIDStmt     *sql.Stmt
-	setProgramNameByUUIDStmt         *sql.Stmt
-	setProgramScheduleByUUIDStmt     *sql.Stmt
-	setProgramStateByUUIDStmt        *sql.Stmt
-	setProgramTagsStmt               *sql.Stmt
-	setProgramTypeByUUIDStmt         *sql.Stmt
-	setThingNameByUUIDStmt           *sql.Stmt
-	setThingStateByUUIDStmt          *sql.Stmt
-	setThingTagsStmt                 *sql.Stmt
-	setThingTypeByUUIDStmt           *sql.Stmt
-	setTimeseriesLowerBoundStmt      *sql.Stmt
-	setTimeseriesNameStmt            *sql.Stmt
-	setTimeseriesSiUnitStmt          *sql.Stmt
-	setTimeseriesTagsStmt            *sql.Stmt
-	setTimeseriesThingStmt           *sql.Stmt
-	setTimeseriesUpperBoundStmt      *sql.Stmt
-	setUserNameStmt                  *sql.Stmt
-	signProgramCodeRevisionStmt      *sql.Stmt
+	db                                 DBTX
+	tx                                 *sql.Tx
+	addTokenToUserStmt                 *sql.Stmt
+	addUserToGroupStmt                 *sql.Stmt
+	checkUserTokenHasAccessStmt        *sql.Stmt
+	checkUserTokenHasAccessManyStmt    *sql.Stmt
+	createAlertStmt                    *sql.Stmt
+	createCodeRevisionStmt             *sql.Stmt
+	createDatasetStmt                  *sql.Stmt
+	createGroupStmt                    *sql.Stmt
+	createPolicyStmt                   *sql.Stmt
+	createProgramStmt                  *sql.Stmt
+	createThingStmt                    *sql.Stmt
+	createTimeseriesStmt               *sql.Stmt
+	createTsDataStmt                   *sql.Stmt
+	createUserStmt                     *sql.Stmt
+	createUserTokenStmt                *sql.Stmt
+	deleteAlertStmt                    *sql.Stmt
+	deleteAllTsDataStmt                *sql.Stmt
+	deleteDatasetStmt                  *sql.Stmt
+	deleteGroupStmt                    *sql.Stmt
+	deletePolicyByUUIDStmt             *sql.Stmt
+	deleteProgramStmt                  *sql.Stmt
+	deleteProgramCodeRevisionStmt      *sql.Stmt
+	deleteThingStmt                    *sql.Stmt
+	deleteTimeseriesStmt               *sql.Stmt
+	deleteTokenFromUserStmt            *sql.Stmt
+	deleteTsDataRangeStmt              *sql.Stmt
+	deleteUserStmt                     *sql.Stmt
+	existsAlertStmt                    *sql.Stmt
+	existsDatasetStmt                  *sql.Stmt
+	existsGroupStmt                    *sql.Stmt
+	existsPolicyStmt                   *sql.Stmt
+	existsProgramStmt                  *sql.Stmt
+	existsThingStmt                    *sql.Stmt
+	existsTimeseriesStmt               *sql.Stmt
+	existsUserStmt                     *sql.Stmt
+	findAlertByUUIDStmt                *sql.Stmt
+	findAlertsStmt                     *sql.Stmt
+	findAllModulesStmt                 *sql.Stmt
+	findAllRoutineRevisionsStmt        *sql.Stmt
+	findDatasetByThingStmt             *sql.Stmt
+	findDatasetByUUIDStmt              *sql.Stmt
+	findDatasetsStmt                   *sql.Stmt
+	findDatasetsByTagsStmt             *sql.Stmt
+	findGroupByUuidStmt                *sql.Stmt
+	findGroupsStmt                     *sql.Stmt
+	findGroupsByUserStmt               *sql.Stmt
+	findPoliciesStmt                   *sql.Stmt
+	findPoliciesByGroupStmt            *sql.Stmt
+	findPoliciesByUserStmt             *sql.Stmt
+	findPolicyByUUIDStmt               *sql.Stmt
+	findProgramByUUIDStmt              *sql.Stmt
+	findProgramCodeRevisionsStmt       *sql.Stmt
+	findProgramsStmt                   *sql.Stmt
+	findProgramsByTagsStmt             *sql.Stmt
+	findThingByUUIDStmt                *sql.Stmt
+	findThingsStmt                     *sql.Stmt
+	findThingsByTagsStmt               *sql.Stmt
+	findTimeseriesStmt                 *sql.Stmt
+	findTimeseriesByTagsStmt           *sql.Stmt
+	findTimeseriesByThingStmt          *sql.Stmt
+	findTimeseriesByUUIDStmt           *sql.Stmt
+	findTokensByUserStmt               *sql.Stmt
+	findUserByUUIDStmt                 *sql.Stmt
+	findUsersStmt                      *sql.Stmt
+	getDatasetContentByUUIDStmt        *sql.Stmt
+	getNamedModuleCodeAtHeadStmt       *sql.Stmt
+	getNamedModuleCodeAtRevisionStmt   *sql.Stmt
+	getProgramCodeAtHeadStmt           *sql.Stmt
+	getProgramCodeAtRevisionStmt       *sql.Stmt
+	getSignedProgramCodeAtHeadStmt     *sql.Stmt
+	getTimeseriesByUUIDStmt            *sql.Stmt
+	getTsDataRangeStmt                 *sql.Stmt
+	getTsDataRangeAggStmt              *sql.Stmt
+	getUnitFromTimeseriesStmt          *sql.Stmt
+	getUserUuidFromTokenStmt           *sql.Stmt
+	removeUserFromAllGroupsStmt        *sql.Stmt
+	removeUserFromGroupsStmt           *sql.Stmt
+	setDatasetContentByUUIDStmt        *sql.Stmt
+	setDatasetFormatByUUIDStmt         *sql.Stmt
+	setDatasetNameByUUIDStmt           *sql.Stmt
+	setDatasetTagsStmt                 *sql.Stmt
+	setGroupNameByUUIDStmt             *sql.Stmt
+	setPolicyActionStmt                *sql.Stmt
+	setPolicyEffectStmt                *sql.Stmt
+	setPolicyGroupStmt                 *sql.Stmt
+	setPolicyPriorityStmt              *sql.Stmt
+	setPolicyResourceStmt              *sql.Stmt
+	setProgramDeadlineByUUIDStmt       *sql.Stmt
+	setProgramLanguageByUUIDStmt       *sql.Stmt
+	setProgramNameByUUIDStmt           *sql.Stmt
+	setProgramScheduleByUUIDStmt       *sql.Stmt
+	setProgramStateByUUIDStmt          *sql.Stmt
+	setProgramTagsStmt                 *sql.Stmt
+	setProgramTypeByUUIDStmt           *sql.Stmt
+	setThingNameByUUIDStmt             *sql.Stmt
+	setThingStateByUUIDStmt            *sql.Stmt
+	setThingTagsStmt                   *sql.Stmt
+	setThingTypeByUUIDStmt             *sql.Stmt
+	setTimeseriesLowerBoundStmt        *sql.Stmt
+	setTimeseriesNameStmt              *sql.Stmt
+	setTimeseriesSiUnitStmt            *sql.Stmt
+	setTimeseriesTagsStmt              *sql.Stmt
+	setTimeseriesThingStmt             *sql.Stmt
+	setTimeseriesUpperBoundStmt        *sql.Stmt
+	setUserNameStmt                    *sql.Stmt
+	signProgramCodeRevisionStmt        *sql.Stmt
+	updateAlertIncDuplicateStmt        *sql.Stmt
+	updateAlertSetDescriptionStmt      *sql.Stmt
+	updateAlertSetEnvironmentStmt      *sql.Stmt
+	updateAlertSetEventStmt            *sql.Stmt
+	updateAlertSetLastReceivedTimeStmt *sql.Stmt
+	updateAlertSetOriginStmt           *sql.Stmt
+	updateAlertSetRawdataStmt          *sql.Stmt
+	updateAlertSetResourceStmt         *sql.Stmt
+	updateAlertSetServiceStmt          *sql.Stmt
+	updateAlertSetSeverityStmt         *sql.Stmt
+	updateAlertSetStatusStmt           *sql.Stmt
+	updateAlertSetTagsStmt             *sql.Stmt
+	updateAlertSetTimeoutStmt          *sql.Stmt
+	updateAlertSetValueStmt            *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                               tx,
-		tx:                               tx,
-		addTokenToUserStmt:               q.addTokenToUserStmt,
-		addUserToGroupStmt:               q.addUserToGroupStmt,
-		checkUserTokenHasAccessStmt:      q.checkUserTokenHasAccessStmt,
-		checkUserTokenHasAccessManyStmt:  q.checkUserTokenHasAccessManyStmt,
-		createCodeRevisionStmt:           q.createCodeRevisionStmt,
-		createDatasetStmt:                q.createDatasetStmt,
-		createGroupStmt:                  q.createGroupStmt,
-		createPolicyStmt:                 q.createPolicyStmt,
-		createProgramStmt:                q.createProgramStmt,
-		createThingStmt:                  q.createThingStmt,
-		createTimeseriesStmt:             q.createTimeseriesStmt,
-		createTsDataStmt:                 q.createTsDataStmt,
-		createUserStmt:                   q.createUserStmt,
-		createUserTokenStmt:              q.createUserTokenStmt,
-		deleteAllTsDataStmt:              q.deleteAllTsDataStmt,
-		deleteDatasetStmt:                q.deleteDatasetStmt,
-		deleteGroupStmt:                  q.deleteGroupStmt,
-		deletePolicyByUUIDStmt:           q.deletePolicyByUUIDStmt,
-		deleteProgramStmt:                q.deleteProgramStmt,
-		deleteProgramCodeRevisionStmt:    q.deleteProgramCodeRevisionStmt,
-		deleteThingStmt:                  q.deleteThingStmt,
-		deleteTimeseriesStmt:             q.deleteTimeseriesStmt,
-		deleteTokenFromUserStmt:          q.deleteTokenFromUserStmt,
-		deleteTsDataRangeStmt:            q.deleteTsDataRangeStmt,
-		deleteUserStmt:                   q.deleteUserStmt,
-		existsDatasetStmt:                q.existsDatasetStmt,
-		existsGroupStmt:                  q.existsGroupStmt,
-		existsPolicyStmt:                 q.existsPolicyStmt,
-		existsProgramStmt:                q.existsProgramStmt,
-		existsThingStmt:                  q.existsThingStmt,
-		existsTimeseriesStmt:             q.existsTimeseriesStmt,
-		existsUserStmt:                   q.existsUserStmt,
-		findAllModulesStmt:               q.findAllModulesStmt,
-		findAllRoutineRevisionsStmt:      q.findAllRoutineRevisionsStmt,
-		findDatasetByThingStmt:           q.findDatasetByThingStmt,
-		findDatasetByUUIDStmt:            q.findDatasetByUUIDStmt,
-		findDatasetsStmt:                 q.findDatasetsStmt,
-		findDatasetsByTagsStmt:           q.findDatasetsByTagsStmt,
-		findGroupByUuidStmt:              q.findGroupByUuidStmt,
-		findGroupsStmt:                   q.findGroupsStmt,
-		findGroupsByUserStmt:             q.findGroupsByUserStmt,
-		findPoliciesStmt:                 q.findPoliciesStmt,
-		findPoliciesByGroupStmt:          q.findPoliciesByGroupStmt,
-		findPoliciesByUserStmt:           q.findPoliciesByUserStmt,
-		findPolicyByUUIDStmt:             q.findPolicyByUUIDStmt,
-		findProgramByUUIDStmt:            q.findProgramByUUIDStmt,
-		findProgramCodeRevisionsStmt:     q.findProgramCodeRevisionsStmt,
-		findProgramsStmt:                 q.findProgramsStmt,
-		findProgramsByTagsStmt:           q.findProgramsByTagsStmt,
-		findThingByUUIDStmt:              q.findThingByUUIDStmt,
-		findThingsStmt:                   q.findThingsStmt,
-		findThingsByTagsStmt:             q.findThingsByTagsStmt,
-		findTimeseriesStmt:               q.findTimeseriesStmt,
-		findTimeseriesByTagsStmt:         q.findTimeseriesByTagsStmt,
-		findTimeseriesByThingStmt:        q.findTimeseriesByThingStmt,
-		findTimeseriesByUUIDStmt:         q.findTimeseriesByUUIDStmt,
-		findTokensByUserStmt:             q.findTokensByUserStmt,
-		findUserByUUIDStmt:               q.findUserByUUIDStmt,
-		findUsersStmt:                    q.findUsersStmt,
-		getDatasetContentByUUIDStmt:      q.getDatasetContentByUUIDStmt,
-		getNamedModuleCodeAtHeadStmt:     q.getNamedModuleCodeAtHeadStmt,
-		getNamedModuleCodeAtRevisionStmt: q.getNamedModuleCodeAtRevisionStmt,
-		getProgramCodeAtHeadStmt:         q.getProgramCodeAtHeadStmt,
-		getProgramCodeAtRevisionStmt:     q.getProgramCodeAtRevisionStmt,
-		getSignedProgramCodeAtHeadStmt:   q.getSignedProgramCodeAtHeadStmt,
-		getTimeseriesByUUIDStmt:          q.getTimeseriesByUUIDStmt,
-		getTsDataRangeStmt:               q.getTsDataRangeStmt,
-		getTsDataRangeAggStmt:            q.getTsDataRangeAggStmt,
-		getUnitFromTimeseriesStmt:        q.getUnitFromTimeseriesStmt,
-		getUserUuidFromTokenStmt:         q.getUserUuidFromTokenStmt,
-		removeUserFromAllGroupsStmt:      q.removeUserFromAllGroupsStmt,
-		removeUserFromGroupsStmt:         q.removeUserFromGroupsStmt,
-		setDatasetContentByUUIDStmt:      q.setDatasetContentByUUIDStmt,
-		setDatasetFormatByUUIDStmt:       q.setDatasetFormatByUUIDStmt,
-		setDatasetNameByUUIDStmt:         q.setDatasetNameByUUIDStmt,
-		setDatasetTagsStmt:               q.setDatasetTagsStmt,
-		setGroupNameByUUIDStmt:           q.setGroupNameByUUIDStmt,
-		setPolicyActionStmt:              q.setPolicyActionStmt,
-		setPolicyEffectStmt:              q.setPolicyEffectStmt,
-		setPolicyGroupStmt:               q.setPolicyGroupStmt,
-		setPolicyPriorityStmt:            q.setPolicyPriorityStmt,
-		setPolicyResourceStmt:            q.setPolicyResourceStmt,
-		setProgramDeadlineByUUIDStmt:     q.setProgramDeadlineByUUIDStmt,
-		setProgramLanguageByUUIDStmt:     q.setProgramLanguageByUUIDStmt,
-		setProgramNameByUUIDStmt:         q.setProgramNameByUUIDStmt,
-		setProgramScheduleByUUIDStmt:     q.setProgramScheduleByUUIDStmt,
-		setProgramStateByUUIDStmt:        q.setProgramStateByUUIDStmt,
-		setProgramTagsStmt:               q.setProgramTagsStmt,
-		setProgramTypeByUUIDStmt:         q.setProgramTypeByUUIDStmt,
-		setThingNameByUUIDStmt:           q.setThingNameByUUIDStmt,
-		setThingStateByUUIDStmt:          q.setThingStateByUUIDStmt,
-		setThingTagsStmt:                 q.setThingTagsStmt,
-		setThingTypeByUUIDStmt:           q.setThingTypeByUUIDStmt,
-		setTimeseriesLowerBoundStmt:      q.setTimeseriesLowerBoundStmt,
-		setTimeseriesNameStmt:            q.setTimeseriesNameStmt,
-		setTimeseriesSiUnitStmt:          q.setTimeseriesSiUnitStmt,
-		setTimeseriesTagsStmt:            q.setTimeseriesTagsStmt,
-		setTimeseriesThingStmt:           q.setTimeseriesThingStmt,
-		setTimeseriesUpperBoundStmt:      q.setTimeseriesUpperBoundStmt,
-		setUserNameStmt:                  q.setUserNameStmt,
-		signProgramCodeRevisionStmt:      q.signProgramCodeRevisionStmt,
+		db:                                 tx,
+		tx:                                 tx,
+		addTokenToUserStmt:                 q.addTokenToUserStmt,
+		addUserToGroupStmt:                 q.addUserToGroupStmt,
+		checkUserTokenHasAccessStmt:        q.checkUserTokenHasAccessStmt,
+		checkUserTokenHasAccessManyStmt:    q.checkUserTokenHasAccessManyStmt,
+		createAlertStmt:                    q.createAlertStmt,
+		createCodeRevisionStmt:             q.createCodeRevisionStmt,
+		createDatasetStmt:                  q.createDatasetStmt,
+		createGroupStmt:                    q.createGroupStmt,
+		createPolicyStmt:                   q.createPolicyStmt,
+		createProgramStmt:                  q.createProgramStmt,
+		createThingStmt:                    q.createThingStmt,
+		createTimeseriesStmt:               q.createTimeseriesStmt,
+		createTsDataStmt:                   q.createTsDataStmt,
+		createUserStmt:                     q.createUserStmt,
+		createUserTokenStmt:                q.createUserTokenStmt,
+		deleteAlertStmt:                    q.deleteAlertStmt,
+		deleteAllTsDataStmt:                q.deleteAllTsDataStmt,
+		deleteDatasetStmt:                  q.deleteDatasetStmt,
+		deleteGroupStmt:                    q.deleteGroupStmt,
+		deletePolicyByUUIDStmt:             q.deletePolicyByUUIDStmt,
+		deleteProgramStmt:                  q.deleteProgramStmt,
+		deleteProgramCodeRevisionStmt:      q.deleteProgramCodeRevisionStmt,
+		deleteThingStmt:                    q.deleteThingStmt,
+		deleteTimeseriesStmt:               q.deleteTimeseriesStmt,
+		deleteTokenFromUserStmt:            q.deleteTokenFromUserStmt,
+		deleteTsDataRangeStmt:              q.deleteTsDataRangeStmt,
+		deleteUserStmt:                     q.deleteUserStmt,
+		existsAlertStmt:                    q.existsAlertStmt,
+		existsDatasetStmt:                  q.existsDatasetStmt,
+		existsGroupStmt:                    q.existsGroupStmt,
+		existsPolicyStmt:                   q.existsPolicyStmt,
+		existsProgramStmt:                  q.existsProgramStmt,
+		existsThingStmt:                    q.existsThingStmt,
+		existsTimeseriesStmt:               q.existsTimeseriesStmt,
+		existsUserStmt:                     q.existsUserStmt,
+		findAlertByUUIDStmt:                q.findAlertByUUIDStmt,
+		findAlertsStmt:                     q.findAlertsStmt,
+		findAllModulesStmt:                 q.findAllModulesStmt,
+		findAllRoutineRevisionsStmt:        q.findAllRoutineRevisionsStmt,
+		findDatasetByThingStmt:             q.findDatasetByThingStmt,
+		findDatasetByUUIDStmt:              q.findDatasetByUUIDStmt,
+		findDatasetsStmt:                   q.findDatasetsStmt,
+		findDatasetsByTagsStmt:             q.findDatasetsByTagsStmt,
+		findGroupByUuidStmt:                q.findGroupByUuidStmt,
+		findGroupsStmt:                     q.findGroupsStmt,
+		findGroupsByUserStmt:               q.findGroupsByUserStmt,
+		findPoliciesStmt:                   q.findPoliciesStmt,
+		findPoliciesByGroupStmt:            q.findPoliciesByGroupStmt,
+		findPoliciesByUserStmt:             q.findPoliciesByUserStmt,
+		findPolicyByUUIDStmt:               q.findPolicyByUUIDStmt,
+		findProgramByUUIDStmt:              q.findProgramByUUIDStmt,
+		findProgramCodeRevisionsStmt:       q.findProgramCodeRevisionsStmt,
+		findProgramsStmt:                   q.findProgramsStmt,
+		findProgramsByTagsStmt:             q.findProgramsByTagsStmt,
+		findThingByUUIDStmt:                q.findThingByUUIDStmt,
+		findThingsStmt:                     q.findThingsStmt,
+		findThingsByTagsStmt:               q.findThingsByTagsStmt,
+		findTimeseriesStmt:                 q.findTimeseriesStmt,
+		findTimeseriesByTagsStmt:           q.findTimeseriesByTagsStmt,
+		findTimeseriesByThingStmt:          q.findTimeseriesByThingStmt,
+		findTimeseriesByUUIDStmt:           q.findTimeseriesByUUIDStmt,
+		findTokensByUserStmt:               q.findTokensByUserStmt,
+		findUserByUUIDStmt:                 q.findUserByUUIDStmt,
+		findUsersStmt:                      q.findUsersStmt,
+		getDatasetContentByUUIDStmt:        q.getDatasetContentByUUIDStmt,
+		getNamedModuleCodeAtHeadStmt:       q.getNamedModuleCodeAtHeadStmt,
+		getNamedModuleCodeAtRevisionStmt:   q.getNamedModuleCodeAtRevisionStmt,
+		getProgramCodeAtHeadStmt:           q.getProgramCodeAtHeadStmt,
+		getProgramCodeAtRevisionStmt:       q.getProgramCodeAtRevisionStmt,
+		getSignedProgramCodeAtHeadStmt:     q.getSignedProgramCodeAtHeadStmt,
+		getTimeseriesByUUIDStmt:            q.getTimeseriesByUUIDStmt,
+		getTsDataRangeStmt:                 q.getTsDataRangeStmt,
+		getTsDataRangeAggStmt:              q.getTsDataRangeAggStmt,
+		getUnitFromTimeseriesStmt:          q.getUnitFromTimeseriesStmt,
+		getUserUuidFromTokenStmt:           q.getUserUuidFromTokenStmt,
+		removeUserFromAllGroupsStmt:        q.removeUserFromAllGroupsStmt,
+		removeUserFromGroupsStmt:           q.removeUserFromGroupsStmt,
+		setDatasetContentByUUIDStmt:        q.setDatasetContentByUUIDStmt,
+		setDatasetFormatByUUIDStmt:         q.setDatasetFormatByUUIDStmt,
+		setDatasetNameByUUIDStmt:           q.setDatasetNameByUUIDStmt,
+		setDatasetTagsStmt:                 q.setDatasetTagsStmt,
+		setGroupNameByUUIDStmt:             q.setGroupNameByUUIDStmt,
+		setPolicyActionStmt:                q.setPolicyActionStmt,
+		setPolicyEffectStmt:                q.setPolicyEffectStmt,
+		setPolicyGroupStmt:                 q.setPolicyGroupStmt,
+		setPolicyPriorityStmt:              q.setPolicyPriorityStmt,
+		setPolicyResourceStmt:              q.setPolicyResourceStmt,
+		setProgramDeadlineByUUIDStmt:       q.setProgramDeadlineByUUIDStmt,
+		setProgramLanguageByUUIDStmt:       q.setProgramLanguageByUUIDStmt,
+		setProgramNameByUUIDStmt:           q.setProgramNameByUUIDStmt,
+		setProgramScheduleByUUIDStmt:       q.setProgramScheduleByUUIDStmt,
+		setProgramStateByUUIDStmt:          q.setProgramStateByUUIDStmt,
+		setProgramTagsStmt:                 q.setProgramTagsStmt,
+		setProgramTypeByUUIDStmt:           q.setProgramTypeByUUIDStmt,
+		setThingNameByUUIDStmt:             q.setThingNameByUUIDStmt,
+		setThingStateByUUIDStmt:            q.setThingStateByUUIDStmt,
+		setThingTagsStmt:                   q.setThingTagsStmt,
+		setThingTypeByUUIDStmt:             q.setThingTypeByUUIDStmt,
+		setTimeseriesLowerBoundStmt:        q.setTimeseriesLowerBoundStmt,
+		setTimeseriesNameStmt:              q.setTimeseriesNameStmt,
+		setTimeseriesSiUnitStmt:            q.setTimeseriesSiUnitStmt,
+		setTimeseriesTagsStmt:              q.setTimeseriesTagsStmt,
+		setTimeseriesThingStmt:             q.setTimeseriesThingStmt,
+		setTimeseriesUpperBoundStmt:        q.setTimeseriesUpperBoundStmt,
+		setUserNameStmt:                    q.setUserNameStmt,
+		signProgramCodeRevisionStmt:        q.signProgramCodeRevisionStmt,
+		updateAlertIncDuplicateStmt:        q.updateAlertIncDuplicateStmt,
+		updateAlertSetDescriptionStmt:      q.updateAlertSetDescriptionStmt,
+		updateAlertSetEnvironmentStmt:      q.updateAlertSetEnvironmentStmt,
+		updateAlertSetEventStmt:            q.updateAlertSetEventStmt,
+		updateAlertSetLastReceivedTimeStmt: q.updateAlertSetLastReceivedTimeStmt,
+		updateAlertSetOriginStmt:           q.updateAlertSetOriginStmt,
+		updateAlertSetRawdataStmt:          q.updateAlertSetRawdataStmt,
+		updateAlertSetResourceStmt:         q.updateAlertSetResourceStmt,
+		updateAlertSetServiceStmt:          q.updateAlertSetServiceStmt,
+		updateAlertSetSeverityStmt:         q.updateAlertSetSeverityStmt,
+		updateAlertSetStatusStmt:           q.updateAlertSetStatusStmt,
+		updateAlertSetTagsStmt:             q.updateAlertSetTagsStmt,
+		updateAlertSetTimeoutStmt:          q.updateAlertSetTimeoutStmt,
+		updateAlertSetValueStmt:            q.updateAlertSetValueStmt,
 	}
 }
