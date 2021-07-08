@@ -45,7 +45,7 @@ AS
     alerts.severity,
     alerts.previous_severity,
     (CASE
-        WHEN alerts.status = 'open'::alert_status
+        WHEN alerts.status IN ('open'::alert_status, 'acknowledge'::alert_status)
             AND (
                 COALESCE(alerts.last_receive_time, alerts.created)
                 + make_interval(secs => alerts.timeout)
