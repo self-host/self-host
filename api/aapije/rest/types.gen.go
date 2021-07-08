@@ -413,19 +413,19 @@ type ResourceFilterParam string
 type ServiceFilterParam []string
 
 // SeverityFilterParam defines model for severityFilterParam.
-type SeverityFilterParam string
+type SeverityFilterParam AlertSeverity
 
 // SeverityGeFilterParam defines model for severityGeFilterParam.
-type SeverityGeFilterParam string
+type SeverityGeFilterParam AlertSeverity
 
 // SeverityLeFilterParam defines model for severityLeFilterParam.
-type SeverityLeFilterParam string
+type SeverityLeFilterParam AlertSeverity
 
 // SiUnitParam defines model for siUnitParam.
 type SiUnitParam string
 
 // StatusFilterParam defines model for statusFilterParam.
-type StatusFilterParam string
+type StatusFilterParam AlertStatus
 
 // TagsFilterParam defines model for tagsFilterParam.
 type TagsFilterParam []string

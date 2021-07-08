@@ -352,7 +352,7 @@ components:
       required: false
       style: form
       schema:
-        type: string
+        $ref: '#/components/schemas/AlertStatus'
     severityLeFilterParam:
       in: query
       name: severity_le
@@ -360,7 +360,7 @@ components:
       required: false
       style: form
       schema:
-        type: string
+        $ref: '#/components/schemas/AlertSeverity'
     severityGeFilterParam:
       in: query
       name: severity_ge
@@ -368,7 +368,7 @@ components:
       required: false
       style: form
       schema:
-        type: string
+        $ref: '#/components/schemas/AlertSeverity'
     severityFilterParam:
       in: query
       name: severity
@@ -376,7 +376,7 @@ components:
       required: false
       style: form
       schema:
-        type: string
+        $ref: '#/components/schemas/AlertSeverity'
     namespaceParam:
       in: query
       name: ns
