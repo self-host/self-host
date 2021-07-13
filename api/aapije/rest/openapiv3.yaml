@@ -27,7 +27,7 @@ info:
     The `domain` name is the `username` part of an ordinary HTTP BasicAuth request, the `access key` is the `password`.
     
     ### Status codes
-    All requests will respond with one out of the following status codes:
+    All error requests will respond with one out of the following status codes:
 
     - 400 Bad request.
     - 401 Unauthorized.
