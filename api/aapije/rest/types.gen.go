@@ -872,10 +872,10 @@ type FindTimeSeriesParams struct {
 // DeleteDataFromTimeSeriesParams defines parameters for DeleteDataFromTimeSeries.
 type DeleteDataFromTimeSeriesParams struct {
 
-	// Start of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
+	// Start (>=) of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
 	Start RangeStartParam `json:"start"`
 
-	// End of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
+	// End (<=) of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
 	End RangeEndParam `json:"end"`
 
 	// Value should be greater or equal to (>=) this.
@@ -888,10 +888,10 @@ type DeleteDataFromTimeSeriesParams struct {
 // QueryTimeseriesForDataParams defines parameters for QueryTimeseriesForData.
 type QueryTimeseriesForDataParams struct {
 
-	// Start of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
+	// Start (>=) of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
 	Start RangeStartParam `json:"start"`
 
-	// End of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
+	// End (<=) of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
 	End RangeEndParam `json:"end"`
 
 	// The SI unit of the result. A cast will occur if the base unit differes.
@@ -932,10 +932,10 @@ type FindTsdataByQueryParams struct {
 	// A series of timeseries UUIDs to search for
 	Uuids []string `json:"uuids"`
 
-	// Start of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
+	// Start (>=) of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
 	Start RangeStartParam `json:"start"`
 
-	// End of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
+	// End (<=) of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
 	End RangeEndParam `json:"end"`
 
 	// Value should be greater or equal to (>=) this.

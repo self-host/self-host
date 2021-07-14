@@ -245,7 +245,7 @@ components:
     rangeStartParam:
       in: query
       name: start
-      description: Start of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
+      description: Start (>=) of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
       required: true
       schema:
         type: string
@@ -254,7 +254,7 @@ components:
     rangeEndParam:
       in: query
       name: end
-      description: End of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
+      description: End (<=) of time period. The period (start to end) can **not** exceed 1 year. Defaults to `now`.
       required: true
       schema:
         type: string
