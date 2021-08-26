@@ -22,7 +22,7 @@ func (ra *RestApi) FindTsdataByQuery(w http.ResponseWriter, r *http.Request, p r
 	aggregate := "avg"
 	precision := "microseconds"
 
-	if time.Time(p.End).Sub(time.Time(p.Start)) > 31556952*time.Second {
+	if time.Time(p.End).Sub(time.Time(p.Start)) > 31622401*time.Second {
 		// FIXME: these errors should be declared in one location
 		ie.SendHTTPError(w, ie.NewBadRequestError(fmt.Errorf("start to end range exceeds limit")))
 		return

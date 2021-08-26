@@ -182,7 +182,7 @@ func (ra *RestApi) QueryTimeseriesForData(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if time.Time(p.End).Sub(time.Time(p.Start)) > 31556952*time.Second {
+	if time.Time(p.End).Sub(time.Time(p.Start)) > 31622401*time.Second {
 		ie.SendHTTPError(w, ie.ErrorMalformedRequest)
 		return
 	}
@@ -430,7 +430,7 @@ func (ra *RestApi) DeleteDataFromTimeSeries(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	if time.Time(p.End).Sub(time.Time(p.Start)) > 31556952*time.Second {
+	if time.Time(p.End).Sub(time.Time(p.Start)) > 31622401*time.Second {
 		ie.SendHTTPError(w, ie.ErrorMalformedRequest)
 		return
 	}
