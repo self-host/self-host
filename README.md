@@ -110,6 +110,7 @@ Hardware and software required;
     + [Unit handling](https://github.com/self-host/self-host/blob/main/docs/unit_handling.md)
     + [Exernal services](https://github.com/self-host/self-host/blob/main/docs/external_services.md)
     + [Alerts](https://github.com/self-host/self-host/blob/main/docs/alerts.md)
+    + [Database ERD](https://github.com/self-host/self-host/blob/main/docs/assets/database_erd.png)
 - [Benchmark](https://github.com/self-host/self-host/blob/main/docs/benchmark_overview.md)
 - [Public-facing API specification](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/self-host/self-host/main/api/aapije/rest/openapiv3.yaml)
 - [Notes on deploying to production](https://github.com/self-host/self-host/blob/main/docs/production_deployment.md)
