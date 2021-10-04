@@ -218,6 +218,11 @@ SET content = sqlc.arg(content)::bytea,
     checksum = sha256(sqlc.arg(content)::bytea)
 WHERE datasets.uuid = sqlc.arg(uuid);
 
+-- name: SetDatasetThingByUUID :execrows
+UPDATE datasets
+SET belongs_to = sqlc.arg(thing_uuid)
+WHERE datasets.uuid = sqlc.arg(uuid);
+
 -- name: SetDatasetTags :execrows
 UPDATE datasets
 SET tags = sqlc.arg(tags)

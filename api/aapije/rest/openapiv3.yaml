@@ -771,6 +771,11 @@ components:
                 type: string
                 format: byte
                 example: 'LS0tCiBkb2U6ICJhIGRlZXIsIGEgZmVtYWxlIGRlZXIiCiBwaTogMy4xNDE1OQo='
+              thing_uuid:
+                type: string
+                nullable: true
+                example: '54295623-c5e3-4085-80cf-542338b1bc30'
+                description: A reference to a Thing
               tags:
                 description: An array of text labels (tags) for tracking and filtering purposes.
                 type: array
@@ -3587,5 +3592,3 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
         '500':
           $ref: '#/components/responses/InternalServerError'
-
-

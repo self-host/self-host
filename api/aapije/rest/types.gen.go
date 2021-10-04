@@ -578,6 +578,9 @@ type UpdateDataset struct {
 
 	// An array of text labels (tags) for tracking and filtering purposes.
 	Tags *[]string `json:"tags,omitempty"`
+
+	// A reference to a Thing
+	ThingUuid *string `json:"thing_uuid"`
 }
 
 // UpdateGroup defines model for UpdateGroup.

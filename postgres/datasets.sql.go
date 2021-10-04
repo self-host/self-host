@@ -575,3 +575,22 @@ func (q *Queries) SetDatasetTags(ctx context.Context, arg SetDatasetTagsParams) 
 	}
 	return result.RowsAffected()
 }
+
+const setDatasetThingByUUID = `-- name: SetDatasetThingByUUID :execrows
+UPDATE datasets
+SET belongs_to = $1
+WHERE datasets.uuid = $2
+`
+
+type SetDatasetThingByUUIDParams struct {
+	ThingUuid uuid.UUID
+	Uuid      uuid.UUID
+}
+
+func (q *Queries) SetDatasetThingByUUID(ctx context.Context, arg SetDatasetThingByUUIDParams) (int64, error) {
+	result, err := q.exec(ctx, q.setDatasetThingByUUIDStmt, setDatasetThingByUUID, arg.ThingUuid, arg.Uuid)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}

@@ -185,6 +185,15 @@ func (ra *RestApi) UpdateDatasetByUuid(w http.ResponseWriter, r *http.Request, i
 		Tags:    updDataset.Tags,
 	}
 
+	if updDataset.ThingUuid != nil {
+		thingUUID, err := uuid.Parse(*updDataset.ThingUuid)
+		if err != nil {
+			ie.SendHTTPError(w, ie.ErrorMalformedRequest)
+			return
+		}
+		params.ThingUuid = &thingUUID
+	}
+
 	if updDataset.Format != nil {
 		s := string(*updDataset.Format)
 		params.Format = &s

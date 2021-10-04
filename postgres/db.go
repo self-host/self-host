@@ -265,6 +265,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.setDatasetTagsStmt, err = db.PrepareContext(ctx, setDatasetTags); err != nil {
 		return nil, fmt.Errorf("error preparing query SetDatasetTags: %w", err)
 	}
+	if q.setDatasetThingByUUIDStmt, err = db.PrepareContext(ctx, setDatasetThingByUUID); err != nil {
+		return nil, fmt.Errorf("error preparing query SetDatasetThingByUUID: %w", err)
+	}
 	if q.setGroupNameByUUIDStmt, err = db.PrepareContext(ctx, setGroupNameByUUID); err != nil {
 		return nil, fmt.Errorf("error preparing query SetGroupNameByUUID: %w", err)
 	}
@@ -792,6 +795,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing setDatasetTagsStmt: %w", cerr)
 		}
 	}
+	if q.setDatasetThingByUUIDStmt != nil {
+		if cerr := q.setDatasetThingByUUIDStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing setDatasetThingByUUIDStmt: %w", cerr)
+		}
+	}
 	if q.setGroupNameByUUIDStmt != nil {
 		if cerr := q.setGroupNameByUUIDStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing setGroupNameByUUIDStmt: %w", cerr)
@@ -1107,6 +1115,7 @@ type Queries struct {
 	setDatasetFormatByUUIDStmt         *sql.Stmt
 	setDatasetNameByUUIDStmt           *sql.Stmt
 	setDatasetTagsStmt                 *sql.Stmt
+	setDatasetThingByUUIDStmt          *sql.Stmt
 	setGroupNameByUUIDStmt             *sql.Stmt
 	setPolicyActionStmt                *sql.Stmt
 	setPolicyEffectStmt                *sql.Stmt
@@ -1233,6 +1242,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		setDatasetFormatByUUIDStmt:         q.setDatasetFormatByUUIDStmt,
 		setDatasetNameByUUIDStmt:           q.setDatasetNameByUUIDStmt,
 		setDatasetTagsStmt:                 q.setDatasetTagsStmt,
+		setDatasetThingByUUIDStmt:          q.setDatasetThingByUUIDStmt,
 		setGroupNameByUUIDStmt:             q.setGroupNameByUUIDStmt,
 		setPolicyActionStmt:                q.setPolicyActionStmt,
 		setPolicyEffectStmt:                q.setPolicyEffectStmt,

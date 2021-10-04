@@ -260,10 +260,11 @@ func (svc *DatasetService) GetDatasetContentByUuid(ctx context.Context, id uuid.
 }
 
 type UpdateDatasetByUuidParams struct {
-	Content *[]byte
-	Format  *string
-	Name    *string
-	Tags    *[]string
+	Content   *[]byte
+	Format    *string
+	Name      *string
+	Tags      *[]string
+	ThingUuid *uuid.UUID
 }
 
 func (svc *DatasetService) UpdateDatasetByUuid(ctx context.Context, id uuid.UUID, p UpdateDatasetByUuidParams) (int64, error) {
@@ -322,6 +323,19 @@ func (svc *DatasetService) UpdateDatasetByUuid(ctx context.Context, id uuid.UUID
 			Tags: *p.Tags,
 		}
 		c, err := q.SetDatasetTags(ctx, params)
+		if err != nil {
+			tx.Rollback()
+			return 0, err
+		}
+		count += c
+	}
+
+	if p.ThingUuid != nil {
+		params := postgres.SetDatasetThingByUUIDParams{
+			Uuid:      id,
+			ThingUuid: *p.ThingUuid,
+		}
+		c, err := q.SetDatasetThingByUUID(ctx, params)
 		if err != nil {
 			tx.Rollback()
 			return 0, err
