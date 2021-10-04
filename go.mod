@@ -7,7 +7,7 @@ require (
 	github.com/d5/tengo/v2 v2.7.0
 	github.com/deepmap/oapi-codegen v1.6.1
 	github.com/fsnotify/fsnotify v1.4.9
-	github.com/ganehag/go-units v1.0.4
+	github.com/ganehag/go-units v1.0.5
 	github.com/getkin/kin-openapi v0.59.0
 	github.com/go-chi/chi/v5 v5.0.0
 	github.com/go-chi/cors v1.2.0
