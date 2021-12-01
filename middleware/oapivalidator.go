@@ -16,12 +16,12 @@ import (
 )
 
 // Validate a request against the OpenAPI specification
-func OapiRequestValidator(swagger *openapi3.Swagger) func(http.HandlerFunc) http.HandlerFunc {
+func OapiRequestValidator(swagger *openapi3.T) func(http.HandlerFunc) http.HandlerFunc {
 	return OapiRequestValidatorWithOptions(swagger, nil)
 }
 
 // Validate a request against the OpenAPI specification (with options)
-func OapiRequestValidatorWithOptions(swagger *openapi3.Swagger, options *Options) func(http.HandlerFunc) http.HandlerFunc {
+func OapiRequestValidatorWithOptions(swagger *openapi3.T, options *Options) func(http.HandlerFunc) http.HandlerFunc {
 	router, err := legacyrouter.NewRouter(swagger)
 	if err != nil {
 		// Fatal?
