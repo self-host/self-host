@@ -21,6 +21,7 @@ Roll your own NODA API compatible server and host the data yourself.
 
 Made in Sweden :sweden: by skilled artisan software engineers.
 
+<img src="https://raw.githubusercontent.com/self-host/self-host/main/docs/assets/swedish_software.png" width="128" height="128" alt="Putting the SE in Software Engineering">
 
 # The purpose of this project
 
