@@ -14,7 +14,7 @@ docker network create -d bridge selfhost
 Start a container with PostgreSQL 12 or PostgreSQL 13.
 
 ```text
-docker run --name pg13 --network selfhost -e POSTGRES_PASSWORD=mysecretpassword -d postgres:13-alpine
+docker run --name pg13 -p 5432:5432 --network selfhost -e POSTGRES_PASSWORD=mysecretpassword -d postgres:13-alpine
 ```
 
 Create a new database on the PostgreSQL DBMS.
